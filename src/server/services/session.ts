@@ -2,13 +2,8 @@ import type { RequestEvent } from '@sveltejs/kit';
 import { eq } from 'drizzle-orm';
 import { sha256 } from '@oslojs/crypto/sha2';
 import { encodeBase64url, encodeHexLowerCase } from '@oslojs/encoding';
-import { db } from '$lib/server/db';
-import * as table from '$lib/server/db/schema';
-
-import { GitHub } from 'arctic';
-import { GITHUB_CLIENT_ID, GITHUB_CLIENT_SECRET } from '$env/static/private';
-
-export const github = new GitHub(GITHUB_CLIENT_ID, GITHUB_CLIENT_SECRET, null);
+import { db } from '$lib/db/index.server';
+import * as table from '$lib/db/schema';
 
 const DAY_IN_MS = 1000 * 60 * 60 * 24;
 
@@ -22,6 +17,7 @@ export function generateSessionToken() {
 
 export async function createSession(token: string, userId: string) {
 	const sessionId = encodeHexLowerCase(sha256(new TextEncoder().encode(token)));
+	console.log({ sessionId, userId });
 	const session: table.Session = {
 		id: sessionId,
 		userId,
@@ -36,7 +32,12 @@ export async function validateSessionToken(token: string) {
 	const [result] = await db
 		.select({
 			// Adjust user table here to tweak returned data
-			user: { id: table.user.id, username: table.user.username },
+			user: {
+				id: table.user.id,
+				name: table.user.name,
+				email: table.user.email,
+				avatar: table.user.avatar
+			},
 			session: table.session
 		})
 		.from(table.session)
