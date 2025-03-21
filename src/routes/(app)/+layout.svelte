@@ -11,7 +11,7 @@
 	let { data, children }: Props = $props();
 </script>
 
-<form method="POST" action="/?signout" use:enhance>
+<form method="POST" action="/?/signout" use:enhance>
 	<button>Sign out</button>
 </form>
 

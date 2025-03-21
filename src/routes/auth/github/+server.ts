@@ -1,5 +1,5 @@
 import { generateState } from 'arctic';
-import { github } from '$lib/server/oauth';
+import { github } from '$services/oauth';
 
 import type { RequestEvent } from '@sveltejs/kit';
 
@@ -11,7 +11,7 @@ export async function GET(event: RequestEvent): Promise<Response> {
 		path: '/',
 		httpOnly: true,
 		maxAge: 60 * 10,
-		sameSite: 'lax'
+		sameSite: 'strict'
 	});
 
 	return new Response(null, {

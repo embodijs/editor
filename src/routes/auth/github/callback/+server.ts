@@ -1,8 +1,11 @@
-import { generateSessionToken, createSession, setSessionTokenCookie } from '$lib/server/session';
-import { github } from '$lib/server/oauth';
+import { generateSessionToken, createSession, setSessionTokenCookie } from '$services/session';
+
+import { github } from '$services/oauth';
+import { createUser, getUserFromGithubId } from '$services/user';
 
 import type { RequestEvent } from '@sveltejs/kit';
 import type { OAuth2Tokens } from 'arctic';
+import { generateUserId } from '$core/model/user';
 
 export async function GET(event: RequestEvent): Promise<Response> {
 	const code = event.url.searchParams.get('code');
@@ -34,15 +37,15 @@ export async function GET(event: RequestEvent): Promise<Response> {
 		}
 	});
 	const githubUser = await githubUserResponse.json();
-	const githubUserId = githubUser.id;
-	const githubUsername = githubUser.login;
 
 	// TODO: Replace this with your own DB query.
-	const existingUser = await getUserFromGitHubId(githubUserId);
-
+	const existingUser = await getUserFromGithubId(githubUser.id);
+	console.log({ existingUser });
 	if (existingUser) {
 		const sessionToken = generateSessionToken();
-		const session = await createSession(sessionToken, user.id);
+		console.log({ sessionToken });
+		const session = await createSession(sessionToken, existingUser.id);
+		console.log({ session });
 		setSessionTokenCookie(event, sessionToken, session.expiresAt);
 		return new Response(null, {
 			status: 302,
@@ -53,7 +56,13 @@ export async function GET(event: RequestEvent): Promise<Response> {
 	}
 
 	// TODO: Replace this with your own DB query.
-	const user = await createUser(githubUserId, githubUsername);
+	const user = await createUser({
+		id: generateUserId(),
+		githubId: githubUser.id,
+		name: githubUser.name,
+		email: githubUser.email,
+		avatar: githubUser.avatar_url
+	});
 
 	const sessionToken = generateSessionToken();
 	const session = await createSession(sessionToken, user.id);
