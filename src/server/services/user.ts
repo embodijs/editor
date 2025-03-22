@@ -3,7 +3,7 @@ import { user, type NewDatabaseUser } from '$lib/db/schema';
 import type { User } from '$core/model/user';
 import { eq } from 'drizzle-orm';
 
-export function getUserFromGithubId(id: string): Promise<User | undefined> {
+export function getUserByGithubId(id: string): Promise<User | undefined> {
 	return db
 		.select({
 			id: user.id,
