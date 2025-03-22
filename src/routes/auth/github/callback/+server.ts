@@ -1,7 +1,7 @@
 import { generateSessionToken, createSession, setSessionTokenCookie } from '$services/session';
 
 import { github } from '$services/oauth';
-import { createUser, getUserFromGithubId } from '$services/user';
+import { createUser, getUserByGithubId } from '$services/user';
 
 import type { RequestEvent } from '@sveltejs/kit';
 import type { OAuth2Tokens } from 'arctic';
@@ -39,7 +39,7 @@ export async function GET(event: RequestEvent): Promise<Response> {
 	const githubUser = await githubUserResponse.json();
 
 	// TODO: Replace this with your own DB query.
-	const existingUser = await getUserFromGithubId(githubUser.id);
+	const existingUser = await getUserByGithubId(githubUser.id);
 	console.log({ existingUser });
 	if (existingUser) {
 		const sessionToken = generateSessionToken();

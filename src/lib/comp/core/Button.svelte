@@ -1,10 +1,12 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte';
+	import type { HTMLAttributes } from 'svelte/elements';
 
 	type Props = {
 		children: Snippet;
 		small?: boolean;
 		large?: boolean;
+		ghost?: boolean;
 		primary?: boolean;
 		secondary?: boolean;
 		accent?: boolean;
@@ -13,7 +15,7 @@
 		success?: boolean;
 		warning?: boolean;
 		error?: boolean;
-	};
+	} & HTMLAttributes<HTMLButtonElement>;
 
 	let {
 		children,
@@ -26,7 +28,9 @@
 		info = false,
 		success = false,
 		warning = false,
-		error = false
+		error = false,
+		ghost = false,
+		...props
 	}: Props = $props();
 </script>
 
@@ -34,6 +38,7 @@
 	class="btn"
 	class:btn-sm={small}
 	class:btn-lg={large}
+	class:btn-ghost={ghost}
 	class:btn-neutral={neutral}
 	class:btn-primary={primary}
 	class:btn-secondary={secondary}
@@ -42,6 +47,7 @@
 	class:btn-success={success}
 	class:btn-warning={warning}
 	class:btn-error={error}
+	{...props}
 >
 	{@render children()}</button
 >
