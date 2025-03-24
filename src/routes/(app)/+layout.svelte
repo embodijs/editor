@@ -2,9 +2,8 @@
 	import type { Snippet } from 'svelte';
 	import type { LayoutData } from './$types.js';
 	import { enhance } from '$app/forms';
-	import { DropdownButton, Dropdown, Avatar, DropdownMenu, DropdownItem } from '$lib/comp/core';
-	import { Ellipsis, Home, SquarePen } from 'lucide-svelte';
-	import { Menu, MenuItem } from '$lib/comp/menu/index.js';
+	import { Dropdown, Avatar, DropdownMenu, DropdownItem } from '$lib/comp/core';
+	import { Target, Home, SquarePen } from 'lucide-svelte';
 
 	type Props = {
 		data: LayoutData;
@@ -28,7 +27,7 @@
 			</div>
 			<div>
 				<ul class="menu bg-base-100 rounded-box w-56">
-					<li><a href="/projects">Switch Project</a></li>
+					<li><a href="/projects"><Target />Switch Project</a></li>
 					<li><a href="/"><Home />Dashboard</a></li>
 					<li><a href="/pages"><SquarePen />Pages</a></li>
 				</ul>

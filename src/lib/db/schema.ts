@@ -14,10 +14,12 @@ export const session = sqliteTable('session', {
 	userId: text('user_id')
 		.notNull()
 		.references(() => user.id),
+	gitToken: text('git_token').notNull(),
+	username: text('username').notNull(),
 	expiresAt: integer('expires_at', { mode: 'timestamp' }).notNull()
 });
 
-export type Session = typeof session.$inferSelect;
+export type Session = InferSelectModel<typeof session>;
 
 export type DatabaseUser = InferSelectModel<typeof user>;
 export type NewDatabaseUser = InferInsertModel<typeof user>;

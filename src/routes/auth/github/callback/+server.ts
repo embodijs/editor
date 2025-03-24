@@ -25,26 +25,30 @@ export async function GET(event: RequestEvent): Promise<Response> {
 	let tokens: OAuth2Tokens;
 	try {
 		tokens = await github.validateAuthorizationCode(code);
-	} catch (e) {
+		console.log(tokens.scopes());
+	} catch (error) {
 		// Invalid code or client credentials
+		console.info(error);
 		return new Response(null, {
 			status: 400
 		});
 	}
+	const accessToken = tokens.accessToken();
 	const githubUserResponse = await fetch('https://api.github.com/user', {
 		headers: {
-			Authorization: `Bearer ${tokens.accessToken()}`
+			Authorization: `Bearer ${accessToken}`
 		}
 	});
 	const githubUser = await githubUserResponse.json();
 
-	// TODO: Replace this with your own DB query.
 	const existingUser = await getUserByGithubId(githubUser.id);
-	console.log({ existingUser });
 	if (existingUser) {
 		const sessionToken = generateSessionToken();
-		console.log({ sessionToken });
-		const session = await createSession(sessionToken, existingUser.id);
+		const session = await createSession(sessionToken, {
+			userId: existingUser.id,
+			gitToken: accessToken,
+			username: githubUser.login
+		});
 		console.log({ session });
 		setSessionTokenCookie(event, sessionToken, session.expiresAt);
 		return new Response(null, {
@@ -65,7 +69,7 @@ export async function GET(event: RequestEvent): Promise<Response> {
 	});
 
 	const sessionToken = generateSessionToken();
-	const session = await createSession(sessionToken, user.id);
+	const session = await createSession(sessionToken, user.id, githubUser.access_token);
 	setSessionTokenCookie(event, sessionToken, session.expiresAt);
 
 	return new Response(null, {
