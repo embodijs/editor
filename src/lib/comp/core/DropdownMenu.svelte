@@ -11,7 +11,7 @@
 
 <ul
 	{...props}
-	tabindex="0"
+	tabindex={0}
 	class="menu dropdown-content bg-base-100 rounded-box z-1 mt-1 w-52 p-2 shadow {props.class}"
 >
 	{@render children()}
