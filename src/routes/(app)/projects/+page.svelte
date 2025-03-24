@@ -4,6 +4,14 @@
 	type Props = { data: PageData };
 
 	let { data }: Props = $props();
+	console.log(data);
 </script>
 
-{JSON.stringify(data)}
+{#each data.reposByOwner as { owner, repos } (owner.id)}
+	<h2>{owner.name}</h2>
+	<ul>
+		{#each repos as repo (repo.id)}
+			<li>{repo.name}</li>
+		{/each}
+	</ul>
+{/each}
