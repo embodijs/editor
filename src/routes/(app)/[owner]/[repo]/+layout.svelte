@@ -11,6 +11,10 @@
 	};
 
 	let { data, children }: Props = $props();
+
+	const project = (sub?: `/${string}`) => {
+		return `/${data.current.owner}/${data.current.repo}${sub}`;
+	};
 </script>
 
 <div class="drawer lg:drawer-open">
@@ -28,8 +32,8 @@
 			<div>
 				<ul class="menu bg-base-100 rounded-box w-56">
 					<li><a href="/projects"><Target />Switch Project</a></li>
-					<li><a href="/"><Home />Dashboard</a></li>
-					<li><a href="/pages"><SquarePen />Pages</a></li>
+					<li><a href={project('/')}><Home />Dashboard</a></li>
+					<li><a href={project('/pages')}><SquarePen />Pages</a></li>
 				</ul>
 			</div>
 			<div>
