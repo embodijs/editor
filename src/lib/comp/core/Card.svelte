@@ -16,3 +16,10 @@
 		{@render children()}
 	</div>
 </div>
+
+<style lang="postcss">
+	@reference 'tailwindcss';
+	.card {
+		@apply m-3;
+	}
+</style>
