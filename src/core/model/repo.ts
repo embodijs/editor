@@ -11,3 +11,10 @@ export const GitRepoSchema = v.object({
 });
 
 export type GitRepo = v.InferOutput<typeof GitRepoSchema>;
+
+export const BaseGitRepo = v.object({
+	owner: v.string(),
+	name: v.string()
+});
+
+export type BaseGitRepo = v.InferOutput<typeof BaseGitRepo>;
