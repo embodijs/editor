@@ -69,6 +69,7 @@
 		"@inlang/paraglide-sveltekit": "^0.16.1",
 		"@libsql/client": "^0.15.1",
 		"@node-rs/argon2": "^2.0.2",
+		"@octokit/rest": "^21.1.1",
 		"@oslojs/crypto": "^1.0.1",
 		"@oslojs/encoding": "^1.1.0",
 		"arctic": "^3.5.0",

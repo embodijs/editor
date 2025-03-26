@@ -1,28 +1,19 @@
 import type { GitOrg } from '$core/model/org';
-import type { GitRepo } from '$core/model/repo';
+import type { BaseGitRepo, GitRepo } from '$core/model/repo';
 import type { InternalGitUser } from '$core/model/user';
-import type { paths as GitHubPaths } from '../../github/interface';
-
-type GetOrgRepos =
-	GitHubPaths['/orgs/{org}/repos']['get']['responses']['200']['content']['application/json'];
-type GetUserRepos =
-	GitHubPaths['/user/repos']['get']['responses']['200']['content']['application/json'];
+import { generateGithubBase, getGithubClient } from '$lib/server/git';
 
 export const getRepoFromGithubByOrg = async (
 	org: GitOrg,
 	user: InternalGitUser
 ): Promise<GitRepo[]> => {
-	const response = await fetch(`https://api.github.com/orgs/${org.name}/repos`, {
-		headers: {
-			Accept: 'application/vnd.github.v3+json',
-			Authorization: `Bearer ${user.token}`,
-			'X-GitHub-Api-Version': '2022-11-28'
-		}
+	const github = getGithubClient();
+	const { data } = await github.rest.repos.listForOrg({
+		org: org.name,
+		...generateGithubBase(user)
 	});
 
-	const reposJson = (await response.json()) as GetOrgRepos;
-
-	return reposJson.map((repo) => ({
+	return data.map((repo) => ({
 		name: repo.name,
 		fullName: repo.full_name,
 		private: repo.private,
@@ -34,17 +25,10 @@ export const getRepoFromGithubByOrg = async (
 };
 
 export const getRepoFromGithubByUser = async (user: InternalGitUser): Promise<GitRepo[]> => {
-	const response = await fetch(`https://api.github.com/user/repos`, {
-		headers: {
-			Accept: 'application/vnd.github.v3+json',
-			Authorization: `Bearer ${user.token}`,
-			'X-GitHub-Api-Version': '2022-11-28'
-		}
-	});
+	const github = getGithubClient();
+	const { data } = await github.rest.repos.listForAuthenticatedUser(generateGithubBase(user));
 
-	const reposJson = (await response.json()) as GetUserRepos;
-
-	return reposJson.map((repo) => ({
+	return data.map((repo) => ({
 		name: repo.name,
 		fullName: repo.full_name,
 		private: repo.private,
@@ -53,4 +37,20 @@ export const getRepoFromGithubByUser = async (user: InternalGitUser): Promise<Gi
 		url: repo.html_url,
 		description: repo.description ?? undefined
 	}));
+};
+
+export const readRepoContentFromGithub = async (
+	path: string,
+	repo: BaseGitRepo,
+	user: InternalGitUser
+) => {
+	const github = getGithubClient();
+	const data = await github.rest.repos.getContent({
+		path,
+		owner: repo.owner,
+		repo: repo.name,
+		...generateGithubBase(user)
+	});
+
+	return data;
 };
