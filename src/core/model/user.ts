@@ -13,16 +13,9 @@ export const InternalGitUserSchema = v.object({
 export type InternalGitUser = v.InferOutput<typeof InternalGitUserSchema>;
 export type User = v.InferOutput<typeof UserSchema>;
 export type NewUser = v.InferInput<typeof UserSchema>;
+export type Session = table.Session;
 
 export const generateUserId = () => {
 	const id = `user_${crypto.randomUUID()}`;
 	return id;
-};
-
-export const createInternalGitUser = (user: User, session: table.Session): InternalGitUser => {
-	return {
-		id: user.id,
-		username: session.username,
-		token: session.gitToken
-	};
 };

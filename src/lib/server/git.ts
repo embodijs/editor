@@ -2,6 +2,7 @@ import type { InternalGitUser } from '$core/model/user';
 import { Octokit } from '@octokit/rest';
 
 const githubOctokit = new Octokit();
+export type GithubRest = (typeof githubOctokit)['rest'];
 
 export const getGithubClient = () => {
 	return githubOctokit;

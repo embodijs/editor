@@ -1,24 +1,20 @@
 <script lang="ts">
-	import { Button, Card } from '$lib/comp/core';
-	import CardTitle from '$lib/comp/core/CardTitle.svelte';
 	import type { PageData } from './$types';
-	import CardActions from '$lib/comp/core/CardActions.svelte';
-	import { enhance } from '$app/forms';
+	import { Card, CardActions, CardTitle } from '$/lib/comp/core';
 
 	type Props = { data: PageData };
 
 	let { data }: Props = $props();
 </script>
 
-{#each data.reposByOwner as { owner, repos } (owner.id)}
-	<h2>{owner.name}</h2>
-	{#each repos as repo (repo.id)}
-		<Card>
-			<CardTitle>{repo.name}</CardTitle>
-			<p>{repo.description}</p>
-			<CardActions>
-				<a class="btn btn-primary" href={`/${repo.fullName}`}>Select</a>
-			</CardActions>
-		</Card>
-	{/each}
+<h1>Projects</h1>
+<a class="btn btn-primary" href="/projects/add">Add</a>
+{#each data.projects as project (project.id)}
+	<Card>
+		<CardTitle>{project.name}</CardTitle>
+		<p>{project.description}</p>
+		<CardActions>
+			<a class="btn btn-primary" href={`/${project.owner}/${project.repo}`}>Open</a>
+		</CardActions>
+	</Card>
 {/each}
