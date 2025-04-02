@@ -12,7 +12,7 @@
 
 	let { data, children }: Props = $props();
 
-	const project = (sub?: `/${string}`) => {
+	const projectPath = (sub?: `/${string}`) => {
 		return `/${data.current.owner}/${data.current.repo}${sub}`;
 	};
 </script>
@@ -32,8 +32,12 @@
 			<div>
 				<ul class="menu bg-base-100 rounded-box w-56">
 					<li><a href="/projects"><Target />Switch Project</a></li>
-					<li><a href={project('/')}><Home />Dashboard</a></li>
-					<li><a href={project('/pages')}><SquarePen />Pages</a></li>
+					<li><a href={projectPath('/')}><Home />Dashboard</a></li>
+					{#each data.collections as title, index (index)}
+						<li>
+							<a href={projectPath(`/collections/${index}`)}><SquarePen />{title}</a>
+						</li>
+					{/each}
 				</ul>
 			</div>
 			<div>
