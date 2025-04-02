@@ -4,7 +4,7 @@ import { generateGithubBase, getGithubClient } from '$lib/server/git';
 
 export const getGithubOrgs = async (user: InternalGitUser): Promise<GitOrg[]> => {
 	const github = getGithubClient();
-	const { data } = await github.rest.orgs.list(generateGithubBase(user));
+	const { data } = await github.rest.orgs.listForAuthenticatedUser(generateGithubBase(user));
 	return data.map((org) => ({
 		name: org.login,
 		avatar: org.avatar_url,

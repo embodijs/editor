@@ -1,0 +1,11 @@
+dictionaries = []
+words = [
+    "'valibot'",
+    "session",
+    "sveltejs",
+    "valibot",
+]
+flag_words = []
+ignore_paths = []
+ignore_patterns = []
+use_global = true
