@@ -1,37 +1,47 @@
-import { EmbodiConfigSchema } from '$core/model/config';
+import { EmbodiConfigSchema, type EmbodiConfig } from '$core/model/config';
 import type { GitContent, GitFile } from '$core/model/content';
 import * as v from 'valibot';
 import { extractJsonFromGitFile } from './repo';
 
-export const readEmbodiConfig = async (load: (path: string) => Promise<GitFile>) => {
-	const config = await load('/.embodi/editor.json');
+export enum ConfigValidationResult {
+	INVALID,
+	VALID,
+	MISSING
+}
+export const loadEmbodiConfig = async (load: (path: string) => Promise<GitContent>) => {
+	const content = await load('/.embodi/editor.json');
+	return content;
+};
+
+export const extractEmbodiConfig = (gitFile: GitFile): EmbodiConfig => {
+	const config = extractJsonFromGitFile(gitFile);
 
 	const parsed = v.parse(EmbodiConfigSchema, config);
 	return parsed;
 };
 
-export enum ValidataionsReturn {
-	INVALID,
-	VALID,
-	MISSING
-}
+export const isGitFile = (file: GitContent): file is GitFile => {
+	if (Array.isArray(file) || file.type !== 'file') {
+		return false;
+	}
+	return true;
+};
 
-export const hasValidConfig = async (
-	load: (path: string) => Promise<GitContent>
-): Promise<ValidataionsReturn> => {
+export const validateConfig = (gitFile: GitContent): boolean => {
 	try {
-		const gitFile = await load('/.embodi/editor.json');
-		if (Array.isArray(gitFile) || gitFile.type !== 'file') {
-			return ValidataionsReturn.INVALID;
+		if (!isGitFile(gitFile)) {
+			return false;
 		}
-
 		const config = extractJsonFromGitFile(gitFile);
-		console.log(JSON.stringify(config));
 
 		const result = v.safeParse(EmbodiConfigSchema, config);
-		return result.success ? ValidataionsReturn.VALID : ValidataionsReturn.INVALID;
+		return result.success;
 	} catch (error) {
 		console.error('Error parsing config:', error);
-		return ValidataionsReturn.MISSING;
+		return false;
 	}
+};
+
+export const extractCollectionsTitles = (config: EmbodiConfig): string[] => {
+	return config.collections.map((collection) => collection.name);
 };

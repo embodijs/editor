@@ -26,6 +26,15 @@ export async function createSession(token: string, data: Omit<table.Session, 'id
 	return session;
 }
 
+export async function updateSession(data: Omit<table.Session, 'expiresAt'>) {
+	const session: table.Session = {
+		...data,
+		expiresAt: new Date(Date.now() + DAY_IN_MS * 30)
+	};
+	await db.update(table.session).set(session).where(eq(table.session.id, data.id));
+	return session;
+}
+
 export async function validateSessionToken(token: string) {
 	const sessionId = encodeHexLowerCase(sha256(new TextEncoder().encode(token)));
 	const [result] = await db
