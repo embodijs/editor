@@ -35,7 +35,7 @@
 					<li><a href={projectPath('/')}><Home />Dashboard</a></li>
 					{#each data.collections as title, index (index)}
 						<li>
-							<a href={projectPath(`/collections/${index}`)}><SquarePen />{title}</a>
+							<a href={projectPath(`/collection/${index}`)}><SquarePen />{title}</a>
 						</li>
 					{/each}
 				</ul>
