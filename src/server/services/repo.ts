@@ -54,10 +54,10 @@ type GithubContentArray<
 		GithubRest['repos']['getContent']
 	> = GetResponseDataTypeFromEndpointMethod<GithubRest['repos']['getContent']>
 > = T extends (infer A)[] ? A : never;
-
+//TODO: check encoding and pissble formats
 const convertGithubContentToGitFile = (repo: GithubFileType): GitFile => ({
 	type: repo.type,
-	encoding: repo.encoding,
+	encoding: repo.encoding as 'base64',
 	path: repo.path,
 	name: repo.name,
 	size: repo.size,
@@ -84,12 +84,13 @@ export const getRepoContentFromGithub = async (
 		...generateGithubBase(user)
 	});
 	const { data, status } = response;
+	console.log({ data, status });
 	if (status !== 200) {
 		throw new Error('Not found');
 	}
 	if (Array.isArray(data)) {
 		return data
-			.filter((item) => !(item.type === 'file' || item.type === 'dir'))
+			.filter((item) => item.type === 'file' || item.type === 'dir')
 			.map(convertGithubContentToGitContent);
 	} else if (data.type === 'file') {
 		return convertGithubContentToGitFile(data);

@@ -14,5 +14,7 @@ export const EmbodiConfigSchema = v.object({
 });
 
 export const ExternalEmbodiConfigSchema = v.pick(EmbodiConfigSchema, ['title', 'collections']);
+
+export type Collection = v.InferOutput<typeof CollectionSchema>;
 export type ExternalEmbodiConfig = v.InferOutput<typeof ExternalEmbodiConfigSchema>;
 export type EmbodiConfig = v.InferOutput<typeof EmbodiConfigSchema>;
