@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type { PageData } from './$types';
 	import { Card, CardActions, CardTitle } from '$/lib/comp/core';
+	import { enhance } from '$app/forms';
 
 	type Props = { data: PageData };
 
@@ -14,7 +15,11 @@
 		<CardTitle>{project.name}</CardTitle>
 		<p>{project.description}</p>
 		<CardActions>
-			<a class="btn btn-primary" href={`/${project.owner}/${project.repo}`}>Open</a>
-		</CardActions>
+			<form action="?/open" method="POST" use:enhance>
+				<input type="hidden" name="owner" value={project.owner} />
+				<input type="hidden" name="repo" value={project.repo} />
+				<button class="btn btn-primary">Open</button>
+			</form></CardActions
+		>
 	</Card>
 {/each}
