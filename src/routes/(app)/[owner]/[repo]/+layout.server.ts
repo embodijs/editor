@@ -13,7 +13,11 @@ import { error } from '@sveltejs/kit';
 import { updateSession } from '$services/session';
 
 export const load: LayoutServerLoad = async ({ locals, params }) => {
-	if (hasProject(locals)) {
+	if (
+		hasProject(locals) &&
+		locals.session.activeProjectConfig.owner === params.owner &&
+		locals.session.activeProjectConfig.repo === params.repo
+	) {
 		const collections = extractCollectionsTitles(locals.session.activeProjectConfig);
 		return {
 			collections
