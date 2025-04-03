@@ -1,4 +1,4 @@
-import { EmbodiConfigSchema, type EmbodiConfig } from '$core/model/config';
+import { ExternalEmbodiConfigSchema, type ExternalEmbodiConfig } from '$core/model/config';
 import type { GitContent, GitFile } from '$core/model/content';
 import * as v from 'valibot';
 import { extractJsonFromGitFile } from './repo';
@@ -13,10 +13,10 @@ export const loadEmbodiConfig = async (load: (path: string) => Promise<GitConten
 	return content;
 };
 
-export const extractEmbodiConfig = (gitFile: GitFile): EmbodiConfig => {
+export const extractEmbodiConfig = (gitFile: GitFile): ExternalEmbodiConfig => {
 	const config = extractJsonFromGitFile(gitFile);
 
-	const parsed = v.parse(EmbodiConfigSchema, config);
+	const parsed = v.parse(ExternalEmbodiConfigSchema, config);
 	return parsed;
 };
 
@@ -34,7 +34,7 @@ export const validateConfig = (gitFile: GitContent): boolean => {
 		}
 		const config = extractJsonFromGitFile(gitFile);
 
-		const result = v.safeParse(EmbodiConfigSchema, config);
+		const result = v.safeParse(ExternalEmbodiConfigSchema, config);
 		return result.success;
 	} catch (error) {
 		console.error('Error parsing config:', error);
@@ -42,6 +42,6 @@ export const validateConfig = (gitFile: GitContent): boolean => {
 	}
 };
 
-export const extractCollectionsTitles = (config: EmbodiConfig): string[] => {
+export const extractCollectionsTitles = (config: ExternalEmbodiConfig): string[] => {
 	return config.collections.map((collection) => collection.name);
 };

@@ -1,5 +1,5 @@
 import type { LayoutServerLoad } from './$types';
-import { assertProject, hasProject, isAuthorized } from '$/lib/server/guards';
+import { hasProject, isAuthorized } from '$/lib/server/guards';
 import {
 	extractCollectionsTitles,
 	extractEmbodiConfig,
@@ -21,7 +21,7 @@ export const load: LayoutServerLoad = async ({ locals, params }) => {
 	}
 
 	isAuthorized(locals);
-
+	const { owner, repo } = params;
 	const gitUser = createInternalGitUser(locals);
 	const gitRepo = createBaseGitRepo(params);
 
@@ -39,7 +39,11 @@ export const load: LayoutServerLoad = async ({ locals, params }) => {
 
 	await updateSession({
 		...locals.session,
-		activeProjectConfig: config
+		activeProjectConfig: {
+			...config,
+			owner,
+			repo
+		}
 	});
 
 	return {

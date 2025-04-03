@@ -34,7 +34,11 @@ export const load: PageServerLoad = async ({ params, locals }) => {
 	await createProject(project, user.id);
 	await updateSession({
 		...session,
-		activeProjectConfig: config
+		activeProjectConfig: {
+			...config,
+			owner,
+			repo
+		}
 	});
 
 	redirect(302, `/${owner}/${repo}/`);

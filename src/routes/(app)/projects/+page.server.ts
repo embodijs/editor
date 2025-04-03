@@ -1,4 +1,4 @@
-import { isAuthorized } from '$/lib/server/auth';
+import { isAuthorized } from '$/lib/server/guards';
 import { getProjects } from '$services/project';
 import type { PageServerLoad } from './$types';
 
