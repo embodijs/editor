@@ -28,3 +28,11 @@ export function hasProject(locals: App.Locals): locals is Omit<App.Locals, 'sess
 	}
 	return true;
 }
+
+export function getProjectConfig(locals: App.Locals) {
+	const project = locals.session?.activeProjectConfig;
+	if (!project) {
+		throw error(403, 'Project is not set');
+	}
+	return project;
+}

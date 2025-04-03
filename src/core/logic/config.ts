@@ -2,13 +2,14 @@ import { ExternalEmbodiConfigSchema, type ExternalEmbodiConfig } from '$core/mod
 import type { GitContent, GitFile } from '$core/model/content';
 import * as v from 'valibot';
 import { extractJsonFromGitFile } from './repo';
+import type { GetGitContent } from '$core/types/external';
 
 export enum ConfigValidationResult {
 	INVALID,
 	VALID,
 	MISSING
 }
-export const loadEmbodiConfig = async (load: (path: string) => Promise<GitContent>) => {
+export const loadEmbodiConfig = async (load: GetGitContent) => {
 	const content = await load('/.embodi/editor.json');
 	return content;
 };
