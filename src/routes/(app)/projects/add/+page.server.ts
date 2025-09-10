@@ -1,6 +1,6 @@
-import { isAuthorized } from '$lib/server/auth';
+import { isAuthorized } from '$lib/server/guards';
 import { getGithubOrgs } from '$services/org';
-import { getRepoFromGithubByOrg, getRepoFromGithubByUser } from '$services/repo';
+import { getRepoFromGithubByOrg, getRepoFromGithubByUser, getRepositories } from '$services/repo';
 import { error, redirect } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
 import { superValidate } from 'sveltekit-superforms';
@@ -14,6 +14,8 @@ export const load: PageServerLoad = async ({ locals }) => {
 	const orgs = await getGithubOrgs(gitUser);
 
 	const formAdd = await superValidate(valibot(CreateProjectSchema));
+	const allRepos = await getRepositories(gitUser);
+	console.log({ allRepos });
 
 	const reposByOwner = await Promise.all([
 		{

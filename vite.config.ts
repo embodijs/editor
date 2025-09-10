@@ -2,6 +2,7 @@ import { paraglide } from '@inlang/paraglide-sveltekit/vite';
 import tailwindcss from '@tailwindcss/vite';
 import { svelteTesting } from '@testing-library/svelte/vite';
 import { sveltekit } from '@sveltejs/kit/vite';
+import codegen from 'vite-plugin-graphql-codegen';
 import { defineConfig } from 'vite';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -12,6 +13,7 @@ const dirname =
 // More info at: https://storybook.js.org/docs/writing-tests/test-addon
 export default defineConfig({
 	plugins: [
+		codegen(),
 		tailwindcss(),
 		sveltekit(),
 		paraglide({
