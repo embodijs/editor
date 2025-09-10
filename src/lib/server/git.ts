@@ -1,5 +1,5 @@
 import type { InternalGitUser } from '$core/model/user';
-import { Octokit } from '@octokit/rest';
+import { Octokit } from 'octokit';
 
 const githubOctokit = new Octokit();
 export type GithubRest = (typeof githubOctokit)['rest'];

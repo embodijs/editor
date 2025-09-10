@@ -39,16 +39,20 @@ export async function GET(event: RequestEvent): Promise<Response> {
 			Authorization: `Bearer ${accessToken}`
 		}
 	});
-	const githubUser = await githubUserResponse.json();
+	const githubUser: GithubUser = await githubUserResponse.json();
 
 	const existingUser = await getUserByGithubId(githubUser.id);
 	if (existingUser) {
 		const sessionToken = generateSessionToken();
-		const session = await createSession(sessionToken, {
-			userId: existingUser.id,
-			gitToken: accessToken,
-			username: githubUser.login
-		});
+		const session = await createSession(
+			sessionToken,
+			{
+				userId: existingUser.id,
+				gitToken: accessToken,
+				username: githubUser.login
+			},
+			githubUser.access_token
+		);
 		console.log({ session });
 		setSessionTokenCookie(event, sessionToken, session.expiresAt);
 		return new Response(null, {
