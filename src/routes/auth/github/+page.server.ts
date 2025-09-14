@@ -1,13 +1,13 @@
 import { generateState } from 'arctic';
 import { github } from '$services/oauth';
 
-import type { RequestEvent } from '@sveltejs/kit';
+import { redirect } from '@sveltejs/kit';
+import type { PageServerLoad } from './$types';
 
-export async function GET(event: RequestEvent): Promise<Response> {
+export const load: PageServerLoad = async (event) => {
 	const state = generateState();
 	const scopes = ['user:email', 'read:org'];
 	const url = github.createAuthorizationURL(state, scopes);
-	console.log(url);
 
 	event.cookies.set('github_oauth_state', state, {
 		path: '/',
@@ -16,10 +16,5 @@ export async function GET(event: RequestEvent): Promise<Response> {
 		sameSite: 'strict'
 	});
 
-	return new Response(null, {
-		status: 302,
-		headers: {
-			Location: url.toString()
-		}
-	});
-}
+	return redirect(302, url.toString());
+};

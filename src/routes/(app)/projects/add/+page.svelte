@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type { PageData } from './$types';
-	import { Card, CardActions, CardTitle } from '$/lib/comp/core';
+	import { ProjectCard } from '$/lib/comp/project';
+	import { Button } from '$lib/comp/core';
 
 	type Props = { data: PageData };
 
@@ -10,13 +11,13 @@
 <h1>Your GitHub Repos</h1>
 {#each data.reposByOwner as { owner, repos } (owner.id)}
 	<h2>{owner.name}</h2>
-	{#each repos as repo (repo.id)}
-		<Card>
-			<CardTitle>{repo.name}</CardTitle>
-			<p>{repo.description}</p>
-			<CardActions>
-				<a class="btn btn-primary" href={`/projects/setup/${repo.id}/${repo.fullName}`}>Add</a>
-			</CardActions>
-		</Card>
-	{/each}
+	<div class="flex gap-3">
+		{#each repos as repo (repo.id)}
+			<ProjectCard class="w-full" title={repo.name} description={repo.description}>
+				{#snippet action()}
+					<Button href="/projects/setup/{repo.id}/{repo.fullName}">Add</Button>
+				{/snippet}
+			</ProjectCard>
+		{/each}
+	</div>
 {/each}
