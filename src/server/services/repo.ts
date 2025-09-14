@@ -1,9 +1,10 @@
 import type { GitContent, GitDirContent, GitFile } from '$core/model/content';
 import type { GitOrg } from '$core/model/org';
 import type { BaseGitRepo, GitRepo } from '$core/model/repo';
-import type { InternalGitUser } from '$core/model/user';
+import { PLATFORMS, type InternalGitUser } from '$core/model/user';
 import { generateGithubBase, getGithubClient, type GithubRest } from '$lib/server/git';
 import type { GetResponseDataTypeFromEndpointMethod } from '@octokit/types';
+import { getGitHubRepositories } from './github/repo';
 
 export const getRepoFromGithubByOrg = async (
 	org: GitOrg,
@@ -25,6 +26,15 @@ export const getRepoFromGithubByOrg = async (
 		url: repo.html_url,
 		description: repo.description ?? undefined
 	}));
+};
+
+export const getRepositories = (user: InternalGitUser) => {
+	switch (user.platform) {
+		case PLATFORMS.GITHUB:
+			return getGitHubRepositories(user);
+		default:
+			throw new Error(`Unsupported platform: ${user.platform}`);
+	}
 };
 
 export const getRepoFromGithubByUser = async (user: InternalGitUser): Promise<GitRepo[]> => {
