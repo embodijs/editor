@@ -4,9 +4,14 @@ import * as v from 'valibot';
 
 export const UserSchema = v.pick(createSelectSchema(table.user), ['id', 'email', 'name', 'avatar']);
 
+export enum PLATFORMS {
+	GITHUB
+}
+
 export const InternalGitUserSchema = v.object({
 	id: v.string(),
 	username: v.string(),
+	platform: v.enum(PLATFORMS),
 	token: v.string()
 });
 

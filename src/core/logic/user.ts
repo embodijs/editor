@@ -1,4 +1,4 @@
-import type { InternalGitUser, Session, User } from '$core/model/user';
+import { PLATFORMS, type InternalGitUser, type Session, type User } from '$core/model/user';
 
 type Locals = { user: User; session: Session };
 export function createInternalGitUser(locals: Locals): InternalGitUser;
@@ -11,6 +11,7 @@ export function createInternalGitUser(
 		return {
 			id: userOrLocals.id,
 			username: session.username,
+			platform: PLATFORMS.GITHUB,
 			token: session.gitToken
 		};
 	} else {
@@ -18,6 +19,7 @@ export function createInternalGitUser(
 		return {
 			id: user.id,
 			username: session.username,
+			platform: PLATFORMS.GITHUB,
 			token: session.gitToken
 		};
 	}
