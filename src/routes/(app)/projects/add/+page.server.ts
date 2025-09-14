@@ -23,12 +23,8 @@ export const load: PageServerLoad = async ({ locals }) => {
 				id: gitUser.id,
 				name: gitUser.username
 			},
-			repos: await getRepoFromGithubByUser(gitUser)
-		},
-		...orgs.map(async (org) => {
-			const repos = await getRepoFromGithubByOrg(org, gitUser);
-			return { owner: org, repos };
-		})
+			repos: await getRepositories(gitUser)
+		}
 	]);
 
 	return { reposByOwner, formAdd };
