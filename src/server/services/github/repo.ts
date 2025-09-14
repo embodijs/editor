@@ -2,9 +2,7 @@ import type { GitContent } from '$core/model/content';
 import type { BaseGitRepo, GitRepo } from '$core/model/repo';
 import type { InternalGitUser } from '$core/model/user';
 import { graphql } from '$lib/gql';
-import type { NotNull } from 'drizzle-orm';
 import { createGithubClient } from './github';
-import { description } from 'valibot';
 
 const GET_REPO_CONTENT = graphql(`
 	query GetRepoContent($owner: String!, $name: String!, $path: String!) {
