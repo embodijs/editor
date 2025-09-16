@@ -1,28 +1,7 @@
-import type { GitContent } from '$core/model/content';
-import type { BaseGitRepo, GitRepo } from '$core/model/repo';
+import type { GitRepo } from '$core/model/repo';
 import type { InternalGitUser } from '$core/model/user';
 import { graphql } from '$lib/gql';
-import { createGithubClient } from './github';
-
-const GET_REPO_CONTENT = graphql(`
-	query GetRepoContent($owner: String!, $name: String!, $path: String!) {
-		repository(owner: $owner, name: $name) {
-			object(expression: $path) {
-				... on Tree {
-					entries {
-						name
-						type
-						object {
-							... on Blob {
-								text
-							}
-						}
-					}
-				}
-			}
-		}
-	}
-`);
+import { createGraphqlClient, generateRestBase, getClient } from './github';
 
 const GET_REPOS = graphql(`
 	query GetRepos($amount: Int!) {
@@ -69,13 +48,55 @@ export const getRepoMetaFromGitbub = async (
 	user: InternalGitUser,
 	owner: string,
 	name: string
-) => {};
+): Promise<GitRepo> => {
+	const client = getClient();
+	const { data } = await client.request('GET /repos/{owner}/{repo}', {
+		owner,
+		repo: name,
+		...generateRestBase(user)
+	});
+
+	return {
+		name: data.name,
+		owner: data.owner.login,
+		fullName: data.full_name,
+		private: data.private,
+		hasPages: data.has_pages,
+		id: data.id.toString(),
+		url: data.html_url,
+		description: data.description ?? undefined
+	};
+};
+
+export const getRepoPagesFromGithub = async (
+	user: InternalGitUser,
+	owner: string,
+	name: string
+) => {
+	const client = getClient();
+	const { data } = await client.request('GET /repos/{owner}/{repo}/pages', {
+		owner,
+		repo: name,
+		...generateRestBase(user)
+	});
+
+	return {
+		url: {
+			url: data.html_url,
+			cname: data.cname,
+			verified: data.protected_domain_state === 'verified'
+		},
+		buildType: data.build_type,
+		public: data.public,
+		httpsEnforced: data.https_enforced
+	};
+};
 
 export const getReposFromGithub = async (
 	user: InternalGitUser,
 	amount: number = 20
 ): Promise<GitRepo[]> => {
-	const github = createGithubClient(user.token);
+	const github = createGraphqlClient(user.token);
 	const response = await github.request(GET_REPOS, {
 		amount
 	});
@@ -107,32 +128,4 @@ export const getReposFromGithub = async (
 		}
 		return acc;
 	}, [] as GitRepo[]);
-};
-
-export const getRepoContentFromGithub = async (
-	path: string,
-	repo: BaseGitRepo,
-	user: InternalGitUser
-): Promise<GitContent> => {
-	const github = createGithubClient(user);
-	const response = await github.request(GET_REPO_CONTENT, {
-		owner: repo.owner,
-		name: repo.name,
-		path: `HEAD:${path}`
-	});
-
-	const repository = response.repository;
-	if (!repository?.object) {
-		throw new Error('Not found');
-	}
-
-	const treeObject = repository.object;
-	if ('entries' in treeObject && treeObject.entries) {
-		return treeObject.entries
-			.filter((entry) => entry.type === 'blob' || entry.type === 'tree')
-			.map(convertGithubContentToGitContent);
-	} else if ('text' in treeObject && treeObject.text) {
-		return convertGithubContentToGitFile(treeObject);
-	}
-	throw new Error('Invalid content type');
 };

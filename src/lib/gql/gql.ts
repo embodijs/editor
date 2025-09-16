@@ -14,12 +14,10 @@ import type { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-
  * Learn more about it here: https://the-guild.dev/graphql/codegen/plugins/presets/preset-client#reducing-bundle-size
  */
 type Documents = {
-    "\n\tquery GetRepoContent($owner: String!, $name: String!, $path: String!) {\n\t\trepository(owner: $owner, name: $name) {\n\t\t\tobject(expression: $path) {\n\t\t\t\t... on Tree {\n\t\t\t\t\tentries {\n\t\t\t\t\t\tname\n\t\t\t\t\t\ttype\n\t\t\t\t\t\tobject {\n\t\t\t\t\t\t\t... on Blob {\n\t\t\t\t\t\t\t\ttext\n\t\t\t\t\t\t\t}\n\t\t\t\t\t\t}\n\t\t\t\t\t}\n\t\t\t\t}\n\t\t\t}\n\t\t}\n\t}\n": typeof types.GetRepoContentDocument,
     "\n\tquery GetRepos($amount: Int!) {\n\t\tviewer {\n\t\t\trepositories(first: $amount, orderBy: { field: UPDATED_AT, direction: DESC }) {\n\t\t\t\tnodes {\n\t\t\t\t\tid\n\t\t\t\t\turl\n\t\t\t\t\tdescription\n\t\t\t\t\towner {\n\t\t\t\t\t\tlogin\n\t\t\t\t\t}\n\t\t\t\t\tname\n\t\t\t\t\tnameWithOwner\n\t\t\t\t\tisPrivate\n\t\t\t\t\tviewerPermission\n\t\t\t\t\tdefaultBranchRef {\n\t\t\t\t\t\tname\n\t\t\t\t\t}\n\n\t\t\t\t\t# Check root directory files using the actual branch\n\t\t\t\t\thasEmbodiConfigTs: object(expression: \"HEAD:.embodi.ts\") {\n\t\t\t\t\t\tid\n\t\t\t\t\t}\n\t\t\t\t\thasEmbodiConfigJs: object(expression: \"HEAD:.embodi.js\") {\n\t\t\t\t\t\tid\n\t\t\t\t\t}\n\t\t\t\t\thasAstroConfigJs: object(expression: \"HEAD:astro.config.js\") {\n\t\t\t\t\t\tid\n\t\t\t\t\t}\n\t\t\t\t\thasAstroConfigTs: object(expression: \"HEAD:astro.config.ts\") {\n\t\t\t\t\t\tid\n\t\t\t\t\t}\n\t\t\t\t\thasAstroConfigMjs: object(expression: \"HEAD:astro.config.mjs\") {\n\t\t\t\t\t\tid\n\t\t\t\t\t}\n\t\t\t\t}\n\t\t\t}\n\t\t}\n\t}\n": typeof types.GetReposDocument,
     "\n\tquery GetUser {\n\t\tviewer {\n\t\t\tname\n\t\t\tid\n\t\t\temail\n\t\t\tavatarUrl\n\t\t\tlogin\n\t\t}\n\t}\n": typeof types.GetUserDocument,
 };
 const documents: Documents = {
-    "\n\tquery GetRepoContent($owner: String!, $name: String!, $path: String!) {\n\t\trepository(owner: $owner, name: $name) {\n\t\t\tobject(expression: $path) {\n\t\t\t\t... on Tree {\n\t\t\t\t\tentries {\n\t\t\t\t\t\tname\n\t\t\t\t\t\ttype\n\t\t\t\t\t\tobject {\n\t\t\t\t\t\t\t... on Blob {\n\t\t\t\t\t\t\t\ttext\n\t\t\t\t\t\t\t}\n\t\t\t\t\t\t}\n\t\t\t\t\t}\n\t\t\t\t}\n\t\t\t}\n\t\t}\n\t}\n": types.GetRepoContentDocument,
     "\n\tquery GetRepos($amount: Int!) {\n\t\tviewer {\n\t\t\trepositories(first: $amount, orderBy: { field: UPDATED_AT, direction: DESC }) {\n\t\t\t\tnodes {\n\t\t\t\t\tid\n\t\t\t\t\turl\n\t\t\t\t\tdescription\n\t\t\t\t\towner {\n\t\t\t\t\t\tlogin\n\t\t\t\t\t}\n\t\t\t\t\tname\n\t\t\t\t\tnameWithOwner\n\t\t\t\t\tisPrivate\n\t\t\t\t\tviewerPermission\n\t\t\t\t\tdefaultBranchRef {\n\t\t\t\t\t\tname\n\t\t\t\t\t}\n\n\t\t\t\t\t# Check root directory files using the actual branch\n\t\t\t\t\thasEmbodiConfigTs: object(expression: \"HEAD:.embodi.ts\") {\n\t\t\t\t\t\tid\n\t\t\t\t\t}\n\t\t\t\t\thasEmbodiConfigJs: object(expression: \"HEAD:.embodi.js\") {\n\t\t\t\t\t\tid\n\t\t\t\t\t}\n\t\t\t\t\thasAstroConfigJs: object(expression: \"HEAD:astro.config.js\") {\n\t\t\t\t\t\tid\n\t\t\t\t\t}\n\t\t\t\t\thasAstroConfigTs: object(expression: \"HEAD:astro.config.ts\") {\n\t\t\t\t\t\tid\n\t\t\t\t\t}\n\t\t\t\t\thasAstroConfigMjs: object(expression: \"HEAD:astro.config.mjs\") {\n\t\t\t\t\t\tid\n\t\t\t\t\t}\n\t\t\t\t}\n\t\t\t}\n\t\t}\n\t}\n": types.GetReposDocument,
     "\n\tquery GetUser {\n\t\tviewer {\n\t\t\tname\n\t\t\tid\n\t\t\temail\n\t\t\tavatarUrl\n\t\t\tlogin\n\t\t}\n\t}\n": types.GetUserDocument,
 };
@@ -38,10 +36,6 @@ const documents: Documents = {
  */
 export function graphql(source: string): unknown;
 
-/**
- * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
- */
-export function graphql(source: "\n\tquery GetRepoContent($owner: String!, $name: String!, $path: String!) {\n\t\trepository(owner: $owner, name: $name) {\n\t\t\tobject(expression: $path) {\n\t\t\t\t... on Tree {\n\t\t\t\t\tentries {\n\t\t\t\t\t\tname\n\t\t\t\t\t\ttype\n\t\t\t\t\t\tobject {\n\t\t\t\t\t\t\t... on Blob {\n\t\t\t\t\t\t\t\ttext\n\t\t\t\t\t\t\t}\n\t\t\t\t\t\t}\n\t\t\t\t\t}\n\t\t\t\t}\n\t\t\t}\n\t\t}\n\t}\n"): (typeof documents)["\n\tquery GetRepoContent($owner: String!, $name: String!, $path: String!) {\n\t\trepository(owner: $owner, name: $name) {\n\t\t\tobject(expression: $path) {\n\t\t\t\t... on Tree {\n\t\t\t\t\tentries {\n\t\t\t\t\t\tname\n\t\t\t\t\t\ttype\n\t\t\t\t\t\tobject {\n\t\t\t\t\t\t\t... on Blob {\n\t\t\t\t\t\t\t\ttext\n\t\t\t\t\t\t\t}\n\t\t\t\t\t\t}\n\t\t\t\t\t}\n\t\t\t\t}\n\t\t\t}\n\t\t}\n\t}\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
