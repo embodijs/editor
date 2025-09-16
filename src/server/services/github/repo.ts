@@ -24,8 +24,8 @@ const GET_REPO_CONTENT = graphql(`
 	}
 `);
 
-const GET_REPO = graphql(`
-	query GetRepo($amount: Int!) {
+const GET_REPOS = graphql(`
+	query GetRepos($amount: Int!) {
 		viewer {
 			repositories(first: $amount, orderBy: { field: UPDATED_AT, direction: DESC }) {
 				nodes {
@@ -65,12 +65,18 @@ const GET_REPO = graphql(`
 	}
 `);
 
-export const getGitHubRepositories = async (
+export const getRepoMetaFromGitbub = async (
+	user: InternalGitUser,
+	owner: string,
+	name: string
+) => {};
+
+export const getReposFromGithub = async (
 	user: InternalGitUser,
 	amount: number = 20
 ): Promise<GitRepo[]> => {
-	const github = createGithubClient(user);
-	const response = await github.request(GET_REPO, {
+	const github = createGithubClient(user.token);
+	const response = await github.request(GET_REPOS, {
 		amount
 	});
 
@@ -83,7 +89,7 @@ export const getGitHubRepositories = async (
 		if (
 			repo != null &&
 			(repo.hasEmbodiConfigTs ||
-				repo.hasEmbdoiConfigJs ||
+				repo.hasEmbodiConfigJs ||
 				repo.hasAstroConfigJs ||
 				repo.hasAstroConfigTs ||
 				repo.hasAstroConfigMjs)

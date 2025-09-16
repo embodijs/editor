@@ -2,20 +2,20 @@ import { isAuthorized } from '$/lib/server/guards';
 import { extractEmbodiConfig, isGitFile, loadEmbodiConfig } from '$core/logic/config';
 import { createBaseGitRepo } from '$core/logic/repo';
 import { createInternalGitUser } from '$core/logic/user';
-import { getProjects } from '$services/project';
+import { getProject } from '$services/project';
 import { getRepoContentFromGithub } from '$services/repo';
 import { error, redirect } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
 import { updateSession } from '$services/session';
 
-export const load: PageServerLoad = async ({ locals }) => {
+export const load: PageServerLoad = async ({ locals, params }) => {
 	isAuthorized(locals);
-	const { user } = locals;
+	const { projectId } = params;
 
-	const projects = await getProjects(user.id);
+	const project = await getProject(projectId);
 
 	return {
-		projects
+		project
 	};
 };
 

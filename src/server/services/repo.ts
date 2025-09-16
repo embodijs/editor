@@ -4,7 +4,7 @@ import type { BaseGitRepo, GitRepo } from '$core/model/repo';
 import { PLATFORMS, type InternalGitUser } from '$core/model/user';
 import { generateGithubBase, getGithubClient, type GithubRest } from '$lib/server/git';
 import type { GetResponseDataTypeFromEndpointMethod } from '@octokit/types';
-import { getGitHubRepositories } from './github/repo';
+import { getReposFromGithub } from './github/repo';
 
 export const getRepoFromGithubByOrg = async (
 	org: GitOrg,
@@ -31,7 +31,7 @@ export const getRepoFromGithubByOrg = async (
 export const getRepositories = (user: InternalGitUser) => {
 	switch (user.platform) {
 		case PLATFORMS.GITHUB:
-			return getGitHubRepositories(user);
+			return getReposFromGithub(user);
 		default:
 			throw new Error(`Unsupported platform: ${user.platform}`);
 	}

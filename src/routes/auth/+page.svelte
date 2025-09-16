@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { Button } from '$lib/comp/ui/button/index.js';
-	import { Github, GalleryVerticalEnd } from 'lucide-svelte';
+	import { Github, GalleryVerticalEnd } from '@lucide/svelte';
 
 	import LoginCard from './LoginCard.svelte';
 </script>

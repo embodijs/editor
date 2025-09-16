@@ -6,6 +6,7 @@ import { createUser, getUserByGithubId } from '$services/user';
 import type { RequestEvent } from '@sveltejs/kit';
 import type { OAuth2Tokens } from 'arctic';
 import { generateUserId } from '$core/model/user';
+import { getCurrentUser } from '$services/github/user';
 
 export async function GET(event: RequestEvent): Promise<Response> {
 	const code = event.url.searchParams.get('code');
@@ -25,7 +26,6 @@ export async function GET(event: RequestEvent): Promise<Response> {
 	let tokens: OAuth2Tokens;
 	try {
 		tokens = await github.validateAuthorizationCode(code);
-		console.log(tokens.scopes());
 	} catch (error) {
 		// Invalid code or client credentials
 		console.info(error);
@@ -34,13 +34,9 @@ export async function GET(event: RequestEvent): Promise<Response> {
 		});
 	}
 	const accessToken = tokens.accessToken();
-	const githubUserResponse = await fetch('https://api.github.com/user', {
-		headers: {
-			Authorization: `Bearer ${accessToken}`
-		}
-	});
-	const githubUser: GithubUser = await githubUserResponse.json();
-
+	console.log({ accessToken });
+	const githubUser = await getCurrentUser({ token: accessToken });
+	console.log({ githubUser });
 	const existingUser = await getUserByGithubId(githubUser.id);
 	if (existingUser) {
 		const sessionToken = generateSessionToken();
@@ -51,7 +47,7 @@ export async function GET(event: RequestEvent): Promise<Response> {
 				gitToken: accessToken,
 				username: githubUser.login
 			},
-			githubUser.access_token
+			accessToken
 		);
 		console.log({ session });
 		setSessionTokenCookie(event, sessionToken, session.expiresAt);

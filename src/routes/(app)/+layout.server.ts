@@ -1,13 +1,10 @@
-import { redirect } from '@sveltejs/kit';
-
 import type { LayoutServerLoad } from './$types';
+import { isAuthorized } from '$/lib/server/guards';
 
 export const load: LayoutServerLoad = async ({ locals }) => {
-	if (!locals.user) {
-		return redirect(302, '/auth');
-	}
-
+	isAuthorized(locals);
+	const { user } = locals;
 	return {
-		user: locals.user
+		user
 	};
 };
