@@ -6,7 +6,7 @@ import type { PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async (event) => {
 	const state = generateState();
-	const scopes = ['user:email', 'read:org'];
+	const scopes = ['user:email', 'repo', 'read:org'];
 	const url = github.createAuthorizationURL(state, scopes);
 
 	event.cookies.set('github_oauth_state', state, {
