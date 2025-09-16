@@ -11,5 +11,5 @@ export const load: PageServerLoad = async ({ locals }) => {
 		}
 	}
 
-	redirect(302, '/import/1-repos');
+	redirect(302, '/import');
 };

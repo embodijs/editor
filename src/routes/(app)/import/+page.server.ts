@@ -1,20 +1,18 @@
 import { isAuthorized } from '$lib/server/guards';
-import { getGithubOrgs } from '$services/org';
-import { getRepoFromGithubByOrg, getRepoFromGithubByUser, getRepositories } from '$services/repo';
+import { getRepos } from '$services/repo';
 import { error, redirect } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
 import { superValidate } from 'sveltekit-superforms';
 import { valibot } from 'sveltekit-superforms/adapters';
-import { CreateProjectSchema } from '$core/model/project';
+import { NewProject } from '$core/model/project';
 import { createInternalGitUser } from '$core/logic/user';
 
 export const load: PageServerLoad = async ({ locals }) => {
 	isAuthorized(locals);
 	const gitUser = createInternalGitUser(locals.user, locals.session);
-	const orgs = await getGithubOrgs(gitUser);
 
-	const formAdd = await superValidate(valibot(CreateProjectSchema));
-	const allRepos = await getRepositories(gitUser);
+	const formAdd = await superValidate(valibot(NewProject));
+	const allRepos = await getRepos(gitUser);
 	console.log({ allRepos });
 
 	const reposByOwner = await Promise.all([
@@ -23,7 +21,7 @@ export const load: PageServerLoad = async ({ locals }) => {
 				id: gitUser.id,
 				name: gitUser.username
 			},
-			repos: await getRepositories(gitUser)
+			repos: await getRepos(gitUser)
 		}
 	]);
 

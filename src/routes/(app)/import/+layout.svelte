@@ -9,3 +9,13 @@
 		{@render children()}
 	</div>
 </main>
+
+<style lang="postcss">
+	@reference 'tailwindcss';
+
+	main :global {
+		h1 {
+			@apply text-2xl font-bold;
+		}
+	}
+</style>

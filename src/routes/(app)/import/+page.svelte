@@ -8,7 +8,7 @@
 	let { data }: Props = $props();
 </script>
 
-<h1 class="mb-5 text-2xl font-bold">Your GitHub Repos</h1>
+<h1>Your GitHub Repos</h1>
 {#each data.reposByOwner as { owner, repos } (owner.id)}
 	<section class="flex flex-col gap-3">
 		<h2 class="text-xl font-semibold">{owner.name}</h2>
