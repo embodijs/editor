@@ -57,6 +57,7 @@
 		"eslint": "^9.35.0",
 		"eslint-config-prettier": "^10.1.8",
 		"eslint-plugin-svelte": "^3.12.3",
+		"formsnap": "^2.0.1",
 		"globals": "^16.4.0",
 		"jsdom": "^26.1.0",
 		"playwright": "^1.55.0",
@@ -90,6 +91,7 @@
 		"graphql": "^16.11.0",
 		"graphql-request": "^7.2.0",
 		"octokit": "^5.0.3",
-		"openapi-typescript": "^7.9.1"
+		"openapi-typescript": "^7.9.1",
+		"svelte-sonner": "^1.0.5"
 	}
 }
