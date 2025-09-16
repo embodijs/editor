@@ -5,7 +5,7 @@ export const GitRepoSchema = v.object({
 	owner: v.string(),
 	fullName: v.string(),
 	private: v.boolean(),
-	sufficientAccessRights: v.boolean(),
+	hasPages: v.boolean(),
 	id: v.string(),
 	url: v.string(),
 	description: v.optional(v.string())

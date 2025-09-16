@@ -29,8 +29,10 @@ export const project = sqliteTable('project', {
 	name: text('name').notNull(),
 	description: text('description'),
 	owner: text('owner').notNull(),
+	provider: text('provider', { enum: ['github'] }).notNull(),
 	repo: text('repo').notNull(),
 	repoId: text('repo_id').notNull(),
+	url: text('url').notNull(),
 	createdAt: integer('created_at', { mode: 'timestamp' }).notNull(),
 	updatedAt: integer('updated_at', { mode: 'timestamp' }).notNull()
 });
