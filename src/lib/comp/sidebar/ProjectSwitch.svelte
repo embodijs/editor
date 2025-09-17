@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { goto } from '$app/navigation';
 	import * as DropdownMenu from '$lib/comp/ui/dropdown-menu/index.js';
 	import * as Sidebar from '$lib/comp/ui/sidebar/index.js';
 	import { useSidebar } from '$lib/comp/ui/sidebar/index.js';
@@ -62,11 +63,11 @@
 					</DropdownMenu.Item>
 				{/each}
 				<DropdownMenu.Separator />
-				<DropdownMenu.Item class="gap-2 p-2">
+				<DropdownMenu.Item class="gap-2 p-2" onSelect={() => goto('/import')}>
 					<div class="flex size-6 items-center justify-center rounded-md border bg-transparent">
 						<Plus class="size-4" />
 					</div>
-					<div class="text-muted-foreground font-medium">Add team</div>
+					<div class="text-muted-foreground font-medium">Add project</div>
 				</DropdownMenu.Item>
 			</DropdownMenu.Content>
 		</DropdownMenu.Root>
