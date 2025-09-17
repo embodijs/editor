@@ -1,4 +1,3 @@
-import type { GitRepo } from '$core/model/repo';
 import { PLATFORMS, type InternalGitUser } from '$core/model/user';
 import { getRepoPagesFromGithub } from './github/repo';
 

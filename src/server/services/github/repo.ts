@@ -1,4 +1,4 @@
-import type { GitRepo } from '$core/model/repo';
+import type { GitRepo, MinimalGitRepo } from '$core/model/repo';
 import type { InternalGitUser } from '$core/model/user';
 import { graphql } from '$lib/gql';
 import { createGraphqlClient, generateRestBase, getClient } from './github';
@@ -95,7 +95,7 @@ export const getRepoPagesFromGithub = async (
 export const getReposFromGithub = async (
 	user: InternalGitUser,
 	amount: number = 20
-): Promise<GitRepo[]> => {
+): Promise<MinimalGitRepo[]> => {
 	const github = createGraphqlClient(user.token);
 	const response = await github.request(GET_REPOS, {
 		amount
@@ -106,7 +106,7 @@ export const getReposFromGithub = async (
 		throw new Error('Not found');
 	}
 
-	return repositories.reduce((acc: GitRepo[], repo) => {
+	return repositories.reduce((acc: MinimalGitRepo[], repo) => {
 		if (
 			repo != null &&
 			(repo.hasEmbodiConfigTs ||
@@ -117,11 +117,9 @@ export const getReposFromGithub = async (
 		) {
 			acc.push({
 				id: repo.id,
-				url: repo.url,
 				description: repo.description ?? undefined,
 				owner: repo.owner.login,
 				name: repo.name,
-				sufficientAccessRights: ['ADMIN', 'WRITE'].includes(repo.viewerPermission ?? ''),
 				fullName: repo.nameWithOwner,
 				private: repo.isPrivate
 			});

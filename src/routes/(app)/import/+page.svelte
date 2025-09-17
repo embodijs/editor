@@ -16,7 +16,11 @@
 			{#each repos as repo (repo.id)}
 				<ProjectCard class="w-full" title={repo.name} description={repo.description}>
 					{#snippet action()}
-						<Button href={`/import/${repo.owner}/${repo.name}`}>Import</Button>
+						{#if repo.projectId}
+							<Button variant="secondary" href="/project/{repo.projectId}">Open</Button>
+						{:else}
+							<Button href={`/import/${repo.owner}/${repo.name}`}>Import</Button>
+						{/if}
 					{/snippet}
 				</ProjectCard>
 			{/each}

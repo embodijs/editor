@@ -1,5 +1,6 @@
 import type { GitFile } from '$core/model/content';
-import type { BaseGitRepo } from '$core/model/repo';
+import type { Project } from '$core/model/project';
+import type { BaseGitRepo, GitRepo } from '$core/model/repo';
 
 export const createBaseGitRepo = (params: { owner: string; repo: string }): BaseGitRepo => ({
 	owner: params.owner,
@@ -9,4 +10,20 @@ export const createBaseGitRepo = (params: { owner: string; repo: string }): Base
 export const extractJsonFromGitFile = (data: GitFile) => {
 	const text = Buffer.from(data.content, data.encoding).toString('utf8');
 	return JSON.parse(text);
+};
+
+export const markExistingRepos = (
+	repos: GitRepo[],
+	projects: Project[]
+): (GitRepo & { projectId?: Project['id'] })[] => {
+	return repos.map((repo) => {
+		const mappedProject = projects.find(
+			(project) => project.owner === repo.owner && project.name === repo.name
+		);
+		if (mappedProject) {
+			return { projectId: mappedProject.id, ...repo };
+		} else {
+			return { ...repo };
+		}
+	});
 };

@@ -4,15 +4,14 @@
 	import { valibotClient } from 'sveltekit-superforms/adapters';
 	import { toast } from 'svelte-sonner';
 	import * as Form from '$lib/comp/ui/form/index.js';
-	import { Input } from '$lib/comp/ui/input/index.js';
 	import { NewProject } from '$core/model/project';
-	import { Textarea } from '$/lib/comp/ui/textarea/index.js';
 	import * as Alert from '$lib/comp/ui/alert/index.js';
+	import { Button, Label, Input, Textarea } from '$/lib/comp/core';
 
 	let { data }: PageProps = $props();
 	const form = superForm(data.form, {
 		validators: valibotClient(NewProject),
-		onUpdate: ({ form: f }) => {
+		result: ({ form: f }) => {
 			if (f.valid) {
 				toast.success(`You submitted ${JSON.stringify(f.data, null, 2)}`);
 			} else {
@@ -36,6 +35,12 @@
 	{/if}
 
 	<form method="POST" class="space-y-5" use:enhance>
+		<Input type="hidden" name="owner" value={$formData.owner} />
+		<Input type="hidden" name="repo" value={$formData.repo} />
+		<div class="flex flex-col gap-1.5">
+			<Label for="repo_full">Repo</Label>
+			<Input id="repo_full" value="{$formData.owner} / {$formData.repo}" disabled />
+		</div>
 		<Form.Field {form} name="name">
 			<Form.Control>
 				{#snippet children({ props })}
@@ -67,6 +72,9 @@
 
 			<Form.FieldErrors />
 		</Form.Field>
-		<Form.Button>Submit</Form.Button>
+		<div class="flex justify-between">
+			<Form.Button>Submit</Form.Button>
+			<Button variant="secondary" href="/import">Back</Button>
+		</div>
 	</form>
 </div>

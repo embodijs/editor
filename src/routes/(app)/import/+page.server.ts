@@ -1,43 +1,32 @@
 import { isAuthorized } from '$lib/server/guards';
 import { getRepos } from '$services/repo';
-import { error, redirect } from '@sveltejs/kit';
-import type { Actions, PageServerLoad } from './$types';
+import type { PageServerLoad } from './$types';
 import { superValidate } from 'sveltekit-superforms';
 import { valibot } from 'sveltekit-superforms/adapters';
 import { NewProject } from '$core/model/project';
 import { createInternalGitUser } from '$core/logic/user';
+import { getProjects } from '$services/project';
+import { markExistingRepos } from '$core/logic/repo';
 
 export const load: PageServerLoad = async ({ locals }) => {
 	isAuthorized(locals);
-	const gitUser = createInternalGitUser(locals.user, locals.session);
+	const user = createInternalGitUser(locals.user, locals.session);
 
-	const formAdd = await superValidate(valibot(NewProject));
-	const allRepos = await getRepos(gitUser);
-	console.log({ allRepos });
+	const [repos, formAdd, projects] = await Promise.all([
+		getRepos(user),
+		superValidate(valibot(NewProject)),
+		getProjects(user.id)
+	]);
 
 	const reposByOwner = await Promise.all([
 		{
 			owner: {
-				id: gitUser.id,
-				name: gitUser.username
+				id: user.id,
+				name: user.username
 			},
-			repos: await getRepos(gitUser)
+			repos: markExistingRepos(repos, projects)
 		}
 	]);
 
 	return { reposByOwner, formAdd };
 };
-
-export const actions = {
-	add: async ({ request }) => {
-		const data = await request.formData();
-
-		const repoId = data.get('repoId');
-		// Validate input
-		if (!repoId) {
-			error(400, 'Missing required fields');
-		}
-
-		redirect(302, '/');
-	}
-} satisfies Actions;
