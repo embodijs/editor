@@ -7,12 +7,17 @@
 	import { ChevronsUpDown, Plus } from '@lucide/svelte';
 
 	type Props = {
-		projects: { id: string; name: string; description: string }[];
+		projects: { id: string; name: string; description: string | null | undefined; url: string }[];
 	};
 
 	let { projects }: Props = $props();
 	const sidebar = useSidebar();
-	let activeTeam = $state(projects[0]);
+	let activeProject = $state(projects[0]);
+
+	const getFaviconUrl = (url: string | URL) => {
+		const { hostname } = new URL(url);
+		return `https://icons.duckduckgo.com/ip3/${hostname}.ico`;
+	};
 </script>
 
 <Sidebar.Menu>
@@ -26,17 +31,17 @@
 						class="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
 					>
 						<div
-							class="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg"
+							class="text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg"
 						>
-							{#if activeTeam.logo}
-								<activeTeam.logo class="size-4" />
+							{#if activeProject.url}
+								<img src={getFaviconUrl(activeProject.url)} alt="Favicon" class="w-full" />
 							{/if}
 						</div>
 						<div class="grid flex-1 text-left text-sm leading-tight">
 							<span class="truncate font-medium">
-								{activeTeam.name}
+								{activeProject.name}
 							</span>
-							<span class="truncate text-xs">{activeTeam.description}</span>
+							<span class="truncate text-xs">{activeProject.description ?? ''}</span>
 						</div>
 						<ChevronsUpDown class="ml-auto" />
 					</Sidebar.MenuButton>
@@ -49,16 +54,16 @@
 				sideOffset={4}
 			>
 				<DropdownMenu.Label class="text-muted-foreground text-xs">Teams</DropdownMenu.Label>
-				{#each projects as team, index (team.id)}
-					<DropdownMenu.Item onSelect={() => (activeTeam = team)} class="gap-2 p-2">
+				{#each projects as project, index (project.id)}
+					<DropdownMenu.Item onSelect={() => (activeProject = project)} class="gap-2 p-2">
 						<div class="flex size-6 items-center justify-center rounded-md border">
-							{#if team.logo}
-								<team.logo class="size-3.5 shrink-0" />
+							{#if activeProject.url}
+								<img src={getFaviconUrl(project.url)} alt="Favicon" class="w-full" />
 							{:else}
 								<div class="bg-muted size-3.5 shrink-0 rounded-full" />
 							{/if}
 						</div>
-						{team.name}
+						{project.name}
 						<DropdownMenu.Shortcut>⌘{index + 1}</DropdownMenu.Shortcut>
 					</DropdownMenu.Item>
 				{/each}
