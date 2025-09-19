@@ -10,27 +10,29 @@ const config: CodegenConfig = {
 			}
 		}
 	},
-	documents: [
-		'src/**/*.{ts,tsx,js,jsx}',
-		'!src/lib/gql/**/*' // Exclude generated files],
-	],
+	documents: ['src/**/*.{ts,tsx,js,jsx}', '!src/lib/gql/**/*'],
 	generates: {
 		'./src/lib/gql/': {
 			preset: 'client',
 			plugins: [],
 			config: {
-				useTypeImports: true
+				useTypeImports: true,
+				scalars: {
+					DateTime: 'string',
+					URI: 'string',
+					HTML: 'string',
+					Base64String: 'string',
+					GitObjectID: 'string',
+					GitRefname: 'string',
+					GitSSHRemote: 'string',
+					GitTimestamp: 'string',
+					PreciseDateTime: 'string',
+					X509Certificate: 'string'
+				}
 			}
 		}
 	},
-	ignoreNoDocuments: true,
-	config: {
-		scalars: {
-			DateTime: 'string',
-			URI: 'string',
-			HTML: 'string'
-		}
-	}
+	ignoreNoDocuments: true
 };
 
 export default config;

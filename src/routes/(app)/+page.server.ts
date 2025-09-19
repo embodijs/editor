@@ -11,5 +11,5 @@ export const load: PageServerLoad = async ({ locals }) => {
 		}
 	}
 
-	redirect(302, '/projects');
+	redirect(302, '/import');
 };

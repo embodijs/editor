@@ -3,7 +3,7 @@
 	import type { LayoutData } from './$types.js';
 	import { enhance } from '$app/forms';
 	import { Dropdown, Avatar, DropdownMenu, DropdownItem } from '$lib/comp/core';
-	import { Target, Home, SquarePen } from 'lucide-svelte';
+	import { Target, Home, SquarePen } from '@lucide/svelte';
 
 	type Props = {
 		data: LayoutData;

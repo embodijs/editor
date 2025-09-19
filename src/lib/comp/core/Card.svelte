@@ -5,7 +5,7 @@
 	type Props = {
 		children: Snippet;
 		image?: Snippet;
-	} & HTMLAttributes<HTMLElement>;
+	} & HTMLAttributes<HTMLDivElement>;
 
 	let { children, image, ...props }: Props = $props();
 </script>

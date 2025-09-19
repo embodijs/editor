@@ -13,3 +13,7 @@ export const createProject = async (data: Project, userId: string) => {
 export const getProjects = async (userId: string): Promise<Project[]> => {
 	return db.select().from(table.project).where(eq(table.project.userId, userId)).all();
 };
+
+export const getProject = (id: string): Promise<Project | undefined> => {
+	return db.select().from(table.project).where(eq(table.project.id, id)).get();
+};
