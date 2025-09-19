@@ -28,7 +28,7 @@
 		"@graphql-codegen/typescript-operations": "^5.0.0",
 		"@inlang/paraglide-js": "^2.3.2",
 		"@internationalized/date": "^3.9.0",
-		"@lucide/svelte": "^0.515.0",
+		"@lucide/svelte": "^0.544.0",
 		"@octokit/types": "^15.0.0",
 		"@playwright/test": "^1.55.0",
 		"@sveltejs/adapter-cloudflare-workers": "^2.9.0",
