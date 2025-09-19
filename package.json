@@ -29,6 +29,7 @@
 		"@graphql-codegen/client-preset": "^5.0.1",
 		"@graphql-codegen/typescript": "^5.0.0",
 		"@graphql-codegen/typescript-operations": "^5.0.0",
+		"@inlang/paraglide-js": "^2.3.2",
 		"@internationalized/date": "^3.9.0",
 		"@lucide/svelte": "^0.515.0",
 		"@octokit/types": "^14.1.0",
@@ -80,7 +81,6 @@
 		"vitest": "^3.2.4"
 	},
 	"dependencies": {
-		"@inlang/paraglide-sveltekit": "^0.16.1",
 		"@libsql/client": "^0.15.15",
 		"@node-rs/argon2": "^2.0.2",
 		"@oslojs/crypto": "^1.0.1",
