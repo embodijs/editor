@@ -1,4 +1,4 @@
-import type { GitRepo, MinimalGitRepo } from '$core/model/repo';
+import type { GitRepoMeta, GitRepoMetaMinimal } from '$core/model/repo';
 import type { InternalGitUser } from '$core/model/user';
 import { graphql } from '$lib/gql';
 import { createGraphqlClient, generateRestBase, getClient } from './github';
@@ -48,7 +48,7 @@ export const getRepoMetaFromGitbub = async (
 	user: InternalGitUser,
 	owner: string,
 	name: string
-): Promise<GitRepo> => {
+): Promise<GitRepoMeta> => {
 	const client = getClient();
 	const { data } = await client.request('GET /repos/{owner}/{repo}', {
 		owner,
@@ -95,7 +95,7 @@ export const getRepoPagesFromGithub = async (
 export const getReposFromGithub = async (
 	user: InternalGitUser,
 	amount: number = 20
-): Promise<MinimalGitRepo[]> => {
+): Promise<GitRepoMetaMinimal[]> => {
 	const github = createGraphqlClient(user.token);
 	const response = await github.request(GET_REPOS, {
 		amount
@@ -106,7 +106,7 @@ export const getReposFromGithub = async (
 		throw new Error('Not found');
 	}
 
-	return repositories.reduce((acc: MinimalGitRepo[], repo) => {
+	return repositories.reduce((acc: GitRepoMetaMinimal[], repo) => {
 		if (
 			repo != null &&
 			(repo.hasEmbodiConfigTs ||
@@ -125,5 +125,5 @@ export const getReposFromGithub = async (
 			});
 		}
 		return acc;
-	}, [] as GitRepo[]);
+	}, [] as GitRepoMetaMinimal[]);
 };

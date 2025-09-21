@@ -1,6 +1,7 @@
 import * as v from 'valibot';
+import { Collection } from './collection';
 
-export const GitRepo = v.object({
+export const GitRepoMeta = v.object({
 	name: v.string(),
 	owner: v.string(),
 	fullName: v.string(),
@@ -11,7 +12,7 @@ export const GitRepo = v.object({
 	description: v.optional(v.string())
 });
 
-export const MinimalGitRepo = v.pick(GitRepo, [
+export const GitRepoMetaMinimal = v.pick(GitRepoMeta, [
 	'name',
 	'owner',
 	'description',
@@ -20,10 +21,18 @@ export const MinimalGitRepo = v.pick(GitRepo, [
 	'id'
 ]);
 
-export const BaseGitRepo = v.object({
+export const GitRepo = v.object({
 	owner: v.string(),
-	name: v.string()
+	name: v.string(),
+	branch: v.optional(v.string())
 });
+
+export const GitRepoConfig = v.object({
+	collections: v.array(Collection),
+	updatedAt: v.optional(v.number())
+});
+
+export type GitRepoMeta = v.InferOutput<typeof GitRepoMeta>;
+export type GitRepoMetaMinimal = v.InferOutput<typeof GitRepoMetaMinimal>;
 export type GitRepo = v.InferOutput<typeof GitRepo>;
-export type MinimalGitRepo = v.InferOutput<typeof MinimalGitRepo>;
-export type BaseGitRepo = v.InferOutput<typeof BaseGitRepo>;
+export type GitRepoConfig = v.InferOutput<typeof GitRepoConfig>;

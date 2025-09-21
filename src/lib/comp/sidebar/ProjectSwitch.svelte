@@ -13,7 +13,7 @@
 
 	let { projects, currentId }: Props = $props();
 	const sidebar = useSidebar();
-	let activeProject = $state(projects.find((project) => project.id === currentId));
+	let activeProject = $state(projects.find((project) => project.id === currentId)!);
 
 	const getFaviconUrl = (url: string | URL) => {
 		const { hostname } = new URL(url);

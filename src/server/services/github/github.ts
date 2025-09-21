@@ -17,9 +17,12 @@ export const generateRestHeaders = (user: InternalGitUser) => {
 	};
 };
 
-export const generateRestBase = (user: InternalGitUser) => {
+export const generateRestBase = (user: InternalGitUser, headers = {}) => {
 	return {
-		headers: generateRestHeaders(user)
+		headers: {
+			...generateRestHeaders(user),
+			...headers
+		}
 	};
 };
 

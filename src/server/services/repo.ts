@@ -1,5 +1,4 @@
-import type { GitContent, GitDirContent, GitFile } from '$core/model/content';
-import type { BaseGitRepo, GitRepo } from '$core/model/repo';
+import type { GitRepoMeta } from '$core/model/repo';
 import { PLATFORMS, type InternalGitUser } from '$core/model/user';
 import { getReposFromGithub, getRepoMetaFromGitbub } from './github/repo';
 
@@ -16,7 +15,7 @@ export const getRepoMeta = async (
 	user: InternalGitUser,
 	owner: string,
 	repo: string
-): Promise<GitRepo> => {
+): Promise<GitRepoMeta> => {
 	switch (user.platform) {
 		case PLATFORMS.GITHUB:
 			return getRepoMetaFromGitbub(user, owner, repo);
@@ -52,30 +51,3 @@ export const getRepoMeta = async (
 // 	name: repo.name,
 // 	size: repo.size
 // });
-
-// export const getRepoContentFromGithub = async (
-// 	path: string,
-// 	repo: BaseGitRepo,
-// 	user: InternalGitUser
-// ): Promise<GitContent> => {
-// 	const github = getGithubClient();
-// 	const response = await github.rest.repos.getContent({
-// 		path,
-// 		owner: repo.owner,
-// 		repo: repo.name,
-// 		...generateGithubBase(user)
-// 	});
-// 	const { data, status } = response;
-// 	console.log({ data, status });
-// 	if (status !== 200) {
-// 		throw new Error('Not found');
-// 	}
-// 	if (Array.isArray(data)) {
-// 		return data
-// 			.filter((item) => item.type === 'file' || item.type === 'dir')
-// 			.map(convertGithubContentToGitContent);
-// 	} else if (data.type === 'file') {
-// 		return convertGithubContentToGitFile(data);
-// 	}
-// 	throw new Error('Invalid content type');
-// };

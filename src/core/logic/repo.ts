@@ -1,6 +1,6 @@
 import type { GitFile } from '$core/model/content';
 import type { Project } from '$core/model/project';
-import type { BaseGitRepo, GitRepo } from '$core/model/repo';
+import type { GitRepoMeta, GitRepoMeta } from '$core/model/repo';
 
 export const createBaseGitRepo = (params: { owner: string; repo: string }): BaseGitRepo => ({
 	owner: params.owner,
@@ -13,9 +13,9 @@ export const extractJsonFromGitFile = (data: GitFile) => {
 };
 
 export const markExistingRepos = (
-	repos: GitRepo[],
+	repos: GitRepoMeta[],
 	projects: Project[]
-): (GitRepo & { projectId?: Project['id'] })[] => {
+): (GitRepoMeta & { projectId?: Project['id'] })[] => {
 	return repos.map((repo) => {
 		const mappedProject = projects.find(
 			(project) => project.owner === repo.owner && project.name === repo.name
