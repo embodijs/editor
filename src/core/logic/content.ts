@@ -18,17 +18,3 @@ export const getCollectionTree = async (
 
 	return tree.filter((el) => el.type === 'file') as unknown as GitFileMeta[];
 };
-
-export const getProjectConfigFile = async (load: GetGitFileContent): Promise<GitRepoConfig> => {
-	const jsonString = await load('.embodi/cms/config.json');
-	if (!jsonString) {
-		throw new Error('Config file not found');
-	}
-	try {
-		const config = JSON.parse(jsonString as string);
-		return v.parse(GitRepoConfig, config);
-	} catch (error) {
-		console.error(error);
-		throw new Error('Invalid JSON');
-	}
-};

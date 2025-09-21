@@ -35,9 +35,7 @@ export async function GET(event: RequestEvent): Promise<Response> {
 		});
 	}
 	const accessToken = tokens.accessToken();
-	console.log({ accessToken });
 	const githubUser = await getCurrentUser({ token: accessToken });
-	console.log({ githubUser });
 	const existingUser = await getUserByGithubId(githubUser.id);
 	if (existingUser) {
 		const sessionToken = generateSessionToken();

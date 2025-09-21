@@ -23,14 +23,11 @@ export const generateProject = (data: NewProject, provider: Provider): Project =
 
 export const getProjectConfigFile = async (load: GetGitFileContent): Promise<GitRepoConfig> => {
 	const jsonString = await load('.embodi/cms/config.json');
-	console.log({ jsonString });
 	if (!jsonString) {
 		throw new Error('Config file not found');
 	}
-	console.log({ jsonString });
 	try {
 		const config = JSON.parse(jsonString);
-		console.log({ config });
 		return v.parse(GitRepoConfig, config);
 	} catch (error) {
 		console.error(error);

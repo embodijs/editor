@@ -17,6 +17,5 @@ const GET_USER = graphql(`
 export const getCurrentUser = async (user: Pick<InternalGitUser, 'token'>) => {
 	const github = createGraphqlClient(user.token);
 	const response = await github.request(GET_USER, {});
-	console.log({ response });
 	return response.viewer;
 };
