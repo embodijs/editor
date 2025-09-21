@@ -8,11 +8,12 @@
 
 	type Props = {
 		projects: { id: string; name: string; description: string | null | undefined; url: string }[];
+		currentId: string;
 	};
 
-	let { projects }: Props = $props();
+	let { projects, currentId }: Props = $props();
 	const sidebar = useSidebar();
-	let activeProject = $state(projects[0]);
+	let activeProject = $state(projects.find((project) => project.id === currentId));
 
 	const getFaviconUrl = (url: string | URL) => {
 		const { hostname } = new URL(url);

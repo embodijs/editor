@@ -17,7 +17,7 @@
 <Sidebar.Provider>
 	<Sidebar.Root variant="inset">
 		<Sidebar.Header>
-			<ProjectSwitch projects={data.projects}></ProjectSwitch>
+			<ProjectSwitch projects={data.projects} currentId={data.currentProjectId}></ProjectSwitch>
 			<!-- <Sidebar.Menu>
 				<Sidebar.MenuItem>
 					<DropdownMenu.Root>
