@@ -32,7 +32,7 @@ export const load: LayoutServerLoad = async ({ locals, params }) => {
 	return {
 		user,
 		projects,
-		currentProjectId: projectId,
+		currentProject,
 		collections: projectConfig.collections
 	};
 };

@@ -15,10 +15,12 @@
 	] as const;
 </script>
 
-<Sidebar.Provider>
+<Sidebar.Provider
+	style="--sidebar-width: calc(var(--spacing) * 72); --header-height: calc(var(--spacing) * 12);"
+>
 	<Sidebar.Root variant="inset">
 		<Sidebar.Header>
-			<ProjectSwitch projects={data.projects} currentId={data.currentProjectId}></ProjectSwitch>
+			<ProjectSwitch projects={data.projects} currentId={data.currentProject.id}></ProjectSwitch>
 		</Sidebar.Header>
 		<Sidebar.Content>
 			<Sidebar.Group>
@@ -28,7 +30,10 @@
 							<Sidebar.MenuItem>
 								<Sidebar.MenuButton>
 									{#snippet child({ props })}
-										<a href="{$page.url.pathname}/collection/{collection.name}" {...props}>
+										<a
+											href="/project/{data.currentProject.id}/collection/{collection.name}"
+											{...props}
+										>
 											<span>{collection.displayName}</span>
 										</a>
 									{/snippet}
@@ -61,9 +66,6 @@
 		<Sidebar.Footer />
 	</Sidebar.Root>
 	<Sidebar.Inset>
-		<main>
-			<Sidebar.Trigger />
-			{@render children()}
-		</main>
+		{@render children()}
 	</Sidebar.Inset>
 </Sidebar.Provider>

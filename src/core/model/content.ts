@@ -40,9 +40,9 @@ export const GitDirContentSchema = v.union([
 	})
 ]);
 
-export const GitContentSchema = v.union([GitFileSchema, v.array(GitDirContentSchema)]);
+export const GitContent = v.union([GitFileSchema, v.array(GitDirContentSchema)]);
 
-export type GitContent = v.InferOutput<typeof GitContentSchema>;
+export type GitContent = v.InferOutput<typeof GitContent>;
 
 export type GitDirContent = v.InferOutput<typeof GitDirContentSchema>;
 export type GitFile = v.InferOutput<typeof GitFileSchema>;

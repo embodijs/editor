@@ -1,5 +1,5 @@
 import type { SessionValidationResult } from '$services/session';
-import { error } from '@sveltejs/kit';
+import { error, redirect } from '@sveltejs/kit';
 import type { Session } from '../db/schema';
 import type { PickNonNullable } from '../helpers/types';
 
@@ -8,7 +8,7 @@ export function isAuthorized(locals: App.Locals): asserts locals is {
 	session: NonNullable<SessionValidationResult['session']>;
 } {
 	if (locals.session == null || locals.user == null) {
-		error(401, 'Not authenticated');
+		redirect(302, '/auth');
 	}
 }
 

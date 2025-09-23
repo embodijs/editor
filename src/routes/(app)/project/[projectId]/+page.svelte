@@ -8,4 +8,6 @@
 	let { data }: Props = $props();
 </script>
 
-<h1>Projects</h1>
+<main>
+	<h1>Dashboard</h1>
+</main>
