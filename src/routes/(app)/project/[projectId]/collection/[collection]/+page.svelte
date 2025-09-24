@@ -10,7 +10,9 @@
 
 <SiteHeader title={currentCollection?.displayName ?? 'Unknown Collection'} />
 <main>
-	{#each data.articlesMeta as meta (meta.path)}
-		<ArticleCard name={meta.name} path={meta.path} />
-	{/each}
+	<div class="grid grid-cols-1 gap-3 p-3">
+		{#each data.articlesMeta as meta (meta.path)}
+			<ArticleCard name={meta.name} path={meta.path} />
+		{/each}
+	</div>
 </main>
