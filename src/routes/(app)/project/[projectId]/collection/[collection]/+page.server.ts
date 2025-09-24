@@ -3,6 +3,7 @@ import type { PageServerLoad } from './$types';
 import { getDirContent } from '$services/content';
 import { createInternalGitUser } from '$core/logic/user';
 import { isAuthorized } from '$/lib/server/guards';
+import { pathToArticleId } from '$core/logic/article';
 
 export const load: PageServerLoad = async ({ params, locals, parent }) => {
 	isAuthorized(locals);
@@ -23,7 +24,10 @@ export const load: PageServerLoad = async ({ params, locals, parent }) => {
 	);
 
 	return {
-		articlesMeta,
+		articlesMeta: articlesMeta.map((article) => ({
+			...article,
+			id: pathToArticleId(article.path)
+		})),
 		collectionName: params.collection
 	};
 };

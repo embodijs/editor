@@ -5,8 +5,9 @@
 	type Props = {
 		name: string;
 		path: string;
+		opento: string;
 	};
-	const { name, path }: Props = $props();
+	const { name, path, opento }: Props = $props();
 </script>
 
 <Card.Root class="@container/card">
@@ -15,7 +16,7 @@
 			{name}
 		</Card.Title>
 		<Card.Action>
-			<Button>Open</Button>
+			<Button href={opento}>Open</Button>
 		</Card.Action>
 	</Card.Header>
 	<Card.Footer class="flex-col items-start gap-1.5 text-sm">

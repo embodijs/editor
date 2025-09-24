@@ -71,6 +71,12 @@
 	},
 	"dependencies": {
 		"@libsql/client": "^0.15.15",
+		"@milkdown/core": "^7.16.0",
+		"@milkdown/crepe": "^7.16.0",
+		"@milkdown/kit": "^7.16.0",
+		"@milkdown/plugin-listener": "^7.16.0",
+		"@milkdown/preset-commonmark": "^7.16.0",
+		"@milkdown/theme-nord": "^7.16.0",
 		"@node-rs/argon2": "^2.0.2",
 		"@oslojs/crypto": "^1.0.1",
 		"@oslojs/encoding": "^1.1.0",
@@ -79,6 +85,7 @@
 		"drizzle-valibot": "^0.4.2",
 		"graphql": "^16.11.0",
 		"graphql-request": "^7.2.0",
+		"gray-matter": "^4.0.3",
 		"octokit": "^5.0.3",
 		"openapi-typescript": "^7.9.1",
 		"svelte-sonner": "^1.0.5"

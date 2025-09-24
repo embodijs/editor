@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { ArticleCard } from '$/lib/comp/collection';
 	import { SiteHeader } from '$/lib/comp/core';
+	import { page } from '$app/state';
 	import type { PageProps } from './$types';
 
 	let { data }: PageProps = $props();
@@ -12,7 +13,11 @@
 <main>
 	<div class="grid grid-cols-1 gap-3 p-3">
 		{#each data.articlesMeta as meta (meta.path)}
-			<ArticleCard name={meta.name} path={meta.path} />
+			<ArticleCard
+				name={meta.name}
+				path={meta.path}
+				opento="/project/{page.params.projectId}/article/{meta.id}"
+			/>
 		{/each}
 	</div>
 </main>

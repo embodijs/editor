@@ -1,4 +1,4 @@
-import type { GitContent } from '$core/model/content';
+import type { GitDirContent } from '$core/model/content';
 import type { GitRepo } from '$core/model/repo';
 import type { InternalGitUser } from '$core/model/user';
 import { generateRestBase, getClient } from './github';
@@ -29,7 +29,7 @@ export const getDirContentFromGithub = async (
 	path: string,
 	branch: GitRepo,
 	user: InternalGitUser
-): Promise<GitContent> => {
+): Promise<GitDirContent[]> => {
 	const client = getClient();
 	const response = await client.request('GET /repos/{owner}/{repo}/contents/{path}', {
 		owner: branch.owner,
