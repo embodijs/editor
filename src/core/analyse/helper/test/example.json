@@ -1,0 +1,843 @@
+{
+	"type": "Program",
+	"start": 0,
+	"end": 647,
+	"body": [
+		{
+			"type": "ImportDeclaration",
+			"start": 0,
+			"end": 37,
+			"specifiers": [
+				{
+					"type": "ImportSpecifier",
+					"start": 9,
+					"end": 13,
+					"imported": {
+						"type": "Identifier",
+						"start": 9,
+						"end": 13,
+						"name": "glob"
+					},
+					"local": {
+						"type": "Identifier",
+						"start": 9,
+						"end": 13,
+						"name": "glob"
+					}
+				}
+			],
+			"source": {
+				"type": "Literal",
+				"start": 21,
+				"end": 36,
+				"value": "astro/loaders",
+				"raw": "\"astro/loaders\""
+			},
+			"attributes": []
+		},
+		{
+			"type": "ImportDeclaration",
+			"start": 38,
+			"end": 90,
+			"specifiers": [
+				{
+					"type": "ImportSpecifier",
+					"start": 47,
+					"end": 63,
+					"imported": {
+						"type": "Identifier",
+						"start": 47,
+						"end": 63,
+						"name": "defineCollection"
+					},
+					"local": {
+						"type": "Identifier",
+						"start": 47,
+						"end": 63,
+						"name": "defineCollection"
+					}
+				},
+				{
+					"type": "ImportSpecifier",
+					"start": 65,
+					"end": 66,
+					"imported": {
+						"type": "Identifier",
+						"start": 65,
+						"end": 66,
+						"name": "z"
+					},
+					"local": {
+						"type": "Identifier",
+						"start": 65,
+						"end": 66,
+						"name": "z"
+					}
+				}
+			],
+			"source": {
+				"type": "Literal",
+				"start": 74,
+				"end": 89,
+				"value": "astro:content",
+				"raw": "\"astro:content\""
+			},
+			"attributes": []
+		},
+		{
+			"type": "VariableDeclaration",
+			"start": 92,
+			"end": 587,
+			"declarations": [
+				{
+					"type": "VariableDeclarator",
+					"start": 98,
+					"end": 586,
+					"id": {
+						"type": "Identifier",
+						"start": 98,
+						"end": 113,
+						"name": "blogsCollection"
+					},
+					"init": {
+						"type": "CallExpression",
+						"start": 116,
+						"end": 586,
+						"callee": {
+							"type": "Identifier",
+							"start": 116,
+							"end": 132,
+							"name": "defineCollection"
+						},
+						"arguments": [
+							{
+								"type": "ObjectExpression",
+								"start": 133,
+								"end": 585,
+								"properties": [
+									{
+										"type": "Property",
+										"start": 137,
+										"end": 208,
+										"method": false,
+										"shorthand": false,
+										"computed": false,
+										"key": {
+											"type": "Identifier",
+											"start": 137,
+											"end": 143,
+											"name": "loader"
+										},
+										"value": {
+											"type": "CallExpression",
+											"start": 145,
+											"end": 208,
+											"callee": {
+												"type": "Identifier",
+												"start": 145,
+												"end": 149,
+												"name": "glob"
+											},
+											"arguments": [
+												{
+													"type": "ObjectExpression",
+													"start": 150,
+													"end": 207,
+													"properties": [
+														{
+															"type": "Property",
+															"start": 152,
+															"end": 176,
+															"method": false,
+															"shorthand": false,
+															"computed": false,
+															"key": {
+																"type": "Identifier",
+																"start": 152,
+																"end": 159,
+																"name": "pattern"
+															},
+															"value": {
+																"type": "Literal",
+																"start": 161,
+																"end": 176,
+																"value": "**/*.{md,mdx}",
+																"raw": "\"**/*.{md,mdx}\""
+															},
+															"kind": "init"
+														},
+														{
+															"type": "Property",
+															"start": 178,
+															"end": 205,
+															"method": false,
+															"shorthand": false,
+															"computed": false,
+															"key": {
+																"type": "Identifier",
+																"start": 178,
+																"end": 182,
+																"name": "base"
+															},
+															"value": {
+																"type": "Literal",
+																"start": 184,
+																"end": 205,
+																"value": "./src/content/blogs",
+																"raw": "\"./src/content/blogs\""
+															},
+															"kind": "init"
+														}
+													]
+												}
+											],
+											"optional": false
+										},
+										"kind": "init"
+									},
+									{
+										"type": "Property",
+										"start": 212,
+										"end": 582,
+										"method": false,
+										"shorthand": false,
+										"computed": false,
+										"key": {
+											"type": "Identifier",
+											"start": 212,
+											"end": 218,
+											"name": "schema"
+										},
+										"value": {
+											"type": "ArrowFunctionExpression",
+											"start": 220,
+											"end": 582,
+											"id": null,
+											"expression": true,
+											"generator": false,
+											"async": false,
+											"params": [
+												{
+													"type": "ObjectPattern",
+													"start": 221,
+													"end": 230,
+													"properties": [
+														{
+															"type": "Property",
+															"start": 223,
+															"end": 228,
+															"method": false,
+															"shorthand": true,
+															"computed": false,
+															"key": {
+																"type": "Identifier",
+																"start": 223,
+																"end": 228,
+																"name": "image"
+															},
+															"value": {
+																"type": "Identifier",
+																"start": 223,
+																"end": 228,
+																"name": "image"
+															},
+															"kind": "init"
+														}
+													]
+												}
+											],
+											"body": {
+												"type": "CallExpression",
+												"start": 239,
+												"end": 582,
+												"callee": {
+													"type": "MemberExpression",
+													"start": 239,
+													"end": 247,
+													"object": {
+														"type": "Identifier",
+														"start": 239,
+														"end": 240,
+														"name": "z"
+													},
+													"property": {
+														"type": "Identifier",
+														"start": 241,
+														"end": 247,
+														"name": "object"
+													},
+													"computed": false,
+													"optional": false
+												},
+												"arguments": [
+													{
+														"type": "ObjectExpression",
+														"start": 248,
+														"end": 581,
+														"properties": [
+															{
+																"type": "Property",
+																"start": 256,
+																"end": 273,
+																"method": false,
+																"shorthand": false,
+																"computed": false,
+																"key": {
+																	"type": "Identifier",
+																	"start": 256,
+																	"end": 261,
+																	"name": "title"
+																},
+																"value": {
+																	"type": "CallExpression",
+																	"start": 263,
+																	"end": 273,
+																	"callee": {
+																		"type": "MemberExpression",
+																		"start": 263,
+																		"end": 271,
+																		"object": {
+																			"type": "Identifier",
+																			"start": 263,
+																			"end": 264,
+																			"name": "z"
+																		},
+																		"property": {
+																			"type": "Identifier",
+																			"start": 265,
+																			"end": 271,
+																			"name": "string"
+																		},
+																		"computed": false,
+																		"optional": false
+																	},
+																	"arguments": [],
+																	"optional": false
+																},
+																"kind": "init"
+															},
+															{
+																"type": "Property",
+																"start": 281,
+																"end": 304,
+																"method": false,
+																"shorthand": false,
+																"computed": false,
+																"key": {
+																	"type": "Identifier",
+																	"start": 281,
+																	"end": 292,
+																	"name": "description"
+																},
+																"value": {
+																	"type": "CallExpression",
+																	"start": 294,
+																	"end": 304,
+																	"callee": {
+																		"type": "MemberExpression",
+																		"start": 294,
+																		"end": 302,
+																		"object": {
+																			"type": "Identifier",
+																			"start": 294,
+																			"end": 295,
+																			"name": "z"
+																		},
+																		"property": {
+																			"type": "Identifier",
+																			"start": 296,
+																			"end": 302,
+																			"name": "string"
+																		},
+																		"computed": false,
+																		"optional": false
+																	},
+																	"arguments": [],
+																	"optional": false
+																},
+																"kind": "init"
+															},
+															{
+																"type": "Property",
+																"start": 312,
+																"end": 329,
+																"method": false,
+																"shorthand": false,
+																"computed": false,
+																"key": {
+																	"type": "Identifier",
+																	"start": 312,
+																	"end": 319,
+																	"name": "pubDate"
+																},
+																"value": {
+																	"type": "CallExpression",
+																	"start": 321,
+																	"end": 329,
+																	"callee": {
+																		"type": "MemberExpression",
+																		"start": 321,
+																		"end": 327,
+																		"object": {
+																			"type": "Identifier",
+																			"start": 321,
+																			"end": 322,
+																			"name": "z"
+																		},
+																		"property": {
+																			"type": "Identifier",
+																			"start": 323,
+																			"end": 327,
+																			"name": "date"
+																		},
+																		"computed": false,
+																		"optional": false
+																	},
+																	"arguments": [],
+																	"optional": false
+																},
+																"kind": "init"
+															},
+															{
+																"type": "Property",
+																"start": 337,
+																"end": 366,
+																"method": false,
+																"shorthand": false,
+																"computed": false,
+																"key": {
+																	"type": "Identifier",
+																	"start": 337,
+																	"end": 343,
+																	"name": "author"
+																},
+																"value": {
+																	"type": "CallExpression",
+																	"start": 345,
+																	"end": 366,
+																	"callee": {
+																		"type": "MemberExpression",
+																		"start": 345,
+																		"end": 364,
+																		"object": {
+																			"type": "CallExpression",
+																			"start": 345,
+																			"end": 355,
+																			"callee": {
+																				"type": "MemberExpression",
+																				"start": 345,
+																				"end": 353,
+																				"object": {
+																					"type": "Identifier",
+																					"start": 345,
+																					"end": 346,
+																					"name": "z"
+																				},
+																				"property": {
+																					"type": "Identifier",
+																					"start": 347,
+																					"end": 353,
+																					"name": "string"
+																				},
+																				"computed": false,
+																				"optional": false
+																			},
+																			"arguments": [],
+																			"optional": false
+																		},
+																		"property": {
+																			"type": "Identifier",
+																			"start": 356,
+																			"end": 364,
+																			"name": "optional"
+																		},
+																		"computed": false,
+																		"optional": false
+																	},
+																	"arguments": [],
+																	"optional": false
+																},
+																"kind": "init"
+															},
+															{
+																"type": "Property",
+																"start": 374,
+																"end": 410,
+																"method": false,
+																"shorthand": false,
+																"computed": false,
+																"key": {
+																	"type": "Identifier",
+																	"start": 374,
+																	"end": 378,
+																	"name": "tags"
+																},
+																"value": {
+																	"type": "CallExpression",
+																	"start": 380,
+																	"end": 410,
+																	"callee": {
+																		"type": "MemberExpression",
+																		"start": 380,
+																		"end": 408,
+																		"object": {
+																			"type": "CallExpression",
+																			"start": 380,
+																			"end": 399,
+																			"callee": {
+																				"type": "MemberExpression",
+																				"start": 380,
+																				"end": 387,
+																				"object": {
+																					"type": "Identifier",
+																					"start": 380,
+																					"end": 381,
+																					"name": "z"
+																				},
+																				"property": {
+																					"type": "Identifier",
+																					"start": 382,
+																					"end": 387,
+																					"name": "array"
+																				},
+																				"computed": false,
+																				"optional": false
+																			},
+																			"arguments": [
+																				{
+																					"type": "CallExpression",
+																					"start": 388,
+																					"end": 398,
+																					"callee": {
+																						"type": "MemberExpression",
+																						"start": 388,
+																						"end": 396,
+																						"object": {
+																							"type": "Identifier",
+																							"start": 388,
+																							"end": 389,
+																							"name": "z"
+																						},
+																						"property": {
+																							"type": "Identifier",
+																							"start": 390,
+																							"end": 396,
+																							"name": "string"
+																						},
+																						"computed": false,
+																						"optional": false
+																					},
+																					"arguments": [],
+																					"optional": false
+																				}
+																			],
+																			"optional": false
+																		},
+																		"property": {
+																			"type": "Identifier",
+																			"start": 400,
+																			"end": 408,
+																			"name": "optional"
+																		},
+																		"computed": false,
+																		"optional": false
+																	},
+																	"arguments": [],
+																	"optional": false
+																},
+																"kind": "init"
+															},
+															{
+																"type": "Property",
+																"start": 418,
+																"end": 447,
+																"method": false,
+																"shorthand": false,
+																"computed": false,
+																"key": {
+																	"type": "Identifier",
+																	"start": 418,
+																	"end": 423,
+																	"name": "draft"
+																},
+																"value": {
+																	"type": "CallExpression",
+																	"start": 425,
+																	"end": 447,
+																	"callee": {
+																		"type": "MemberExpression",
+																		"start": 425,
+																		"end": 445,
+																		"object": {
+																			"type": "CallExpression",
+																			"start": 425,
+																			"end": 436,
+																			"callee": {
+																				"type": "MemberExpression",
+																				"start": 425,
+																				"end": 434,
+																				"object": {
+																					"type": "Identifier",
+																					"start": 425,
+																					"end": 426,
+																					"name": "z"
+																				},
+																				"property": {
+																					"type": "Identifier",
+																					"start": 427,
+																					"end": 434,
+																					"name": "boolean"
+																				},
+																				"computed": false,
+																				"optional": false
+																			},
+																			"arguments": [],
+																			"optional": false
+																		},
+																		"property": {
+																			"type": "Identifier",
+																			"start": 437,
+																			"end": 445,
+																			"name": "optional"
+																		},
+																		"computed": false,
+																		"optional": false
+																	},
+																	"arguments": [],
+																	"optional": false
+																},
+																"kind": "init"
+															},
+															{
+																"type": "Property",
+																"start": 455,
+																"end": 574,
+																"method": false,
+																"shorthand": false,
+																"computed": false,
+																"key": {
+																	"type": "Identifier",
+																	"start": 455,
+																	"end": 460,
+																	"name": "image"
+																},
+																"value": {
+																	"type": "CallExpression",
+																	"start": 462,
+																	"end": 574,
+																	"callee": {
+																		"type": "MemberExpression",
+																		"start": 462,
+																		"end": 572,
+																		"object": {
+																			"type": "CallExpression",
+																			"start": 462,
+																			"end": 554,
+																			"callee": {
+																				"type": "MemberExpression",
+																				"start": 462,
+																				"end": 479,
+																				"object": {
+																					"type": "Identifier",
+																					"start": 462,
+																					"end": 463,
+																					"name": "z"
+																				},
+																				"property": {
+																					"type": "Identifier",
+																					"start": 473,
+																					"end": 479,
+																					"name": "object"
+																				},
+																				"computed": false,
+																				"optional": false
+																			},
+																			"arguments": [
+																				{
+																					"type": "ObjectExpression",
+																					"start": 480,
+																					"end": 553,
+																					"properties": [
+																						{
+																							"type": "Property",
+																							"start": 492,
+																							"end": 504,
+																							"method": false,
+																							"shorthand": false,
+																							"computed": false,
+																							"key": {
+																								"type": "Identifier",
+																								"start": 492,
+																								"end": 495,
+																								"name": "url"
+																							},
+																							"value": {
+																								"type": "CallExpression",
+																								"start": 497,
+																								"end": 504,
+																								"callee": {
+																									"type": "Identifier",
+																									"start": 497,
+																									"end": 502,
+																									"name": "image"
+																								},
+																								"arguments": [],
+																								"optional": false
+																							},
+																							"kind": "init"
+																						},
+																						{
+																							"type": "Property",
+																							"start": 516,
+																							"end": 542,
+																							"method": false,
+																							"shorthand": false,
+																							"computed": false,
+																							"key": {
+																								"type": "Identifier",
+																								"start": 516,
+																								"end": 519,
+																								"name": "alt"
+																							},
+																							"value": {
+																								"type": "CallExpression",
+																								"start": 521,
+																								"end": 542,
+																								"callee": {
+																									"type": "MemberExpression",
+																									"start": 521,
+																									"end": 540,
+																									"object": {
+																										"type": "CallExpression",
+																										"start": 521,
+																										"end": 531,
+																										"callee": {
+																											"type": "MemberExpression",
+																											"start": 521,
+																											"end": 529,
+																											"object": {
+																												"type": "Identifier",
+																												"start": 521,
+																												"end": 522,
+																												"name": "z"
+																											},
+																											"property": {
+																												"type": "Identifier",
+																												"start": 523,
+																												"end": 529,
+																												"name": "string"
+																											},
+																											"computed": false,
+																											"optional": false
+																										},
+																										"arguments": [],
+																										"optional": false
+																									},
+																									"property": {
+																										"type": "Identifier",
+																										"start": 532,
+																										"end": 540,
+																										"name": "optional"
+																									},
+																									"computed": false,
+																									"optional": false
+																								},
+																								"arguments": [],
+																								"optional": false
+																							},
+																							"kind": "init"
+																						}
+																					]
+																				}
+																			],
+																			"optional": false
+																		},
+																		"property": {
+																			"type": "Identifier",
+																			"start": 564,
+																			"end": 572,
+																			"name": "optional"
+																		},
+																		"computed": false,
+																		"optional": false
+																	},
+																	"arguments": [],
+																	"optional": false
+																},
+																"kind": "init"
+															}
+														]
+													}
+												],
+												"optional": false
+											}
+										},
+										"kind": "init"
+									}
+								]
+							}
+						],
+						"optional": false
+					}
+				}
+			],
+			"kind": "const"
+		},
+		{
+			"type": "ExportNamedDeclaration",
+			"start": 589,
+			"end": 646,
+			"declaration": {
+				"type": "VariableDeclaration",
+				"start": 596,
+				"end": 646,
+				"declarations": [
+					{
+						"type": "VariableDeclarator",
+						"start": 602,
+						"end": 645,
+						"id": {
+							"type": "Identifier",
+							"start": 602,
+							"end": 613,
+							"name": "collections"
+						},
+						"init": {
+							"type": "ObjectExpression",
+							"start": 616,
+							"end": 645,
+							"properties": [
+								{
+									"type": "Property",
+									"start": 620,
+									"end": 642,
+									"method": false,
+									"shorthand": false,
+									"computed": false,
+									"key": {
+										"type": "Identifier",
+										"start": 620,
+										"end": 625,
+										"name": "blogs"
+									},
+									"value": {
+										"type": "Identifier",
+										"start": 627,
+										"end": 642,
+										"name": "blogsCollection"
+									},
+									"kind": "init"
+								}
+							]
+						}
+					}
+				],
+				"kind": "const"
+			},
+			"specifiers": [],
+			"source": null,
+			"attributes": []
+		}
+	],
+	"sourceType": "module"
+}
