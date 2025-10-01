@@ -1,3 +1,4 @@
+import type { ExportNamedDeclaration } from 'acorn';
 import {
 	parse,
 	type Node,
@@ -25,12 +26,12 @@ export const walkAST = (
 	callback: (node: Node, parent: Node | null) => void,
 	parent: Node | null = null
 ): void => {
+	callback(node, parent);
+
 	Object.entries(node).forEach(([key, value]) => {
 		if (key === 'parent') {
 			return;
 		}
-
-		callback(node, parent);
 		if (typeof value === 'object' && value !== null) {
 			walkAST(value, callback, node);
 		} else if (Array.isArray(value)) {
@@ -82,8 +83,39 @@ export const isVariableDeclaration = (node: Node): node is VariableDeclaration =
 	return node.type === 'VariableDeclaration';
 };
 
-export const isVariableDeclarator = (node: Node): node is VariableDeclarator => {
+export const isVariableDeclarator = (node: Node, name?: string): node is VariableDeclarator => {
+	if (name && node.type === 'VariableDeclarator') {
+		const variable = node as VariableDeclarator;
+		return isIdentifier(variable.id) && variable.id.name === name;
+	}
 	return node.type === 'VariableDeclarator';
+};
+
+export const isExportNamedDeclaration = (node: Node): node is ExportNamedDeclaration => {
+	return node.type === 'ExportNamedDeclaration';
+};
+
+export const isVariableExport = (node: Node, name?: string): node is ExportNamedDeclaration => {
+	return (
+		isExportNamedDeclaration(node) &&
+		!!node.declaration &&
+		isVariableDeclaration(node.declaration) &&
+		isVariableDeclarator(node.declaration.declarations?.[0], name)
+	);
+};
+
+export const getVariableExport = (node: Node) => {
+	if (
+		isExportNamedDeclaration(node) &&
+		node.declaration &&
+		isVariableDeclaration(node.declaration)
+	) {
+		const declaration = node.declaration.declarations?.[0];
+		if (declaration && isVariableDeclarator(declaration)) {
+			return declaration.init;
+		}
+	}
+	return null;
 };
 
 export const getAttributeName = (node: Property): string | null => {
@@ -93,6 +125,24 @@ export const getAttributeName = (node: Property): string | null => {
 		return node.key.value;
 	}
 	return null;
+};
+
+export const extractObjectMapping = (node: ObjectExpression): Record<string, Node> => {
+	return node.properties.reduce((mapping, prop) => {
+		if (!isProperty(prop)) {
+			return mapping;
+		}
+
+		// blogs: blogsCollection
+		const key = getAttributeName(prop);
+		if (!key) {
+			return mapping;
+		}
+		return {
+			...mapping,
+			[key]: prop.value
+		};
+	}, {});
 };
 
 export const getAttributeValue = (node: Property): string | null => {

@@ -27,7 +27,7 @@ export type Collection = {
 	loader: Loader;
 };
 
-export const definesCollection = (node: Node, parent: Node): node is CallExpression => {
+export const isCollectionDefinition = (node: Node, parent: Node): node is CallExpression => {
 	return isFunctionCall(node, 'defineCollection') && isVariableDeclarator(parent);
 };
 
