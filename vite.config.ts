@@ -4,11 +4,6 @@ import { svelteTesting } from '@testing-library/svelte/vite';
 import { sveltekit } from '@sveltejs/kit/vite';
 import codegen from 'vite-plugin-graphql-codegen';
 import { defineConfig } from 'vite';
-import path from 'node:path';
-import { fileURLToPath } from 'node:url';
-
-const dirname =
-	typeof __dirname !== 'undefined' ? __dirname : path.dirname(fileURLToPath(import.meta.url));
 
 export default defineConfig({
 	plugins: [
@@ -21,6 +16,9 @@ export default defineConfig({
 			strategy: ['cookie', 'baseLocale']
 		})
 	],
+	optimizeDeps: {
+		include: ['@exodus/schemasafe'] // Add this to make client-side validation work
+	},
 	test: {
 		workspace: [
 			{

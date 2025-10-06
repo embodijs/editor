@@ -2,7 +2,6 @@ import type { Collection } from '$core/model/config';
 import type { GitFileMeta } from '$core/model/content';
 import type { GetGitContent, GetGitFileContent } from '$core/types/external';
 import matter from 'gray-matter';
-import * as v from 'valibot';
 
 export const getCollectionTree = async (
 	collection: Collection,

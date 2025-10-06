@@ -1,12 +1,14 @@
 <script lang="ts">
 	import { Separator } from '$lib/comp/ui/separator/index.js';
 	import * as Sidebar from '$lib/comp/ui/sidebar/index.js';
+	import type { Snippet } from 'svelte';
 
 	type Props = {
 		title: string;
+		actions?: Snippet;
 	};
 
-	const { title }: Props = $props();
+	const { title, actions }: Props = $props();
 </script>
 
 <header
@@ -16,17 +18,10 @@
 		<Sidebar.Trigger class="-ml-1" />
 		<Separator orientation="vertical" class="mx-2 data-[orientation=vertical]:h-4" />
 		<h1 class="text-base font-medium">{title}</h1>
-		<!-- <div class="ml-auto flex items-center gap-2">
-			<Button
-				href="https://github.com/shadcn-ui/ui/tree/main/apps/v4/app/(examples)/dashboard"
-				variant="ghost"
-				size="sm"
-				class="dark:text-foreground hidden sm:flex"
-				target="_blank"
-				rel="noopener noreferrer"
-			>
-				GitHub
-			</Button>
-		</div> -->
+		{#if actions}
+			<div class="ml-auto flex items-center gap-2">
+				{@render actions()}
+			</div>
+		{/if}
 	</div>
 </header>

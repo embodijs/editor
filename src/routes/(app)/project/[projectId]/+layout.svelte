@@ -24,6 +24,7 @@
 		</Sidebar.Header>
 		<Sidebar.Content>
 			<Sidebar.Group>
+				<Sidebar.GroupLabel>Collections</Sidebar.GroupLabel>
 				<Sidebar.GroupContent>
 					<Sidebar.Menu>
 						{#each data.collections as collection (collection.name)}
