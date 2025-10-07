@@ -1,12 +1,11 @@
 import { isAuthorized } from '$/lib/server/guards';
-import { fileIdToPath } from '$core/logic/article';
+import { fileIdToPath, generateArticleFormSchema } from '$core/logic/article';
 import { getArticle } from '$core/logic/content';
 import { createInternalGitUser } from '$core/logic/user';
 import { getFileContent } from '$services/content';
 import type { PageServerLoad } from './$types';
 import { superValidate } from 'sveltekit-superforms';
 import { error } from '@sveltejs/kit';
-import { convertMetaFiledsToValibotSchmea } from '$core/logic/collection';
 import { flatMeta } from '$core/logic/article';
 import { valibot } from 'sveltekit-superforms/adapters';
 
@@ -29,13 +28,16 @@ export const load: PageServerLoad = async ({ params, parent, locals }) => {
 			user
 		)
 	);
-	console.log(flatMeta(meta));
-	const schema = convertMetaFiledsToValibotSchmea(fields);
-	const metaForm = await superValidate(flatMeta(meta), valibot(schema));
+
+	const metaForm = await superValidate(
+		{ meta: flatMeta(meta), markdown: content, files: [] },
+		valibot(generateArticleFormSchema(fields))
+	);
 	return {
 		metaForm,
 		formFields: fields,
 		article: {
+			path,
 			meta,
 			content
 		}

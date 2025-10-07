@@ -8,12 +8,7 @@ import {
 	isVariableExport,
 	walkAST
 } from './helper/ast';
-import {
-	getCollectionExport,
-	isCollectionDefinition,
-	isCollectionsExport,
-	parseCollectionConfig
-} from './helper/collection';
+import { isCollectionDefinition, parseCollectionConfig } from './helper/collection';
 
 export const parseAstroContentDefinition = (ast: Program) => {
 	// First pass: collect all defineCollection variables

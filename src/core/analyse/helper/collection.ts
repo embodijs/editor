@@ -3,14 +3,14 @@ import {
 	extractValue,
 	getAttributes,
 	isCallExpression,
-	isFunctionCall,
 	isIdentifier,
 	isObjectExpression,
 	isVariableDeclarator,
-	onProperty,
-	parseObject,
 	type Node
 } from './ast';
+import { onProperty, parseObject } from './object';
+import { parseZodSchema } from './zod';
+import { isFunctionCall } from './function';
 
 export type Loader =
 	| {
@@ -32,7 +32,10 @@ export const isCollectionDefinition = (node: Node, parent: Node): node is CallEx
 };
 
 export const parseCollectionConfig = (node: ObjectExpression) => {
-	const config = parseObject(node, [onProperty('loader', parseLoader)]);
+	const config = parseObject(node, [
+		onProperty('loader', parseLoader),
+		onProperty('schema', parseZodSchema)
+	]);
 
 	return config;
 };

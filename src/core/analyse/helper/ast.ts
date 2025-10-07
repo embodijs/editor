@@ -1,4 +1,4 @@
-import type { ExportNamedDeclaration } from 'acorn';
+import type { ExportNamedDeclaration, MemberExpression, ObjectPattern } from 'acorn';
 import {
 	parse,
 	type Node,
@@ -44,6 +44,10 @@ export const walkAST = (
 	});
 };
 
+export const isObjectPattern = (node: Node): node is ObjectPattern => {
+	return node.type === 'ObjectPattern';
+};
+
 export const isLiteral = (node: Node): node is Literal => {
 	return node.type === 'Literal';
 };
@@ -52,8 +56,8 @@ export const isProperty = (node: Node): node is Property => {
 	return node.type === 'Property';
 };
 
-export const isIdentifier = (node: Node): node is Identifier => {
-	return node.type === 'Identifier';
+export const isIdentifier = (node: Node, name?: string): node is Identifier => {
+	return node.type === 'Identifier' && (!name || (node as Identifier).name === name);
 };
 
 export const isObjectExpression = (node: Node): node is ObjectExpression => {
@@ -73,14 +77,12 @@ export const extractValue = (
 	return undefined;
 };
 
-export const isFunctionCall = (node: Node, name?: string): node is CallExpression => {
-	return (
-		isCallExpression(node) && (!name || (isIdentifier(node.callee) && node.callee.name === name))
-	);
-};
-
 export const isVariableDeclaration = (node: Node): node is VariableDeclaration => {
 	return node.type === 'VariableDeclaration';
+};
+
+export const isMemberExpression = (node: Node): node is MemberExpression => {
+	return node.type === 'MemberExpression';
 };
 
 export const isVariableDeclarator = (node: Node, name?: string): node is VariableDeclarator => {
@@ -171,51 +173,4 @@ export function getAttributesAsEntries(node: ObjectExpression) {
 
 export const getAttributes = (node: ObjectExpression) => {
 	return Object.fromEntries(getAttributesAsEntries(node));
-};
-
-/**
- * Object parser
- *
- *
- *
- */
-
-export const onProperty = (name: string, parser: (node: Property) => unknown) => (node: Node) => {
-	if (isProperty(node) && isIdentifier(node.key) && node.key.name === name) {
-		return parser(node);
-	}
-	return null;
-};
-
-const runParser = <T = unknown>(node: Node, parsers: Array<(node: Node) => T>): T | null => {
-	for (const parser of parsers) {
-		const result = parser(node);
-		if (result != null) {
-			return result;
-		}
-	}
-	return null;
-};
-
-export const parseObject = <T = unknown>(
-	node: ObjectExpression,
-	parsers: Array<(node: Node) => T>
-): Record<string, T> => {
-	return Object.fromEntries(
-		node.properties.reduce(
-			(acc, element) => {
-				if (!isProperty(element)) {
-					return acc;
-				}
-				const value = runParser(element, parsers);
-				const key = getAttributeName(element);
-				if (key == null || value == null) {
-					return acc;
-				}
-
-				return [...acc, [key, value]];
-			},
-			[] as Array<[string, T]>
-		)
-	);
 };

@@ -1,4 +1,4 @@
-<script lang="ts">
+<script lang="ts" generics="T extends { meta: Record<string, unknown>}">
 	import type { MetaInputField } from '$core/model/collection';
 	import type { SuperForm } from 'sveltekit-superforms';
 	import { Input } from '$lib/comp/ui/input/index.js';
@@ -9,37 +9,38 @@
 
 	type Props = {
 		fields: MetaInputField[];
-		form: SuperForm<Record<string, unknown>>;
+		form: SuperForm<T>;
 	};
 
 	const { fields, form }: Props = $props();
 	const { form: formData } = form;
-	formData.subscribe(console.log);
 </script>
 
 {#each fields as field (field.fieldName)}
-	<Form.Field {form} name={field.fieldName}>
+	{@const displayName = field.displayName ?? field.fieldName}
+	<!-- @ts-expect-error - Dynamic meta field names not typed in SuperForm -->
+	<Form.Field {form} name="meta.{field.fieldName}">
 		<Form.Control>
 			{#snippet children({ props })}
 				{#if field.type === 'boolean'}
 					<Checkbox
-						checked={$formData[field.fieldName] as boolean}
+						checked={$formData.meta[field.fieldName] as boolean}
 						{...props}
-						onCheckedChange={(v) => ($formData[field.fieldName] = v)}
+						onCheckedChange={(v) => ($formData.meta[field.fieldName] = v)}
 					/>
-					<Form.Label>{field.displayName ?? field.fieldName}</Form.Label>
+					<Form.Label>{displayName}</Form.Label>
 				{:else}
-					<Form.Label>{field.displayName ?? field.fieldName}</Form.Label>
+					<Form.Label>{displayName}</Form.Label>
 					{#if field.type === 'date'}
 						<DatePicker
 							{...props}
-							bind:value={$formData[field.fieldName] as string}
+							bind:value={$formData.meta[field.fieldName] as string}
 							local={getLocale()}
 						/>
 					{:else if field.type === 'image'}
-						<Input {...props} bind:value={$formData[field.fieldName]}></Input>
+						<Input {...props} bind:value={$formData.meta[field.fieldName]}></Input>
 					{:else}
-						<Input {...props} bind:value={$formData[field.fieldName]}></Input>
+						<Input {...props} bind:value={$formData.meta[field.fieldName]}></Input>
 					{/if}
 				{/if}
 			{/snippet}
