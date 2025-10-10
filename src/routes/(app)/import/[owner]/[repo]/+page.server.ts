@@ -1,5 +1,5 @@
 import { isAuthorized } from '$/lib/server/guards';
-import { createInternalGitUser } from '$core/logic/user';
+import { getInternalGitUser } from '$core/logic/user';
 import { getPagesConfig } from '$services/pages';
 import { getRepoMeta } from '$services/repo';
 import { createProject } from '$services/project';
@@ -13,7 +13,7 @@ import { fail, redirect } from '@sveltejs/kit';
 export const load: PageServerLoad = async ({ locals, params }) => {
 	isAuthorized(locals);
 	const { owner, repo } = params;
-	const user = createInternalGitUser(locals);
+	const user = getInternalGitUser(locals);
 
 	const meta = await getRepoMeta(user, owner, repo);
 	const pages = meta.hasPages ? await getPagesConfig(user, owner, repo) : null;

@@ -8,6 +8,7 @@ export class FileManager {
 		protected gitCurrentDirPath: string,
 		protected formStoreNewFiles: Writable<FileUpload[]>
 	) {
+		console.log(gitCurrentDirPath);
 		this.store = new Map();
 	}
 
@@ -17,7 +18,16 @@ export class FileManager {
 		const hashArray = Array.from(new Uint8Array(hashBuffer));
 		const hashHex = hashArray.map((b) => b.toString(16).padStart(2, '0')).join('');
 
-		return hashHex.substring(0, length);
+		return hashHex.substring(0, 7);
+	}
+
+	protected fileToBase64(file: File): Promise<string> {
+		return new Promise((resolve, reject) => {
+			const reader = new FileReader();
+			reader.onload = () => resolve(reader.result as string);
+			reader.onerror = reject;
+			reader.readAsDataURL(file);
+		});
 	}
 
 	protected addHashToFileName(name: string, hash: string): string {
@@ -41,9 +51,10 @@ export class FileManager {
 		const hash = await this.hash(file);
 		const fileName = this.addHashToFileName(file.name, hash);
 		const upload: FileUpload = {
+			type: file.type,
 			relativePath: `./${fileName}`,
 			absolutePath: `${this.gitCurrentDirPath}/${fileName}`,
-			blob: URL.createObjectURL(file)
+			base64: await this.fileToBase64(file)
 		};
 		this.store.set(upload.relativePath, upload);
 		this.formStoreNewFiles.update((files) => [...files, upload]);
@@ -52,7 +63,8 @@ export class FileManager {
 
 	async getFile(url: string): Promise<string> {
 		if (this.store.has(url)) {
-			return this.store.get(url)!.blob;
+			const { base64 } = this.store.get(url)!;
+			return base64;
 		}
 		//TODO: Load data from server
 		return Promise.resolve(url);

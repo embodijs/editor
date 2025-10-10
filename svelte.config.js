@@ -11,6 +11,7 @@ const config = {
 		adapter: adapter(),
 		alias: {
 			$core: 'src/core',
+			$layer: 'src/server/app',
 			$services: 'src/server/services',
 			'$/*': 'src/*'
 		}

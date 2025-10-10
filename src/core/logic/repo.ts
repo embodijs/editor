@@ -1,10 +1,15 @@
 import type { GitFile } from '$core/model/content';
 import type { Project } from '$core/model/project';
-import type { GitRepoMeta, GitRepoMeta } from '$core/model/repo';
+import type { GitRepo, GitRepoMeta } from '$core/model/repo';
 
-export const createBaseGitRepo = (params: { owner: string; repo: string }): BaseGitRepo => ({
+export const createGitRepo = (params: { owner: string; repo: string }): GitRepo => ({
 	owner: params.owner,
 	name: params.repo
+});
+
+export const projectToRepo = (project: Project): GitRepo => ({
+	owner: project.owner,
+	name: project.name
 });
 
 export const extractJsonFromGitFile = (data: GitFile) => {

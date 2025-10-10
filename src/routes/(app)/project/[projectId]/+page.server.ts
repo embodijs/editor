@@ -1,7 +1,7 @@
 import { isAuthorized } from '$/lib/server/guards';
 import { extractEmbodiConfig, isGitFile, loadEmbodiConfig } from '$core/logic/config';
-import { createBaseGitRepo } from '$core/logic/repo';
-import { createInternalGitUser } from '$core/logic/user';
+import { createGitRepo } from '$core/logic/repo';
+import { getInternalGitUser } from '$core/logic/user';
 import { getProject } from '$services/project';
 import { getRepoContentFromGithub } from '$services/repo';
 import { error, redirect } from '@sveltejs/kit';
@@ -31,8 +31,8 @@ export const actions = {
 			return { error: 'Invalid form data' };
 		}
 
-		const gitUser = createInternalGitUser(locals);
-		const gitRepo = createBaseGitRepo({
+		const gitUser = getInternalGitUser(locals);
+		const gitRepo = createGitRepo({
 			owner,
 			repo
 		});

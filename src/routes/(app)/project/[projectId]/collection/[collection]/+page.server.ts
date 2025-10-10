@@ -1,13 +1,13 @@
 import { error } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 import { getDirContent } from '$services/content';
-import { createInternalGitUser } from '$core/logic/user';
+import { getInternalGitUser } from '$core/logic/user';
 import { isAuthorized } from '$/lib/server/guards';
 import { pathToFileId } from '$core/logic/article';
 
 export const load: PageServerLoad = async ({ params, locals, parent }) => {
 	isAuthorized(locals);
-	const user = createInternalGitUser(locals);
+	const user = getInternalGitUser(locals);
 
 	const { collections, currentProject } = await parent();
 	const gitRepo = { owner: currentProject.owner, name: currentProject.name };

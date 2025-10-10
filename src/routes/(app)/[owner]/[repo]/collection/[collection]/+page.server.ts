@@ -1,7 +1,7 @@
 import { getProjectConfig, isAuthorized } from '$/lib/server/guards';
 import { getCollectionTree } from '$core/logic/content';
-import { createBaseGitRepo } from '$core/logic/repo';
-import { createInternalGitUser } from '$core/logic/user';
+import { createGitRepo } from '$core/logic/repo';
+import { getInternalGitUser } from '$core/logic/user';
 import { getRepoContentFromGithub } from '$services/repo';
 import type { PageServerLoad } from './$types';
 
@@ -10,8 +10,8 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 
 	const { collection } = params;
 	const collectionIndex = parseInt(collection, 10);
-	const gitUser = createInternalGitUser(locals);
-	const gitRepo = createBaseGitRepo(params);
+	const gitUser = getInternalGitUser(locals);
+	const gitRepo = createGitRepo(params);
 
 	const config = getProjectConfig(locals);
 	const files = await getCollectionTree(config.collections[collectionIndex], (path: string) =>

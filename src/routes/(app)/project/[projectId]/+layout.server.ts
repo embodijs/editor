@@ -3,8 +3,10 @@ import { getProjects } from '$services/project';
 import { isAuthorized } from '$/lib/server/guards';
 import { error } from '@sveltejs/kit';
 import { getFileContent } from '$services/content';
-import { createInternalGitUser } from '$core/logic/user';
+import { getInternalGitUser } from '$core/logic/user';
 import { getProjectConfigFile } from '$core/logic/project';
+import { getProjectConfig } from '$layer/project';
+import { projectToRepo } from '$core/logic/repo';
 
 export const load: LayoutServerLoad = async ({ locals, params }) => {
 	isAuthorized(locals);
@@ -18,14 +20,17 @@ export const load: LayoutServerLoad = async ({ locals, params }) => {
 		throw error(404, 'Project not found');
 	}
 
-	const projectConfig = await getProjectConfigFile((path: string) =>
+	const repo = projectToRepo(currentProject);
+	const projectConfig = await getProjectConfig(repo, locals);
+
+	await getProjectConfigFile((path: string) =>
 		getFileContent(
 			path,
 			{
 				owner: currentProject.owner,
 				name: currentProject.repo
 			},
-			createInternalGitUser(locals)
+			getInternalGitUser(locals)
 		)
 	);
 

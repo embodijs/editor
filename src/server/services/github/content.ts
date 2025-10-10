@@ -1,9 +1,19 @@
 import type { GitDirContent } from '$core/model/content';
-import type { GitRepo } from '$core/model/repo';
+import {
+	GitCommitRef,
+	GitRefResult,
+	GitTreeResponse,
+	NewGitBlob,
+	NewGitCommit,
+	type GitBlobRef,
+	type GitRepo,
+	type NewGitTree
+} from '$core/model/repo';
 import type { InternalGitUser } from '$core/model/user';
 import { generateRestBase, getClient } from './github';
+import * as v from 'valibot';
 
-export const getFileContentFromGithub = async (
+export const getFileContent = async (
 	path: string,
 	branch: GitRepo,
 	user: InternalGitUser
@@ -25,7 +35,7 @@ export const getFileContentFromGithub = async (
 	throw new Error('File not found on Github');
 };
 
-export const getDirContentFromGithub = async (
+export const getDirContent = async (
 	path: string,
 	branch: GitRepo,
 	user: InternalGitUser
@@ -54,29 +64,96 @@ export const getDirContentFromGithub = async (
 	}));
 };
 
-// export const getRepoContentFromGithub = async (
-// 	path: string,
-// 	repo: BaseGitRepo,
-// 	user: InternalGitUser
-// ): Promise<GitContent> => {
-// 	const github = getGithubClient();
-// 	const response = await github.rest.repos.getContent({
-// 		path,
-// 		owner: repo.owner,
-// 		repo: repo.name,
-// 		...generateGithubBase(user)
-// 	});
-// 	const { data, status } = response;
-// 	console.log({ data, status });
-// 	if (status !== 200) {
-// 		throw new Error('Not found');
-// 	}
-// 	if (Array.isArray(data)) {
-// 		return data
-// 			.filter((item) => item.type === 'file' || item.type === 'dir')
-// 			.map(convertGithubContentToGitContent);
-// 	} else if (data.type === 'file') {
-// 		return convertGithubContentToGitFile(data);
-// 	}
-// 	throw new Error('Invalid content type');
-// };
+export const storeBlob = async (
+	blob: NewGitBlob,
+	repo: GitRepo,
+	user: InternalGitUser
+): Promise<GitBlobRef> => {
+	const client = getClient();
+	const result = await client.request('POST /repos/{owner}/{repo}/git/blobs', {
+		owner: repo.owner,
+		repo: repo.name,
+		content: blob.content,
+		encoding: blob.encoding,
+		...generateRestBase(user)
+	});
+
+	return result.data;
+};
+
+export const storeTree = async (
+	tree: NewGitTree[],
+	base: string | undefined,
+	repo: GitRepo,
+	user: InternalGitUser
+): Promise<GitTreeResponse> => {
+	const client = getClient();
+	const result = await client.request('POST /repos/{owner}/{repo}/git/trees', {
+		owner: repo.owner,
+		repo: repo.name,
+		tree,
+		base_tree: base,
+		...generateRestBase(user)
+	});
+
+	return v.parse(GitTreeResponse, result.data);
+};
+
+export const commit = async (
+	{ message, parents, tree }: NewGitCommit,
+	repo: GitRepo,
+	user: InternalGitUser
+): Promise<GitCommitRef> => {
+	const client = getClient();
+	const result = await client.request('POST /repos/{owner}/{repo}/git/commits', {
+		owner: repo.owner,
+		repo: repo.name,
+		message,
+		parents,
+		tree,
+		...generateRestBase(user)
+	});
+
+	return result.data;
+};
+
+export const getRef = async (
+	repo: Required<GitRepo>,
+	user: InternalGitUser
+): Promise<GitCommitRef> => {
+	const client = getClient();
+	const result = await client.request('GET /repos/{owner}/{repo}/git/ref/{ref}', {
+		owner: repo.owner,
+		repo: repo.name,
+		ref: `heads/${repo.branch}`,
+		...generateRestBase(user)
+	});
+
+	return result.data.object;
+};
+
+export const updateRef = async (
+	commit: GitCommitRef,
+	branch: Required<GitRepo>,
+	user: InternalGitUser
+): Promise<GitRefResult> => {
+	const client = getClient();
+	const result = await client.request('PATCH /repos/{owner}/{repo}/git/refs/{ref}', {
+		owner: branch.owner,
+		repo: branch.name,
+		ref: `heads/${branch.branch}`,
+		sha: commit.sha,
+		...generateRestBase(user)
+	});
+
+	return result.data;
+};
+
+export const commitAndUpdateRef = async (
+	{ message, parents, tree }: NewGitCommit,
+	repo: Required<GitRepo>,
+	user: InternalGitUser
+): Promise<GitRefResult> => {
+	const ref = await commit({ message, parents, tree }, repo, user);
+	return updateRef(ref, repo, user);
+};

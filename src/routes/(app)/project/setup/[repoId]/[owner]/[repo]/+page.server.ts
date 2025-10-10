@@ -3,8 +3,8 @@ import { getRepoContentFromGithub } from '$services/repo';
 import { redirect } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 import { isAuthorized } from '$/lib/server/guards';
-import { createBaseGitRepo } from '$core/logic/repo';
-import { createInternalGitUser } from '$core/logic/user';
+import { createGitRepo } from '$core/logic/repo';
+import { getInternalGitUser } from '$core/logic/user';
 import { createProject } from '$services/project';
 import { generateProject } from '$core/logic/project';
 import { updateSession } from '$services/session';
@@ -15,8 +15,8 @@ export const load: PageServerLoad = async ({ params, locals }) => {
 	const { owner, repo } = params;
 	const { user, session } = locals;
 
-	const gitUser = createInternalGitUser(locals);
-	const gitRepo = createBaseGitRepo(params);
+	const gitUser = getInternalGitUser(locals);
+	const gitRepo = createGitRepo(params);
 
 	const gitFile = await loadEmbodiConfig((path: string) =>
 		getRepoContentFromGithub(path, gitRepo, gitUser)

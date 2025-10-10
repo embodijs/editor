@@ -4,7 +4,6 @@ import type {
 	TextField,
 	DateField,
 	SelectField,
-	CheckboxField,
 	ImageField
 } from '$core/model/collection';
 import * as v from 'valibot';
@@ -39,20 +38,19 @@ const handleNumber = (field: NumberField) => {
 };
 
 const handleDate = (field: DateField) => {
-	const deepParams: v.BaseValidation<Date, Date, v.BaseIssue<unknown>>[] = [];
-	if (field.min) {
-		deepParams.push(v.minValue(new Date(field.min)));
-	} else if (field.max) {
-		deepParams.push(v.maxValue(new Date(field.max)));
-	}
-	return handleOptional(field, v.pipe(v.date(), ...deepParams));
+	const pipe = v.pipe(
+		v.date(),
+		field.min ? v.minValue(new Date(field.min)) : v.check<Date>(() => true),
+		field.max ? v.maxValue(new Date(field.max)) : v.check<Date>(() => true)
+	);
+	return handleOptional(field, pipe);
 };
 
 const handleArray = (field: SelectField) => {
 	return handleOptional(field, v.array(v.string()));
 };
 
-const handleCheckbox = (fields: CheckboxField) => handleOptional(fields, v.boolean());
+const handleCheckbox = () => v.optional(v.boolean(), false);
 
 const handleImage = (field: ImageField) => {
 	return handleOptional(field, v.string());
@@ -68,7 +66,7 @@ export const convertMetaFiledsToValibotSchmea = (fields: MetaInputField[]) => {
 				return { ...schema, [field.fieldName]: handleNumber(field) };
 			}
 			if (field.type === 'boolean') {
-				return { ...schema, [field.fieldName]: handleCheckbox(field) };
+				return { ...schema, [field.fieldName]: handleCheckbox() };
 			}
 			if (field.type === 'date') {
 				return { ...schema, [field.fieldName]: handleDate(field) };

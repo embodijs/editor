@@ -1,7 +1,20 @@
-import { ArticleFormBase } from '$core/model/article';
+import { Article } from '$core/model/article';
 import type { MetaInputField } from '$core/model/collection';
 import { convertMetaFiledsToValibotSchmea } from './collection';
+import { isRecord } from '$lib/helpers/object';
 import * as v from 'valibot';
+import matter from 'gray-matter';
+import {
+	GitCommitRef,
+	GitTreeType,
+	NewGitTree,
+	type GitBlobRef,
+	type GitRefResult,
+	type GitTreeResponse,
+	type NewGitBlob,
+	type NewGitCommit
+} from '$core/model/repo';
+import type { GetGitFileContent } from '$core/types/external';
 
 export const pathToFileId = (path: string) => Buffer.from(path).toString('base64url');
 
@@ -24,10 +37,108 @@ export const flatMeta = (
 	}, {});
 };
 
+const validateUnflatedMeta = (meta: Record<string, unknown>): Record<string, unknown> => {
+	return Object.fromEntries(
+		Object.entries(meta).map(([key, value]) => {
+			if (isRecord(value) && !(value instanceof Date)) {
+				return [key, unflatMeta(value as Record<string, unknown>)];
+			}
+			return [key, value];
+		})
+	);
+};
+
+export const unflatMeta = (meta: Record<string, unknown>): Record<string, unknown> => {
+	const unflated = Object.entries(meta).reduce(
+		(acc, [key, value]) => {
+			const [parentKey, ...childKey] = key.split('.');
+			if (childKey.length === 0) {
+				return {
+					...acc,
+					[key]: value
+				};
+			}
+			if (!acc[parentKey]) {
+				acc[parentKey] = {};
+			}
+			//Join the sub keys to do validation for the hole object after reduce loop
+			(acc[parentKey] as Record<string, unknown>)[childKey.join('.')] = value;
+			return acc;
+		},
+		{} as Record<string, unknown>
+	);
+	return validateUnflatedMeta(unflated);
+};
+
 export const generateArticleFormSchema = (fields: MetaInputField[]) => {
 	const metaSchema = convertMetaFiledsToValibotSchmea(fields);
 	return v.object({
-		...ArticleFormBase.entries,
+		...Article.entries,
 		meta: metaSchema
 	});
+};
+
+export const combineFrontmatterAndString = (frontmatter: Record<string, unknown>, text: string) => {
+	return {
+		...frontmatter,
+		text
+	};
+};
+
+export const getArticle = async (path: string, load: GetGitFileContent) => {
+	const fileContent = await load(path);
+	if (!fileContent) {
+		throw new Error('File not found');
+	}
+
+	const { data, content } = matter(fileContent);
+	return { meta: data, content };
+};
+
+export const updateArticle = async (
+	article: Article,
+	filePath: string,
+	server: {
+		commit: (commit: NewGitCommit) => Promise<GitRefResult>;
+		getCommit: () => Promise<GitCommitRef>;
+		storeTree: (tree: NewGitTree[], base: string) => Promise<GitTreeResponse>;
+		storeBlob: (blob: NewGitBlob) => Promise<GitBlobRef>;
+	}
+) => {
+	const markdownFileContent = matter.stringify(article.markdown, article.meta);
+	console.log({ files: article.files });
+	const fileRefsPromise = Promise.all(
+		article.files.map(async (file) => {
+			const blobRef = await server.storeBlob({
+				content: file.base64.split(',')[1],
+				encoding: 'base64'
+			});
+			return {
+				path: file.absolutePath,
+				sha: blobRef.sha
+			};
+		})
+	);
+	const [parentCommit, fileRefs] = await Promise.all([server.getCommit(), fileRefsPromise]);
+	console.log({ fileRefs });
+	const treeElements: NewGitTree[] = fileRefs.map((blobRef) => ({
+		mode: '100644',
+		type: GitTreeType.BLOB,
+		sha: blobRef.sha,
+		path: blobRef.path
+	}));
+	treeElements.push({
+		mode: '100644',
+		type: GitTreeType.BLOB,
+		content: markdownFileContent,
+		path: filePath
+	});
+	const tree = await server.storeTree(treeElements, parentCommit.sha);
+	console.log({ tree, parentCommit, treeElements });
+	const commit = await server.commit({
+		message: `Update article ${filePath}`,
+		parents: [parentCommit.sha],
+		tree: tree.sha
+	});
+	return commit;
 };

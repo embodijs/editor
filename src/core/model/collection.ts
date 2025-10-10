@@ -21,8 +21,8 @@ export const NumberField = v.object({
 export const DateField = v.object({
 	...FieldBase.entries,
 	type: v.literal('date'),
-	min: v.optional(v.number()),
-	max: v.optional(v.number())
+	min: v.optional(v.pipe(v.string(), v.isoDate())),
+	max: v.optional(v.pipe(v.string(), v.isoDate()))
 });
 
 export const SelectField = v.object({

@@ -10,18 +10,22 @@
 	import { initFileContext } from '$/lib/context/filemanager';
 	import type { FileUpload } from '$core/model/article';
 	import { writable } from 'svelte/store';
+	import { valibotClient } from 'sveltekit-superforms/adapters';
+	import { generateArticleFormSchema } from '$core/logic/article';
 
 	const { data }: PageProps = $props();
 
+	const schema = generateArticleFormSchema(data.formFields);
 	const form = superForm(data.metaForm, {
-		dataType: 'json'
+		dataType: 'json',
+		validators: valibotClient(schema)
 	});
 	const fileStore = writable<FileUpload[]>([]);
 	const { form: formData, enhance } = form;
 	$effect(() => {
 		$formData.files = $fileStore;
 	});
-	initFileContext(data.article.path, fileStore);
+	initFileContext(data.path, fileStore);
 	formData.subscribe((value) => {
 		console.log(value);
 	});
@@ -38,7 +42,7 @@
 		<header class="m-3 flex justify-end">
 			<Sheet.Trigger class={buttonVariants({ variant: 'link' })}>Meta</Sheet.Trigger>
 		</header>
-		<MarkdownEditor markdown={data.article.content} />
+		<MarkdownEditor {form} />
 		<form use:enhance method="POST">
 			<Sheet.Content>
 				<Sheet.Header>

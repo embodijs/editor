@@ -1,20 +1,17 @@
-<script lang="ts" module>
-	import { SvelteMap } from 'svelte/reactivity';
-
-	const imageStorage = new SvelteMap<string, string>();
-</script>
-
-<script lang="ts">
+<script lang="ts" generics="T extends { markdown: string }">
 	import { Crepe } from '@milkdown/crepe';
 	import '@milkdown/crepe/theme/common/style.css';
 	import '@milkdown/crepe/theme/frame.css';
 	import { getFileContext } from '$/lib/context/filemanager';
+	import type { SuperForm } from 'sveltekit-superforms';
 
 	type Props = {
-		markdown: string;
+		form: SuperForm<T>;
 	};
 
-	const { markdown }: Props = $props();
+	const { form }: Props = $props();
+	const { form: formData } = form;
+
 	const fileManager = getFileContext();
 
 	function editor(dom: HTMLElement, options: { markdown: string }) {
@@ -41,7 +38,7 @@
 
 		crepe.on((listener) => {
 			listener.markdownUpdated(() => {
-				console.log('Markdown changed:', crepe.getMarkdown());
+				formData.update((data) => ({ ...data, markdown: crepe.getMarkdown() }));
 			});
 		});
 
@@ -55,4 +52,4 @@
 	}
 </script>
 
-<div use:editor={{ markdown }}></div>
+<div use:editor={{ markdown: $formData.markdown }}></div>
