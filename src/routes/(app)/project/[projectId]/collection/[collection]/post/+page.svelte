@@ -34,7 +34,6 @@
 <Sheet.Root>
 	<SiteHeader title="Article">
 		{#snippet actions()}
-			<Button variant="ghost" type="reset">Cancel</Button>
 			<Button onclick={() => form.submit()}>Save</Button>
 		{/snippet}
 	</SiteHeader>
