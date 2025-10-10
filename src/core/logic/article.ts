@@ -95,7 +95,38 @@ export const getArticle = async (path: string, load: GetGitFileContent) => {
 	return { meta: data, content };
 };
 
-export const updateArticle = async (
+export const slugify = (str: string) => {
+	return str
+		.normalize('NFD') // Decompose accented characters
+		.replace(/[\u0300-\u036f]/g, '') // Remove diacritics
+		.toLowerCase()
+		.trim()
+		.replace(/[^a-z0-9\s-]/g, '') // Keep only alphanumeric, spaces, hyphens
+		.replace(/[\s-]+/g, '-') // Replace spaces/hyphens with single hyphen
+		.replace(/^-+|-+$/g, ''); // Remove leading/trailing hyphens
+};
+
+export const hasInlineHeadline = (content: string) => {
+	return content.trim().startsWith('# ');
+};
+
+export const getInlineHeadline = (content: string) => {
+	const [headline] = content.trim().split('\n');
+	return headline.slice(2).trim();
+};
+
+export const generateArticleFileName = (article: Article) => {
+	if (hasInlineHeadline(article.markdown)) {
+		const headline = getInlineHeadline(article.markdown);
+		return `${slugify(headline)}.md`;
+	} else if (typeof article.meta.title === 'string') {
+		return `${slugify(article.meta.title)}.md`;
+	}
+
+	throw new Error('Article has no title!');
+};
+
+export const saveArticle = async (
 	article: Article,
 	filePath: string,
 	server: {
@@ -106,7 +137,6 @@ export const updateArticle = async (
 	}
 ) => {
 	const markdownFileContent = matter.stringify(article.markdown, article.meta);
-	console.log({ files: article.files });
 	const fileRefsPromise = Promise.all(
 		article.files.map(async (file) => {
 			const blobRef = await server.storeBlob({
@@ -120,7 +150,6 @@ export const updateArticle = async (
 		})
 	);
 	const [parentCommit, fileRefs] = await Promise.all([server.getCommit(), fileRefsPromise]);
-	console.log({ fileRefs });
 	const treeElements: NewGitTree[] = fileRefs.map((blobRef) => ({
 		mode: '100644',
 		type: GitTreeType.BLOB,
@@ -134,7 +163,6 @@ export const updateArticle = async (
 		path: filePath
 	});
 	const tree = await server.storeTree(treeElements, parentCommit.sha);
-	console.log({ tree, parentCommit, treeElements });
 	const commit = await server.commit({
 		message: `Update article ${filePath}`,
 		parents: [parentCommit.sha],

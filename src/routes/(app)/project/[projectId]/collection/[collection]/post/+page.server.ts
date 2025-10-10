@@ -1,54 +1,36 @@
 import { isAuthorized } from '$/lib/server/guards';
 import {
-	fileIdToPath,
 	generateArticleFormSchema,
 	unflatMeta,
-	getArticle
+	generateArticleFileName,
+	pathToFileId
 } from '$core/logic/article';
-import { getInternalGitUser } from '$core/logic/user';
-import { getFileContent } from '$services/content';
 import type { Actions, PageServerLoad } from './$types';
 import { superValidate, fail } from 'sveltekit-superforms';
-import { error } from '@sveltejs/kit';
-import { flatMeta } from '$core/logic/article';
+import { error, redirect } from '@sveltejs/kit';
 import { valibot } from 'sveltekit-superforms/adapters';
 import type { Collection } from '$core/model/collection';
 import { getProjectConfig } from '$layer/project';
 import { getProject } from '$services/project';
 import { projectToRepo } from '$core/logic/repo';
 import { saveArticle } from '$layer/article';
-import { dirname } from 'path';
+import { join } from 'path';
 
 const getCurrentCollection = (collections: Collection[], name: string) =>
 	collections.find((collection) => collection.name === name);
 
 export const load: PageServerLoad = async ({ params, parent, locals }) => {
 	isAuthorized(locals);
-	const path = fileIdToPath(params.fileId);
-	const user = getInternalGitUser(locals);
-	const { currentProject, collections } = await parent();
-	const { fields } = getCurrentCollection(collections, params.collection) ?? {};
-	if (!fields) {
+	const { collections } = await parent();
+	const { fields, loader } = getCurrentCollection(collections, params.collection) ?? {};
+	if (!fields || !loader) {
 		throw error(404, 'Collection not found');
 	}
-	const { meta, content } = await getArticle(path, (path: string) =>
-		getFileContent(
-			path,
-			{
-				owner: currentProject.owner,
-				name: currentProject.repo
-			},
-			user
-		)
-	);
-	const metaForm = await superValidate(
-		{ meta: flatMeta(meta), markdown: content, files: [] },
-		valibot(generateArticleFormSchema(fields))
-	);
+	const metaForm = await superValidate(valibot(generateArticleFormSchema(fields)));
 	return {
 		metaForm,
 		formFields: fields,
-		path: dirname(path)
+		path: loader.base
 	};
 };
 
@@ -56,15 +38,14 @@ export const actions: Actions = {
 	default: async ({ request, params, locals }) => {
 		isAuthorized(locals);
 		const project = await getProject(params.projectId);
-		const path = fileIdToPath(params.fileId);
 		if (!project) {
 			throw error(404, 'Project not found');
 		}
 		const repo = projectToRepo(project);
 		const { collections } = await getProjectConfig(repo, locals);
-		const { fields } = getCurrentCollection(collections, params.collection) ?? {};
+		const { fields, loader } = getCurrentCollection(collections, params.collection) ?? {};
 
-		if (!fields) {
+		if (!fields || !loader) {
 			throw error(404, 'Collection not found');
 		}
 
@@ -76,19 +57,25 @@ export const actions: Actions = {
 			return fail(400, { form });
 		}
 		const { meta, markdown, files } = form.data;
+		const path = loader.base;
+		const fileName = generateArticleFileName(form.data);
+		const filePath = join(path, fileName);
 		await saveArticle(
 			{
 				meta: unflatMeta(meta),
 				markdown,
 				files
 			},
-			path,
+			filePath,
 			{
 				...repo,
 				branch: 'main'
 			},
 			locals
 		);
-		return { form };
+		return redirect(
+			302,
+			`/app/project/${params.projectId}/collection/${params.collection}/post/${pathToFileId(filePath)}`
+		);
 	}
 };

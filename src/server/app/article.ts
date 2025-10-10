@@ -4,14 +4,14 @@ import * as core from '$core/logic/article';
 import * as service from '$services/content';
 import type { Article } from '$core/model/article';
 
-export const updateArticle = (
+export const saveArticle = (
 	article: Article,
 	path: string,
 	repo: Required<GitRepo>,
 	locals: UserLocals
 ) => {
 	const user = getInternalGitUser(locals);
-	return core.updateArticle(article, path, {
+	return core.saveArticle(article, path, {
 		getCommit: () => {
 			return service.getRef(repo, user);
 		},
