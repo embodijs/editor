@@ -26,9 +26,6 @@
 		$formData.files = $fileStore;
 	});
 	initFileContext(data.path, fileStore);
-	formData.subscribe((value) => {
-		console.log(value);
-	});
 </script>
 
 <Sheet.Root>

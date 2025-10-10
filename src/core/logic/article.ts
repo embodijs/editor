@@ -1,7 +1,7 @@
 import { Article } from '$core/model/article';
 import type { MetaInputField } from '$core/model/collection';
 import { convertMetaFiledsToValibotSchmea } from './collection';
-import { isRecord } from '$lib/helpers/object';
+import { isRecord, removeEmpty } from '$lib/helpers/object';
 import * as v from 'valibot';
 import matter from 'gray-matter';
 import {
@@ -136,7 +136,7 @@ export const saveArticle = async (
 		storeBlob: (blob: NewGitBlob) => Promise<GitBlobRef>;
 	}
 ) => {
-	const markdownFileContent = matter.stringify(article.markdown, article.meta);
+	const markdownFileContent = matter.stringify(article.markdown, removeEmpty(article.meta));
 	const fileRefsPromise = Promise.all(
 		article.files.map(async (file) => {
 			const blobRef = await server.storeBlob({

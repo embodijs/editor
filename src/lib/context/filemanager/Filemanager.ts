@@ -8,7 +8,6 @@ export class FileManager {
 		protected gitCurrentDirPath: string,
 		protected formStoreNewFiles: Writable<FileUpload[]>
 	) {
-		console.log(gitCurrentDirPath);
 		this.store = new Map();
 	}
 

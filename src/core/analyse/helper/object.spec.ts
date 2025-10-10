@@ -56,7 +56,6 @@ const blog = {
   schema: ({ image }) => {}
 }`;
 		const ast = codeToAST(code);
-		console.log(JSON.stringify(ast, null, 2));
 		expect(isVariableDeclaration(ast.body[0])).toBeTruthy();
 
 		if (!isVariableDeclaration(ast.body[0])) {

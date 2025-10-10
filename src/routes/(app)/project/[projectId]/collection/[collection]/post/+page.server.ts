@@ -75,7 +75,7 @@ export const actions: Actions = {
 		);
 		return redirect(
 			302,
-			`/app/project/${params.projectId}/collection/${params.collection}/post/${pathToFileId(filePath)}`
+			`/project/${params.projectId}/collection/${params.collection}/post/${pathToFileId(filePath)}`
 		);
 	}
 };

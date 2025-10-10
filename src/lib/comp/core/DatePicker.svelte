@@ -10,7 +10,7 @@
 
 	type Props = {
 		name: string;
-		value?: string | Date;
+		value?: Date;
 		local: Intl.LocalesArgument;
 	};
 
@@ -39,8 +39,7 @@
 	let open = $state(false);
 	let internalValue = $state<DateValue | undefined>(
 		untrack(() => {
-			if (!value) return undefined;
-			const date = value instanceof Date ? value : parseDate(value);
+			const date = value;
 			if (date) return new CalendarDate(date.getFullYear(), date.getMonth() + 1, date.getDate());
 			return undefined;
 		})
@@ -55,7 +54,7 @@
 			const userInput = (e.target as HTMLInputElement).value;
 			const date = parseDate(userInput);
 			if (date) {
-				value = formatDate(date);
+				value = date;
 				internalValue = new CalendarDate(date.getFullYear(), date.getMonth() + 1, date.getDate());
 			}
 		}}
@@ -84,7 +83,7 @@
 				bind:value={internalValue}
 				captionLayout="dropdown"
 				onValueChange={(v) => {
-					value = formatDate(v);
+					value = v?.toDate(getLocalTimeZone());
 					open = false;
 				}}
 			/>

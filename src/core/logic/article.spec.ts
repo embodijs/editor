@@ -65,7 +65,6 @@ describe('Article', () => {
 				tags: ['test', 'article']
 			}
 		};
-		console.log(unflatMeta(article));
 		expect(unflatMeta(article)).toEqual(expected);
 	});
 
