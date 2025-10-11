@@ -13,6 +13,7 @@ import { getProject } from '$services/project';
 import { projectToRepo } from '$core/logic/repo';
 import { saveArticle } from '$layer/article';
 import { dirname } from 'path';
+import { minimatch } from 'minimatch';
 
 const getCurrentCollection = (collections: Collection[], name: string) =>
 	collections.find((collection) => collection.name === name);
@@ -22,9 +23,13 @@ export const load: PageServerLoad = async ({ params, parent, locals }) => {
 	const { path } = params;
 	const user = getInternalGitUser(locals);
 	const { currentProject, collections } = await parent();
-	const { fields } = getCurrentCollection(collections, params.collection) ?? {};
-	if (!fields) {
+	const collection = getCurrentCollection(collections, params.collection);
+	if (!collection) {
 		throw error(404, 'Collection not found');
+	}
+	const { fields, loader } = collection;
+	if (minimatch(path, loader.pattern)) {
+		throw error(404, 'File type is not supported for this collection');
 	}
 	const { meta, content } = await getArticle(path, (path: string) =>
 		getJsonContent(
