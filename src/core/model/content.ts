@@ -1,6 +1,6 @@
 import * as v from 'valibot';
 
-export const GitFileSchema = v.object({
+export const GitFile = v.object({
 	type: v.literal('file'),
 	encoding: v.picklist(['base64', 'utf8']),
 	path: v.string(),
@@ -15,17 +15,19 @@ const GitDirContentBase = v.object({
 	size: v.number()
 });
 
-export const GitFileMetaSchema = v.object({
+export const GitFileMeta = v.object({
 	type: v.literal('file'),
 	...GitDirContentBase.entries
 });
 
-export const GitDirContentSchema = v.union([
-	v.object({
-		type: v.literal('dir'),
-		...GitDirContentBase.entries
-	}),
-	GitFileMetaSchema,
+export const GitDirMeta = v.object({
+	type: v.literal('dir'),
+	...GitDirContentBase.entries
+});
+
+export const GitDirContent = v.union([
+	GitDirMeta,
+	GitFileMeta,
 	v.object({
 		type: v.literal('symlink'),
 		...GitDirContentBase.entries
@@ -40,10 +42,11 @@ export const GitDirContentSchema = v.union([
 	})
 ]);
 
-export const GitContent = v.union([GitFileSchema, v.array(GitDirContentSchema)]);
+export const GitContent = v.union([GitFile, v.array(GitDirContent)]);
 
 export type GitContent = v.InferOutput<typeof GitContent>;
 
-export type GitDirContent = v.InferOutput<typeof GitDirContentSchema>;
-export type GitFile = v.InferOutput<typeof GitFileSchema>;
-export type GitFileMeta = v.InferOutput<typeof GitFileMetaSchema>;
+export type GitDirContent = v.InferOutput<typeof GitDirContent>;
+export type GitFile = v.InferOutput<typeof GitFile>;
+export type GitFileMeta = v.InferOutput<typeof GitFileMeta>;
+export type GitDirMeta = v.InferOutput<typeof GitDirMeta>;

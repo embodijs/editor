@@ -89,6 +89,7 @@
 		"graphql": "^16.11.0",
 		"graphql-request": "^7.2.0",
 		"gray-matter": "^4.0.3",
+		"minimatch": "^10.0.3",
 		"octokit": "^5.0.3",
 		"openapi-typescript": "^7.9.1",
 		"svelte-sonner": "^1.0.5"

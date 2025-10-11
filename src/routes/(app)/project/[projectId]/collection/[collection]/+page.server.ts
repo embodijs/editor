@@ -4,6 +4,7 @@ import { getDirContent } from '$services/content';
 import { getInternalGitUser } from '$core/logic/user';
 import { isAuthorized } from '$/lib/server/guards';
 import { pathToFileId } from '$core/logic/article';
+import { getCollectionContent } from '$layer/collection';
 
 export const load: PageServerLoad = async ({ params, locals, parent }) => {
 	isAuthorized(locals);
@@ -17,11 +18,7 @@ export const load: PageServerLoad = async ({ params, locals, parent }) => {
 	if (!currentCollection) {
 		throw error(404, 'Collection not found');
 	}
-	const articlesMeta = await getDirContent(
-		currentCollection.loader.base.replace('./', ''),
-		gitRepo,
-		user
-	);
+	const articlesMeta = await getCollectionContent(currentCollection.loader, gitRepo, user);
 
 	return {
 		articlesMeta: articlesMeta.map((article) => ({

@@ -64,18 +64,21 @@ const MetaInputField = v.variant('type', [
 	DateField
 ]);
 
+export const Loader = v.object({
+	type: v.literal('glob'),
+	pattern: v.string(),
+	base: v.string()
+});
+
 export const Collection = v.object({
 	name: v.string(),
 	displayName: v.string(),
-	loader: v.object({
-		type: v.literal('glob'),
-		pattern: v.string(),
-		base: v.string()
-	}),
+	loader: Loader,
 	formats: v.array(v.string()),
 	fields: v.array(MetaInputField)
 });
 
+export type Loader = v.InferOutput<typeof Loader>;
 export type Collection = v.InferOutput<typeof Collection>;
 export type MetaInputField = v.InferOutput<typeof MetaInputField>;
 export type TextField = v.InferOutput<typeof TextField>;

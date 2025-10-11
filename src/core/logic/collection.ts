@@ -4,9 +4,12 @@ import type {
 	TextField,
 	DateField,
 	SelectField,
-	ImageField
+	ImageField,
+	Loader
 } from '$core/model/collection';
+import { GitDirContent, GitDirMeta, GitFile, GitFileMeta } from '$core/model/content';
 import * as v from 'valibot';
+import { minimatch } from 'minimatch';
 
 const handleOptional = <T extends v.BaseSchema<unknown, unknown, v.BaseIssue<unknown>>>(
 	fields: MetaInputField,
@@ -82,4 +85,24 @@ export const convertMetaFiledsToValibotSchmea = (fields: MetaInputField[]) => {
 		{} as Record<string, v.BaseSchema<unknown, unknown, v.BaseIssue<unknown>>>
 	);
 	return v.object(formSchema);
+};
+
+export const getCollectionContent = async (
+	loader: Loader,
+	services: { getContent: (path: string) => Promise<GitDirContent[]> }
+): Promise<GitFileMeta[]> => {
+	const basePath = loader.base.replace('./', '');
+	const content = await services.getContent(basePath);
+	const [files, dirs] = content.reduce(
+		(acc, item) => {
+			if (item.type === 'file' && minimatch(item.path, loader.pattern)) {
+				acc[0] = [...acc[0], item];
+			} else if (item.type === 'dir') {
+				acc[1] = [...acc[1], item];
+			}
+			return acc;
+		},
+		[[], []] as [GitFileMeta[], GitDirMeta[]]
+	);
+	return files;
 };
