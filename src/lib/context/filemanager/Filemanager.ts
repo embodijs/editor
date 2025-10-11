@@ -9,7 +9,7 @@ export class FileManager {
 		protected gitCurrentDirPath: string,
 		protected formStoreNewFiles: Writable<FileUpload[]>,
 		protected repo: GitRepo,
-		protected refUrl: URL
+		protected refUrl?: URL
 	) {
 		this.store = new Map();
 	}
@@ -67,6 +67,10 @@ export class FileManager {
 		if (this.store.has(path)) {
 			const { base64 } = this.store.get(path)!;
 			return base64;
+		}
+		return path;
+		if (!this.refUrl) {
+			return '';
 		}
 		const url = new URL(path, this.refUrl);
 		const result = await fetch(url);

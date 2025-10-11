@@ -21,8 +21,9 @@
 			defaultValue: options.markdown,
 			featureConfigs: {
 				[Crepe.Feature.ImageBlock]: {
-					proxyDomURL: (url: string) => {
-						return fileManager?.getFile(url) ?? '';
+					proxyDomURL: (path: string) => {
+						if (path === '') return '';
+						return fileManager?.getFile(path) ?? '';
 					},
 
 					onUpload: async (file) => {

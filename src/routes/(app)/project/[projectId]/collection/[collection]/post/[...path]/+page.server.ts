@@ -1,10 +1,5 @@
 import { isAuthorized } from '$/lib/server/guards';
-import {
-	fileIdToPath,
-	generateArticleFormSchema,
-	unflatMeta,
-	getArticle
-} from '$core/logic/article';
+import { generateArticleFormSchema, unflatMeta, getArticle } from '$core/logic/article';
 import { getInternalGitUser } from '$core/logic/user';
 import { getJsonContent } from '$services/content';
 import type { Actions, PageServerLoad } from './$types';
@@ -24,7 +19,7 @@ const getCurrentCollection = (collections: Collection[], name: string) =>
 
 export const load: PageServerLoad = async ({ params, parent, locals }) => {
 	isAuthorized(locals);
-	const path = fileIdToPath(params.fileId);
+	const { path } = params;
 	const user = getInternalGitUser(locals);
 	const { currentProject, collections } = await parent();
 	const { fields } = getCurrentCollection(collections, params.collection) ?? {};
@@ -56,7 +51,7 @@ export const actions: Actions = {
 	default: async ({ request, params, locals }) => {
 		isAuthorized(locals);
 		const project = await getProject(params.projectId);
-		const path = fileIdToPath(params.fileId);
+		const { path } = params;
 		if (!project) {
 			throw error(404, 'Project not found');
 		}

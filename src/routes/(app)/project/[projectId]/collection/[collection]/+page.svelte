@@ -24,7 +24,8 @@
 			<ArticleCard
 				name={meta.name}
 				path={meta.path}
-				opento="/project/{page.params.projectId}/collection/{page.params.collection}/post/{meta.id}"
+				opento="/project/{page.params.projectId}/collection/{page.params
+					.collection}/post/{meta.path}"
 			/>
 		{/each}
 	</div>
