@@ -12,6 +12,21 @@ import type {
 import { PLATFORMS, type InternalGitUser } from '$core/model/user';
 import * as github from './github/content';
 
+export const getJsonContent = async (
+	path: string,
+	branch: GitRepo,
+	user: InternalGitUser
+): Promise<string> => {
+	switch (user.platform) {
+		case PLATFORMS.GITHUB:
+			return await github.getJsonContent(path, branch, user);
+		default:
+			throw new Error(`Unsupported platform: ${user.platform}`);
+	}
+};
+
+export type GetJsonContent = typeof getJsonContent;
+
 export const getFileContent = async (
 	path: string,
 	branch: GitRepo,

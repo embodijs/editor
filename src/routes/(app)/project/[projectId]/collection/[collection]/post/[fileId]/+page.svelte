@@ -12,6 +12,8 @@
 	import { writable } from 'svelte/store';
 	import { valibotClient } from 'sveltekit-superforms/adapters';
 	import { generateArticleFormSchema } from '$core/logic/article';
+	import type { GitRepo } from '$core/model/repo';
+	import { page } from '$app/state';
 
 	const { data }: PageProps = $props();
 
@@ -25,7 +27,16 @@
 	$effect(() => {
 		$formData.files = $fileStore;
 	});
-	initFileContext(data.path, fileStore);
+	const repo: GitRepo = {
+		owner: data.currentProject.owner,
+		name: data.currentProject.repo
+	};
+	initFileContext(
+		data.path,
+		fileStore,
+		repo,
+		new URL(`/${repo.owner}/${repo.name}/file/${data.path}/`, page.url.origin)
+	);
 </script>
 
 <Sheet.Root>

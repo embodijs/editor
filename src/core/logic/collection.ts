@@ -7,7 +7,7 @@ import type {
 	ImageField,
 	Loader
 } from '$core/model/collection';
-import { GitDirContent, GitDirMeta, GitFile, GitFileMeta } from '$core/model/content';
+import { GitDirContent, GitDirMeta, GitFileMeta } from '$core/model/content';
 import * as v from 'valibot';
 import { minimatch } from 'minimatch';
 

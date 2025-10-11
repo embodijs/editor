@@ -6,7 +6,7 @@ import {
 	getArticle
 } from '$core/logic/article';
 import { getInternalGitUser } from '$core/logic/user';
-import { getFileContent } from '$services/content';
+import { getJsonContent } from '$services/content';
 import type { Actions, PageServerLoad } from './$types';
 import { superValidate, fail } from 'sveltekit-superforms';
 import { error } from '@sveltejs/kit';
@@ -32,7 +32,7 @@ export const load: PageServerLoad = async ({ params, parent, locals }) => {
 		throw error(404, 'Collection not found');
 	}
 	const { meta, content } = await getArticle(path, (path: string) =>
-		getFileContent(
+		getJsonContent(
 			path,
 			{
 				owner: currentProject.owner,

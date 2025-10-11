@@ -1,4 +1,5 @@
 import type { FileUpload } from '$core/model/article';
+import type { GitRepo } from '$core/model/repo';
 import type { Writable } from 'svelte/store';
 
 export class FileManager {
@@ -6,7 +7,9 @@ export class FileManager {
 
 	constructor(
 		protected gitCurrentDirPath: string,
-		protected formStoreNewFiles: Writable<FileUpload[]>
+		protected formStoreNewFiles: Writable<FileUpload[]>,
+		protected repo: GitRepo,
+		protected refUrl: URL
 	) {
 		this.store = new Map();
 	}
@@ -60,12 +63,14 @@ export class FileManager {
 		return upload.relativePath;
 	}
 
-	async getFile(url: string): Promise<string> {
-		if (this.store.has(url)) {
-			const { base64 } = this.store.get(url)!;
+	async getFile(path: string): Promise<string> {
+		if (this.store.has(path)) {
+			const { base64 } = this.store.get(path)!;
 			return base64;
 		}
-		//TODO: Load data from server
-		return Promise.resolve(url);
+		const url = new URL(path, this.refUrl);
+		const result = await fetch(url);
+		const blob = await result.blob();
+		return URL.createObjectURL(blob);
 	}
 }

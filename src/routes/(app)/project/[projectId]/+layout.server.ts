@@ -2,7 +2,7 @@ import type { LayoutServerLoad } from './$types';
 import { getProjects } from '$services/project';
 import { isAuthorized } from '$/lib/server/guards';
 import { error } from '@sveltejs/kit';
-import { getFileContent } from '$services/content';
+import { getJsonContent } from '$services/content';
 import { getInternalGitUser } from '$core/logic/user';
 import { getProjectConfigFile } from '$core/logic/project';
 import { getProjectConfig } from '$layer/project';
@@ -24,7 +24,7 @@ export const load: LayoutServerLoad = async ({ locals, params }) => {
 	const projectConfig = await getProjectConfig(repo, locals);
 
 	await getProjectConfigFile((path: string) =>
-		getFileContent(
+		getJsonContent(
 			path,
 			{
 				owner: currentProject.owner,

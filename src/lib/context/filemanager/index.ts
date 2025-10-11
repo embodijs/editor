@@ -1,15 +1,10 @@
-import type { FileUpload } from '$core/model/article';
-import type { Writable } from 'svelte/store';
 import { FileManager } from './Filemanager';
 import { getContext, setContext, hasContext } from 'svelte';
 
 const key = Symbol('FileManager');
 
-export const initFileContext = (
-	gitCurrentDirPath: string,
-	formStoreNewFiles: Writable<FileUpload[]>
-) => {
-	const fileManage = new FileManager(gitCurrentDirPath, formStoreNewFiles);
+export const initFileContext = (...args: ConstructorParameters<typeof FileManager>) => {
+	const fileManage = new FileManager(...args);
 	setContext(key, fileManage);
 	return fileManage;
 };
