@@ -28,7 +28,7 @@ export const load: PageServerLoad = async ({ params, parent, locals }) => {
 		throw error(404, 'Collection not found');
 	}
 	const { fields, loader } = collection;
-	if (minimatch(path, loader.pattern)) {
+	if (!minimatch(path, loader.pattern)) {
 		throw error(404, 'File type is not supported for this collection');
 	}
 	const { meta, content } = await getArticle(path, (path: string) =>
