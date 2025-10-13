@@ -1,19 +1,25 @@
 {
   "name": "vite-astro",
-  "module": "index.ts",
+  "module": "dist/plugin.js",
+  "types": "dist/plugin.d.ts",
   "type": "module",
   "scripts": {
     "build": "bun build ./src/index.ts --outdir ./dist"
   },
   "exports": {
-    ".": {
-      "types": "./index.d.ts",
-      "import": "./index.ts",
-      "require": "./index.cjs"
-    }
-  },
+      ".": {
+        "import": {
+          "types": "./dist/plugin.d.ts",
+          "default": "./dist/plugin.js"
+        },
+        "require": {
+          "types": "./dist/plugin.d.cts",
+          "default": "./dist/plugin.cjs"
+        }
+      }
+    },
   "dependencies": {
-    "embodi-cms-ui": "workspace:*"
+    "embodi-cms-ui": "workspace:"
   },
   "devDependencies": {
     "@types/bun": "latest"

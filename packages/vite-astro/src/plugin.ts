@@ -3,7 +3,7 @@ import vm from "node:vm";
 import * as z from "zod";
 
 export const mockImports = (): Plugin => ({
-  name: "vite-mock-imports",
+  name: "vite-embodi-mock-imports",
   resolveId(id, importer) {
     if (!importer) return;
     const split = importer.split("/");
@@ -27,7 +27,7 @@ export const mockImports = (): Plugin => ({
 });
 
 export const virtualEntry = (): Plugin => ({
-  name: "vite-virtual-entry",
+  name: "vite-embodi-virtual-entry",
   resolveId(id) {
     if (id === "embodi-config") {
       return "\0embodi-config";
@@ -47,7 +47,7 @@ export default (): Plugin[] => {
 
   return [
     {
-      name: "vite-astro-ast-analyses",
+      name: "vite-embodi-astro-ast-analyses",
       async buildEnd() {
         console.info("Starting cms config generation");
 

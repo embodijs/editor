@@ -1,5 +1,5 @@
 {
   "name": "embodi-cms",
   "verions": "0.1.0",
-  "workspaces": ["packages/*", "app/*"]
+  "workspaces": ["packages/*", "!packages/test/**"]
 }
