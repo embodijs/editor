@@ -1,9 +1,9 @@
 import type {
 	MetaInputField,
 	NumberField,
-	TextField,
+	StringField,
 	DateField,
-	SelectField,
+	EnumField,
 	ImageField,
 	Loader
 } from '$core/model/collection';
@@ -16,7 +16,7 @@ const handleOptional = <T extends v.BaseSchema<unknown, unknown, v.BaseIssue<unk
 	schema: T
 ) => (fields.optional ? v.optional(schema) : schema);
 
-export const handleText = (field: TextField) => {
+export const handleText = (field: StringField) => {
 	const deepParams: v.BaseValidation<string, string, v.BaseIssue<unknown>>[] = [];
 	if (field.minLength) {
 		deepParams.push(v.minLength(field.minLength));
@@ -49,7 +49,7 @@ const handleDate = (field: DateField) => {
 	return handleOptional(field, pipe);
 };
 
-const handleArray = (field: SelectField) => {
+const handleArray = (field: EnumField) => {
 	return handleOptional(field, v.array(v.string()));
 };
 

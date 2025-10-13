@@ -25,13 +25,13 @@ export const DateField = v.object({
 	max: v.optional(v.pipe(v.string(), v.isoDate()))
 });
 
-export const SelectField = v.object({
+export const EnumField = v.object({
 	...FieldBase.entries,
 	type: v.literal('array'),
 	options: v.optional(v.array(v.string()))
 });
 
-export const TextField = v.object({
+export const StringField = v.object({
 	...FieldBase.entries,
 	type: v.literal('string'),
 	minLength: v.optional(v.number()),
@@ -49,18 +49,18 @@ export const FileField = v.object({
 	type: v.literal('file')
 });
 
-export const CheckboxField = v.object({
+export const BooleanField = v.object({
 	...FieldBase.entries,
 	type: v.literal('boolean')
 });
 
 const MetaInputField = v.variant('type', [
 	NumberField,
-	TextField,
+	StringField,
 	ImageField,
 	FileField,
-	CheckboxField,
-	SelectField,
+	BooleanField,
+	EnumField,
 	DateField
 ]);
 
@@ -81,10 +81,10 @@ export const Collection = v.object({
 export type Loader = v.InferOutput<typeof Loader>;
 export type Collection = v.InferOutput<typeof Collection>;
 export type MetaInputField = v.InferOutput<typeof MetaInputField>;
-export type TextField = v.InferOutput<typeof TextField>;
+export type StringField = v.InferOutput<typeof StringField>;
 export type NumberField = v.InferOutput<typeof NumberField>;
 export type ImageField = v.InferOutput<typeof ImageField>;
 export type FileField = v.InferOutput<typeof FileField>;
-export type CheckboxField = v.InferOutput<typeof CheckboxField>;
-export type SelectField = v.InferOutput<typeof SelectField>;
+export type BoolenField = v.InferOutput<typeof BooleanField>;
+export type EnumField = v.InferOutput<typeof EnumField>;
 export type DateField = v.InferOutput<typeof DateField>;

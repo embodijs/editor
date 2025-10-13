@@ -3,7 +3,7 @@
   "module": "index.ts",
   "type": "module",
   "scripts": {
-    "build": "bun build ./index.ts --outdir ./build"
+    "build": "bun build ./src/index.ts --outdir ./dist"
   },
   "exports": {
     ".": {
@@ -11,6 +11,9 @@
       "import": "./index.ts",
       "require": "./index.cjs"
     }
+  },
+  "dependencies": {
+    "embodi-cms-ui": "workspace:*"
   },
   "devDependencies": {
     "@types/bun": "latest"
