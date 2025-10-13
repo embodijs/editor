@@ -1,0 +1,23 @@
+{
+  "name": "vite-astro",
+  "module": "index.ts",
+  "type": "module",
+  "scripts": {
+    "build": "bun build ./index.ts --outdir ./build"
+  },
+  "exports": {
+    ".": {
+      "types": "./index.d.ts",
+      "import": "./index.ts",
+      "require": "./index.cjs"
+    }
+  },
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5",
+    "vite": "^5",
+    "zod": "^4"
+  }
+}
