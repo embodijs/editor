@@ -1,1 +1,1 @@
-export * as collection from '$core/model/collection';
+export * from '../core/model/collection.js';
