@@ -28,9 +28,9 @@
     "valibot": "^1.1.0"
   },
   "peerDependencies": {
-    "typescript": "^5",
-    "vite": "^5",
-    "zod": "^4",
-    "astro": "^5"
+    "typescript": "^5.9.3",
+    "vite": "^5.4.20",
+    "zod": "^4.1.12",
+    "astro": "^5.14.4"
   }
 }
