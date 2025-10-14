@@ -1,32 +1,36 @@
 {
-  "name": "vite-astro",
+  "name": "@embodi/vite-astro-cms",
   "module": "dist/plugin.js",
   "types": "dist/plugin.d.ts",
   "type": "module",
+  "version": "0.0.1",
   "scripts": {
+    "test": "vitest",
     "build": "bun build ./src/index.ts --outdir ./dist"
   },
   "exports": {
-      ".": {
-        "import": {
-          "types": "./dist/plugin.d.ts",
-          "default": "./dist/plugin.js"
-        },
-        "require": {
-          "types": "./dist/plugin.d.cts",
-          "default": "./dist/plugin.cjs"
-        }
+    ".": {
+      "import": {
+        "types": "./dist/plugin.d.ts",
+        "default": "./dist/plugin.js"
+      },
+      "require": {
+        "types": "./dist/plugin.d.cts",
+        "default": "./dist/plugin.cjs"
       }
-    },
+    }
+  },
   "dependencies": {
-    "embodi-cms-ui": "workspace:"
+    "@embodi/cms": "workspace:"
   },
   "devDependencies": {
-    "@types/bun": "latest"
+    "@types/bun": "latest",
+    "valibot": "^1.1.0"
   },
   "peerDependencies": {
     "typescript": "^5",
     "vite": "^5",
-    "zod": "^4"
+    "zod": "^4",
+    "astro": "^5"
   }
 }
