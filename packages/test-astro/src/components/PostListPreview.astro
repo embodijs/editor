@@ -1,0 +1,32 @@
+---
+import { type CollectionEntry } from "astro:content";
+import ArrowRight from "../icons/ArrowRight.astro";
+import FormattedDate from "./FormattedDate.astro";
+import { withBase } from "../utils/helpers";
+
+type Props = {
+  post: CollectionEntry<"blogs">;
+  class?: string;
+  headingLevel?: "h2" | "h3";
+};
+
+const { post, class: className, headingLevel = "h2" } = Astro.props;
+const { title, pubDate, description } = post.data;
+const TitleTag = headingLevel;
+---
+
+<a
+  class:list={["flex justify-between items-start gap-8 group", className]}
+  href={withBase("/blog/" + post.id)}
+>
+  <div class="grow">
+    <TitleTag class="sigmar-ff">{title}</TitleTag>
+    <FormattedDate date={pubDate} />
+    {description && <p>{description}</p>}
+  </div>
+  <div
+    class="hidden opacity-0 transition group-hover:opacity-100 sm:inline-flex sm:gap-4 sm:items-center sm:self-center sm:shrink-0"
+  >
+    Read Post <ArrowRight class="fill-current w-4 h-4" />
+  </div>
+</a>

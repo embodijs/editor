@@ -1,0 +1,51 @@
+---
+import { getCollection } from "astro:content";
+import {
+  getAllTags,
+  getPostsByTag,
+  sortItemsByDateDesc,
+} from "../../../utils/helpers";
+import type { GetStaticPathsOptions, Page } from "astro";
+import siteConfig from "../../../site.config";
+import type { CollectionEntry } from "astro:content";
+import MainLayout from "../../../layouts/MainLayout.astro";
+import Pagination from "../../../components/Pagination.astro";
+import Subscribe from "../../../components/Subscribe.astro";
+import PostListPreview from "../../../components/PostListPreview.astro";
+
+export async function getStaticPaths({ paginate }: GetStaticPathsOptions) {
+  const posts = (await getCollection("blogs")).sort(sortItemsByDateDesc);
+  const tags = getAllTags(posts);
+
+  return tags.flatMap((tag) => {
+    const filteredPosts = getPostsByTag(posts, tag.id);
+    return paginate(filteredPosts, {
+      params: { id: tag.id },
+      pageSize: siteConfig.postsPerPage || 2,
+    });
+  });
+}
+
+type Props = { page: Page<CollectionEntry<"blogs">> };
+
+const { page } = Astro.props;
+const blog = page.data;
+const params = Astro.params;
+const allPosts = await getCollection("blogs", (post) =>
+  post.data.tags?.includes(params.id)
+);
+const allTags = getAllTags(allPosts);
+const currentTag = allTags.find((tag) => {
+  return tag.id === params.id;
+});
+---
+
+<MainLayout pageTitle={siteConfig.title + "| " + currentTag?.name + " posts"}>
+  <div class="page-content">
+    <h2>Posts tagged with <span class="sigmar-ff">{currentTag?.name}</span></h2>
+    <div class="flex flex-col gap-8 max-w-full text-left mt-3">
+      {blog.map((post) => <PostListPreview post={post} />)}
+    </div>
+    <Pagination page={page} class="mb-16 sm:mb-24" />
+  </div>
+</MainLayout>

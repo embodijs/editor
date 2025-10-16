@@ -1,0 +1,41 @@
+---
+import {
+  getAllTags,
+  getPostsByTag,
+  sortItemsByDateDesc,
+  withBase,
+} from "../../utils/helpers";
+import { getCollection } from "astro:content";
+import Button from "../../components/Button.astro";
+import MainLayout from "../../layouts/MainLayout.astro";
+import siteConfig from "../../site.config";
+
+const posts = (await getCollection("blogs")).sort(sortItemsByDateDesc);
+const tags = getAllTags(posts).sort((tagA, tagB) => {
+  const postCountTagA = getPostsByTag(posts, tagA.id).length;
+  const postCountTagB = getPostsByTag(posts, tagB.id).length;
+  return postCountTagB - postCountTagA;
+});
+---
+
+<MainLayout
+  activePage="tags"
+  pageTitle={siteConfig.title + " | " + "Tags Index"}
+>
+  <div class="page-content">
+    <h1 class="sigmar-ff text-balance">Tags</h1>
+    <p class="kanit-regular">Select a tag to view related posts.</p>
+    <div class="flex flex-wrap items-center justify-center gap-4">
+      {
+        tags.map((tag) => {
+          const postCount = getPostsByTag(posts, tag.id).length;
+          return (
+            <Button href={`${withBase("/tags/" + tag.id)}`} class="px-4! m-2">
+              {tag.name} ({postCount})
+            </Button>
+          );
+        })
+      }
+    </div>
+  </div>
+</MainLayout>

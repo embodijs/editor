@@ -1,0 +1,16 @@
+---
+import type { HTMLAttributes } from "astro/types";
+import Button from "./Button.astro";
+
+type AnchorProps = HTMLAttributes<"a"> & { type?: never };
+type ButtonProps = HTMLAttributes<"button"> & { href?: never };
+
+type Props = ButtonProps | AnchorProps;
+
+const { class: className, ...rest } = Astro.props;
+const buttonClasses = "p-2";
+---
+
+<Button class:list={["p-2!", className]} {...rest}>
+  <slot />
+</Button>

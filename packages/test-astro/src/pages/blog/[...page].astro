@@ -1,0 +1,37 @@
+---
+import type { GetStaticPathsOptions, Page } from "astro";
+import { type CollectionEntry, getCollection } from "astro:content";
+import Pagination from "../../components/Pagination.astro";
+import { sortItemsByDateDesc } from "../../utils/helpers";
+import MainLayout from "../../layouts/MainLayout.astro";
+import siteConfig from "../../site.config";
+import PostCardPreview from "../../components/PostCardPreview.astro";
+
+export async function getStaticPaths({ paginate }: GetStaticPathsOptions) {
+  const blogs = (await getCollection("blogs")).sort(sortItemsByDateDesc);
+  return paginate(blogs, { pageSize: siteConfig.postsPerPage || 2 });
+}
+
+type Props = { page: Page<CollectionEntry<"blogs">> };
+
+const { page } = Astro.props;
+const allPosts = page.data;
+---
+
+<MainLayout activePage="blog" pageTitle={siteConfig.title + " | Blog Archive"}>
+  <div class="page-content py-8 text-center">
+    <h1 class="sigmar-ff">Blog</h1>
+    {
+      siteConfig.blog?.description && (
+        <p class="font-light text-balance">{siteConfig.blog?.description}</p>
+      )
+    }
+
+    <div
+      class="flex flex-col text-left gap-8 mb-4 text-sm sm:text-base max-w-fit mx-auto"
+    >
+      {allPosts.map((post) => <PostCardPreview post={post} />)}
+    </div>
+    <Pagination page={page} class="mb-16 sm:mb-24" />
+  </div>
+</MainLayout>

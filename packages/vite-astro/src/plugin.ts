@@ -1,0 +1,134 @@
+import { build, type Plugin, type Rollup } from "vite";
+import type * as loaders from "astro/loaders";
+import vm from "node:vm";
+import * as z from "zod";
+import * as cms from "@embodi/cms";
+import { extractSchema, parseZodSchema } from "./zod";
+import { extractFormats, parseLoader } from "./loaders";
+import { camelToReadable } from "./helper";
+import fs from "node:fs";
+import { resolve, dirname } from "node:path";
+
+export const mockImports = (): Plugin => ({
+  name: "vite-embodi-mock-imports",
+  resolveId(id, importer) {
+    if (!importer) return;
+    const split = importer.split("/");
+    const name = split[split.length - 1];
+
+    if (name?.includes("content.config.")) {
+      console.log("Loading mock import:", id, importer);
+
+      return `\0virtual:${id}`;
+    }
+  },
+  load(id) {
+    if (id === "\0virtual:astro:content") {
+      return `
+        export * as z from 'zod';
+        export const defineCollection = (i) => i;
+      `;
+    }
+  },
+});
+
+export const virtualEntry = (): Plugin => ({
+  name: "vite-embodi-virtual-entry",
+  resolveId(id) {
+    if (id === "embodi-config") {
+      return "\0embodi-config";
+    }
+  },
+  load(id) {
+    if (id === "\0embodi-config") {
+      return `import {collections} from './src/content.config.js';
+        export { collections };
+      `;
+    }
+  },
+});
+
+export default (): Plugin[] => {
+  return [
+    {
+      name: "vite-embodi-astro-ast-analyses",
+      async buildEnd() {
+        console.info("Starting cms config generation");
+
+        const { output } = (await build({
+          plugins: [virtualEntry(), mockImports()],
+          configFile: false,
+          build: {
+            write: false,
+            ssr: true,
+            rollupOptions: {
+              output: {
+                format: "cjs",
+              },
+              input: "embodi-config",
+            },
+          },
+        })) as Rollup.RollupOutput;
+
+        const { imports, importedBindings, code } = output[0];
+        const sandbox = {
+          require: (id: string) => {
+            if (id === "astro/loaders") {
+              return {
+                glob: (i: Parameters<typeof loaders.glob>[0]) => i,
+                file: (i: Parameters<typeof loaders.file>[0]) => i,
+              };
+            } else if (id === "zod") {
+              return z;
+            }
+          },
+          exports: {},
+          module: { exports: {} },
+          console: console,
+        };
+        type AstroCollection = {
+          loader:
+            | Parameters<typeof loaders.glob>[0]
+            | Parameters<typeof loaders.file>[0];
+          schema: z.ZodObject<any> | ((...args: any[]) => z.ZodObject<any>);
+        };
+        const result: Record<string, AstroCollection> =
+          await vm.runInNewContext(code, sandbox);
+        const collections: cms.GitCollection[] = Object.entries(result)
+          .map(([key, value]) => {
+            const schema = extractSchema(value.schema);
+
+            const loader = parseLoader(value.loader);
+            if (!loader) {
+              return null;
+            }
+            const formats =
+              "pattern" in loader ? extractFormats(loader.pattern) : undefined;
+
+            return {
+              name: key,
+              displayName: camelToReadable(key),
+              loader: loader,
+              formats,
+              fields: parseZodSchema(schema),
+            };
+          })
+          .filter((entry) => entry != null);
+
+        const config: cms.GitProjectConfig = {
+          collections,
+          updatedAt: new Date().getTime(),
+        };
+
+        const path = resolve(".embodi/cms/config.json");
+        fs.mkdirSync(dirname(path), { recursive: true });
+        fs.writeFileSync(
+          resolve(".embodi/cms/config.json"),
+          JSON.stringify(config),
+        );
+
+        console.info("Finished cms config generation");
+      },
+    },
+  ];
+};

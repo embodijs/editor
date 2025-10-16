@@ -1,0 +1,56 @@
+---
+import siteConfig from "../site.config";
+import SiteIdentity from "./SiteIdentity.astro";
+const currentYear = new Date().getFullYear();
+---
+
+<footer class="kanit-light text-xs sm:text-sm">
+  <div
+    class="footer-primary flex flex-col items-center justify-center min-w-full border-t border-gray-500/50"
+  >
+    <div
+      class="flex flex-row items-center justify-around sm:justify-center gap-2 sm:gap-6 pt-6 pb-3 sm:px-6 text-center"
+    >
+      {
+        siteConfig.footerNavLinks?.map((link) => (
+          <a href={link.href} title={link.text}>
+            {link.text}
+          </a>
+        ))
+      }
+      <!-- Hi! -->
+      <!-- Feel free to remove the below link or keep it to share your love for this theme! -->
+      <a
+        href="https://github.com/djsiddz/space-ahead"
+        title="Download Space Ahead ✨ Astro Theme"
+        target="_blank">Download Theme</a
+      >
+      <!-- Thank you! -->
+    </div>
+  </div>
+  <div
+    class="footer-secondary flex flex-col sm:flex-row items-center justify-between gap-6 min-w-full"
+  >
+    <div class="flex flex-row gap-2 items-center justify-start text-balance">
+      <span>&copy; {currentYear}</span>
+      {siteConfig.title}. All rights reserved.
+    </div>
+    <div class="flex flex-row gap-4 items-center justify-end-safe">
+      {
+        siteConfig.socialLinks?.map((link) => (
+          <a href={link.href} title={link.text} target="_blank">
+            {link.text}
+          </a>
+        ))
+      }
+    </div>
+  </div>
+  <div
+    class="footer-identity h-40 sm:h-18 text-center overflow-clip sticky bottom-0 items-end"
+  >
+    <span
+      class="sigmar-ff text-8xl sm:text-[6.5rem] leading-none text-whitesmoke/50 dark:text-gray-300/30"
+      >{siteConfig.title}</span
+    >
+  </div>
+</footer>
