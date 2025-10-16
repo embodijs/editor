@@ -1,0 +1,72 @@
+---
+import siteConfig, { type Link } from "../site.config";
+import Hamburger from "./Hamburger.astro";
+import ThemeSwitcher from "./ThemeSwitcher.astro";
+import SiteIdentity from "./SiteIdentity.astro";
+import NavLinks from "./NavLinks.astro";
+import { withBase } from "../utils/helpers";
+const { activePage } = Astro.props;
+---
+
+<header>
+  <nav class="font-light w-full">
+    <a href={withBase("/")}><SiteIdentity /></a>
+    <div class="hidden sm:flex sm:gap-8">
+      {(<NavLinks activePage={activePage} links={siteConfig.headerNavLinks} />)}
+    </div>
+    <ThemeSwitcher />
+    <Hamburger />
+  </nav>
+  <div
+    id="mobile-links"
+    class="font-light animated h-0 m-0 opacity-0 top-0 w-full"
+  >
+    <span class="close-menu">❌</span>
+    <NavLinks
+      activePage={activePage}
+      links={siteConfig.headerNavLinks}
+      isMobileLink={true}
+    />
+  </div>
+</header>
+<script is:inline>
+  document.querySelector("#hamburger-menu").addEventListener("click", () => {
+    console.log("clicked...");
+    document.querySelector("#mobile-links").classList.remove("slideOutUp");
+    document.querySelector("#mobile-links").classList.add("expanded");
+    document.querySelector("#mobile-links").classList.add("slideInDown");
+  });
+
+  document.querySelector(".close-menu").addEventListener("click", () => {
+    console.log("clicked...");
+    document.querySelector("#mobile-links").classList.add("slideOutUp");
+    document.querySelector("#mobile-links").classList.add("expanded");
+    document.querySelector("#mobile-links").classList.remove("slideInDown");
+  });
+</script>
+
+<style>
+  @media (orientation: portrait) {
+    #mobile-links.expanded {
+      align-items: end;
+      background-color: #0000007a;
+      backdrop-filter: blur(72px);
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      justify-content: end;
+      position: absolute;
+      z-index: 10;
+      opacity: 1;
+      padding: 1rem 2rem;
+      width: 100vw;
+      top: 0;
+      min-height: fit-content;
+      border-bottom-left-radius: 0.5rem;
+      border-bottom-right-radius: 0.5rem;
+    }
+    html.light #mobile-links.expanded {
+      background-color: #ffffff6a;
+    }
+  }
+</style>

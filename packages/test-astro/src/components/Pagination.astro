@@ -1,0 +1,35 @@
+---
+import IconButton from "./IconButton.astro";
+import ArrowLeft from "../icons/ArrowLeft.astro";
+import ArrowRight from "../icons/ArrowRight.astro";
+
+const { page, class: className } = Astro.props;
+---
+
+<nav
+  aria-label="Pagination"
+  class:list={[
+    "p-4 flex items-center sm:justify-center gap-8 min-w-full",
+    className,
+  ]}
+>
+  <IconButton
+    class="disabled:fill-gray-500 disabled:hover:cursor-not-allowed disabled:hover:text-gray-500!"
+    href={page.url.prev}
+    aria-label={`Go to page ${page.currentPage - 1} of ${page.lastPage}`}
+    disabled={!page.url.prev}
+  >
+    <ArrowLeft class="w-5 h-5 fill-current" />
+  </IconButton>
+  <span class="text-sm" aria-current="page"
+    >Page {page.currentPage} of {page.lastPage}</span
+  >
+  <IconButton
+    class="disabled:fill-gray-500 disabled:hover:cursor-not-allowed disabled:hover:text-gray-500!"
+    href={page.url.next}
+    aria-label={`Go to page ${page.currentPage + 1} of ${page.lastPage}`}
+    disabled={!page.url.next}
+  >
+    <ArrowRight class="w-5 h-5 fill-current" />
+  </IconButton>
+</nav>

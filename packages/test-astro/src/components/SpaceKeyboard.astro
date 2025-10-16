@@ -1,0 +1,75 @@
+---
+import SpaceBar from "./SpaceBar";
+
+const messages = [
+  "🚀 To Infinity, And Beyond!",
+  "🌌 In a galaxy far far away...",
+  "⭐ May the force be with you!",
+  "☄️ Game Over",
+  "🌑 The Eagle has landed!",
+  "🛰️ 42",
+  "🤖 Wall-E",
+  "👽 E.T. Phone Home",
+  "🌠 We'll be Counting Stars",
+  "👾 Press Start",
+  "🌍 Powered by Astro & Preact",
+  "🖖 Live long and prosper!",
+  "☀️ Time is an illusion. Lunchtime doubly so.",
+];
+---
+
+<div
+  class="flex flex-row w-full justify-between gap-2 items-center mt-12 sm:mt-24"
+>
+  <div
+    id="ctrl-left"
+    class="hidden sm:block pl-2 pb-2 pt-4 pr-4 text-xs border border-dashed border-gray-500 rounded-2xl font-mono"
+  >
+    ^
+  </div>
+  <div
+    id="fn"
+    class="hidden sm:block pl-2 pb-2 pt-4 pr-4 text-xs border border-dashed border-gray-500 rounded-2xl font-mono"
+  >
+    ⌥
+  </div>
+  <div
+    id="alt-left"
+    class="hidden sm:block pl-2 pb-2 pt-4 pr-4 text-xs border border-dashed border-gray-500 rounded-2xl font-mono"
+  >
+    ⌘
+  </div>
+  <SpaceBar
+    client:load
+    messages={messages}
+    className="pl-2 pb-2 pt-4 pr-4 text-xs border border-dashed border-gray-500 rounded-2xl font-mono"
+  />
+  <div
+    id="alt-right"
+    class="hidden sm:block pl-2 pb-2 pt-4 pr-4 text-xs border border-dashed border-gray-500 rounded-2xl font-mono"
+  >
+    ^
+  </div>
+  <div
+    id="ctrl-right"
+    class="hidden sm:block pl-2 pb-2 pt-4 pr-4 text-xs border border-dashed border-gray-500 rounded-2xl font-mono"
+  >
+    ⌘
+  </div>
+</div>
+
+<script is:inline>
+  // Detect OS and show/hide elements
+  window.addEventListener("DOMContentLoaded", () => {
+    const platform = navigator.userAgent.toLowerCase();
+    const isWin = platform.includes("win");
+
+    if (isWin) {
+      document.getElementById("ctrl-left").textContent = "ctrl";
+      document.getElementById("ctrl-right").textContent = "ctrl";
+      document.getElementById("alt-left").textContent = "alt";
+      document.getElementById("alt-right").textContent = "alt";
+      document.getElementById("fn").textContent = "fn";
+    }
+  });
+</script>

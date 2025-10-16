@@ -1,0 +1,52 @@
+---
+import "../styles/global.css";
+
+import Footer from "../components/Footer.astro";
+import Nav from "../components/Nav.astro";
+import Subscribe from "../components/Subscribe.astro";
+import { withBase } from "../utils/helpers";
+import siteConfig from "../site.config";
+
+type LayoutProps = {
+  pageTitle: string;
+  activePage: string;
+  showSubscribeForm?: boolean;
+};
+const {
+  pageTitle,
+  activePage,
+  showSubscribeForm = true,
+} = Astro.props as LayoutProps;
+---
+
+<!doctype html>
+<html lang="en" class="antialiased break-words">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" href={withBase(`/space-ahead-logo.png`)} />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="generator" content={Astro.generator} />
+    <link rel="sitemap" href={withBase(`/sitemap-index.xml`)} />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Sigmar&family=Kanit:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="alternate"
+      type="application/rss+xml"
+      title={siteConfig.title + " - RSS Feed"}
+      href={new URL(withBase("/rss.xml"), Astro.site)}
+    />
+    <title>{pageTitle}</title>
+  </head>
+  <body>
+    <main class="max-w-3xl mx-auto min-h-screen">
+      <Nav activePage={activePage} />
+      <slot />
+      {showSubscribeForm && <Subscribe class="my-12 w-full" />}
+      <Footer />
+    </main>
+  </body>
+</html>
