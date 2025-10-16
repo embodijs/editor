@@ -1,0 +1,41 @@
+{
+  "name": "@embodi/vite-astro-cms",
+  "module": "dist/plugin.js",
+  "types": "dist/plugin.d.ts",
+  "type": "module",
+  "version": "0.1.0",
+  "scripts": {
+    "test": "vitest",
+    "build": "tsup",
+    "prepublishOnly": "bun run build"
+  },
+  "files": [
+    "dist"
+  ],
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/plugin.d.ts",
+        "default": "./dist/plugin.js"
+      },
+      "require": {
+        "types": "./dist/plugin.d.cts",
+        "default": "./dist/plugin.cjs"
+      }
+    }
+  },
+  "dependencies": {
+    "@embodi/cms": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "valibot": "^1.1.0"
+  },
+  "peerDependencies": {
+    "typescript": "^5",
+    "vite": "^7",
+    "zod": "^4",
+    "astro": "^5"
+  },
+  "license": "Apache-2.0"
+}

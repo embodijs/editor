@@ -1,0 +1,87 @@
+---
+import "../../styles/global.css";
+import { Image } from "astro:assets";
+import {
+  sortItemsByDateDesc,
+  createSlugFromTitle,
+  withBase,
+} from "../../utils/helpers";
+import { type CollectionEntry, getCollection, render } from "astro:content";
+import Button from "../../components/Button.astro";
+import MainLayout from "../../layouts/MainLayout.astro";
+import ArrowLeft from "../../icons/ArrowLeft.astro";
+import ArrowRight from "../../icons/ArrowRight.astro";
+import siteConfig from "../../site.config";
+
+export async function getStaticPaths() {
+  const posts = (await getCollection("blogs")).sort(sortItemsByDateDesc);
+  const postCount = posts.length;
+  return posts.map((post, index) => ({
+    params: { id: post.id },
+    props: {
+      post,
+      prevPost: index + 1 !== postCount ? posts[index + 1] : null,
+      nextPost: index !== 0 ? posts[index - 1] : null,
+    },
+  }));
+}
+
+type Props = {
+  post: CollectionEntry<"blogs">;
+  prevPost: CollectionEntry<"blogs">;
+  nextPost: CollectionEntry<"blogs">;
+};
+
+const { post, prevPost, nextPost } = Astro.props;
+const { title, pubDate, author, tags = [], image } = post.data;
+const { Content } = await render(post);
+---
+
+<MainLayout pageTitle={siteConfig.title + " | " + title}>
+  <div class="page-content">
+    <h1 class="sigmar-ff text-center text-balance">{title}</h1>
+    <p class="leading-8 text-center kanit-regular text-balance text-xs">
+      by 🧑‍🚀 <span class="kanit-bold">{author}</span> on <span class="kanit-bold"
+        >{new Date(pubDate).toDateString()}</span
+      >
+    </p>
+    {
+      image && image.url && (
+        <Image class="mb-8 my-6" src={image?.url} alt={image?.alt || ""} />
+      )
+    }
+    <div class="font-light text-left">
+      <Content />
+    </div>
+    <p class="kanit-regular text-center text-balance text-xs">
+      Tagged: {
+        tags.map((tag) => (
+          <Button
+            class="px-4! m-2"
+            href={withBase("/tags/" + createSlugFromTitle(tag))}
+          >
+            {tag}
+          </Button>
+        ))
+      }
+    </p>
+    <div
+      class="flex flex-col sm:flex-row items-center justify-center gap-4 my-8"
+    >
+      <Button class="back-link" href={withBase("/blog")}>
+        <ArrowLeft class="w-5 h-5 fill-current mr-4" /> Back to All Stories
+      </Button>
+      {
+        (prevPost || nextPost) && nextPost && (
+          <Button
+            class="back-link text-balance"
+            href={withBase("/blog/" + nextPost.id)}
+          >
+            Next Post: {nextPost.data.title}{" "}
+            <ArrowRight class="w-5 h-5 fill-current ml-4" />
+          </Button>
+        )
+      }
+    </div>
+  </div>
+</MainLayout>

@@ -1,0 +1,42 @@
+.sigmar-ff {
+  font-family: "Sigmar", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.kanit-light {
+  /* font-family: "Kanit", sans-serif; */
+  font-weight: 300;
+  font-style: normal;
+}
+
+.kanit-light-italic {
+  /* font-family: "Kanit", sans-serif; */
+  font-weight: 300;
+  font-style: italic;
+}
+
+.kanit-regular {
+  /* font-family: "Kanit", sans-serif; */
+  font-weight: 400;
+  font-style: normal;
+}
+
+.kanit-regular-italic {
+  /* font-family: "Kanit", sans-serif; */
+  font-weight: 400;
+  font-style: italic;
+}
+
+.kanit-bold {
+  /* font-family: "Kanit", sans-serif; */
+  font-weight: 700;
+  font-style: normal;
+}
+
+.kanit-bold-italic {
+  /* font-family: "Kanit", sans-serif; */
+  font-weight: 700;
+  font-style: italic;
+}
