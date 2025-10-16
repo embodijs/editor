@@ -7,18 +7,15 @@ import { defineConfig } from 'vite';
 
 export default defineConfig({
 	plugins: [
-		codegen(),
 		tailwindcss(),
 		sveltekit(),
 		paraglideVitePlugin({
 			project: './project.inlang',
 			outdir: './src/lib/paraglide',
 			strategy: ['cookie', 'baseLocale']
-		})
+		}),
+		codegen()
 	],
-	optimizeDeps: {
-		include: ['@exodus/schemasafe'] // Add this to make client-side validation work
-	},
 	test: {
 		workspace: [
 			{

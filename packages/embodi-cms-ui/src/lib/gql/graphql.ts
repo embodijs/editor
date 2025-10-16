@@ -799,6 +799,21 @@ export type AddedToProjectEvent = Node & {
   projectColumnName: Scalars['String']['output'];
 };
 
+/** Represents a 'added_to_project_v2' event on a given issue or pull request. */
+export type AddedToProjectV2Event = Node & ProjectV2Event & {
+  __typename?: 'AddedToProjectV2Event';
+  /** Identifies the actor who performed the event. */
+  actor?: Maybe<Actor>;
+  /** Identifies the date and time when the object was created. */
+  createdAt: Scalars['DateTime']['output'];
+  /** The Node ID of the AddedToProjectV2Event object */
+  id: Scalars['ID']['output'];
+  /** Project referenced by event. */
+  project?: Maybe<ProjectV2>;
+  /** Did this event result from workflow automation? */
+  wasAutomated: Scalars['Boolean']['output'];
+};
+
 /** An announcement banner for an enterprise or organization. */
 export type AnnouncementBanner = {
   __typename?: 'AnnouncementBanner';
@@ -3695,6 +3710,21 @@ export type ConvertToDraftEvent = Node & UniformResourceLocatable & {
   resourcePath: Scalars['URI']['output'];
   /** The HTTP URL for this convert to draft event. */
   url: Scalars['URI']['output'];
+};
+
+/** Represents a 'converted_from_draft' event on a given issue or pull request. */
+export type ConvertedFromDraftEvent = Node & ProjectV2Event & {
+  __typename?: 'ConvertedFromDraftEvent';
+  /** Identifies the actor who performed the event. */
+  actor?: Maybe<Actor>;
+  /** Identifies the date and time when the object was created. */
+  createdAt: Scalars['DateTime']['output'];
+  /** The Node ID of the ConvertedFromDraftEvent object */
+  id: Scalars['ID']['output'];
+  /** Project referenced by event. */
+  project?: Maybe<ProjectV2>;
+  /** Did this event result from workflow automation? */
+  wasAutomated: Scalars['Boolean']['output'];
 };
 
 /** Represents a 'converted_note_to_issue' event on a given issue or pull request. */
@@ -9943,6 +9973,10 @@ export type IssueDependenciesSummary = {
   blockedBy: Scalars['Int']['output'];
   /** Count of issues this issue is blocking */
   blocking: Scalars['Int']['output'];
+  /** Total count of issues this issue is blocked by (open and closed) */
+  totalBlockedBy: Scalars['Int']['output'];
+  /** Total count of issues this issue is blocking (open and closed) */
+  totalBlocking: Scalars['Int']['output'];
 };
 
 /** Ordering options issue dependencies */
@@ -10101,7 +10135,7 @@ export type IssueTimelineItemEdge = {
 };
 
 /** An item in an issue timeline */
-export type IssueTimelineItems = AddedToProjectEvent | AssignedEvent | BlockedByAddedEvent | BlockedByRemovedEvent | BlockingAddedEvent | BlockingRemovedEvent | ClosedEvent | CommentDeletedEvent | ConnectedEvent | ConvertedNoteToIssueEvent | ConvertedToDiscussionEvent | CrossReferencedEvent | DemilestonedEvent | DisconnectedEvent | IssueComment | IssueTypeAddedEvent | IssueTypeChangedEvent | IssueTypeRemovedEvent | LabeledEvent | LockedEvent | MarkedAsDuplicateEvent | MentionedEvent | MilestonedEvent | MovedColumnsInProjectEvent | ParentIssueAddedEvent | ParentIssueRemovedEvent | PinnedEvent | ReferencedEvent | RemovedFromProjectEvent | RenamedTitleEvent | ReopenedEvent | SubIssueAddedEvent | SubIssueRemovedEvent | SubscribedEvent | TransferredEvent | UnassignedEvent | UnlabeledEvent | UnlockedEvent | UnmarkedAsDuplicateEvent | UnpinnedEvent | UnsubscribedEvent | UserBlockedEvent;
+export type IssueTimelineItems = AddedToProjectEvent | AddedToProjectV2Event | AssignedEvent | BlockedByAddedEvent | BlockedByRemovedEvent | BlockingAddedEvent | BlockingRemovedEvent | ClosedEvent | CommentDeletedEvent | ConnectedEvent | ConvertedFromDraftEvent | ConvertedNoteToIssueEvent | ConvertedToDiscussionEvent | CrossReferencedEvent | DemilestonedEvent | DisconnectedEvent | IssueComment | IssueTypeAddedEvent | IssueTypeChangedEvent | IssueTypeRemovedEvent | LabeledEvent | LockedEvent | MarkedAsDuplicateEvent | MentionedEvent | MilestonedEvent | MovedColumnsInProjectEvent | ParentIssueAddedEvent | ParentIssueRemovedEvent | PinnedEvent | ProjectV2ItemStatusChangedEvent | ReferencedEvent | RemovedFromProjectEvent | RemovedFromProjectV2Event | RenamedTitleEvent | ReopenedEvent | SubIssueAddedEvent | SubIssueRemovedEvent | SubscribedEvent | TransferredEvent | UnassignedEvent | UnlabeledEvent | UnlockedEvent | UnmarkedAsDuplicateEvent | UnpinnedEvent | UnsubscribedEvent | UserBlockedEvent;
 
 /** The connection type for IssueTimelineItems. */
 export type IssueTimelineItemsConnection = {
@@ -10135,6 +10169,8 @@ export type IssueTimelineItemsEdge = {
 export enum IssueTimelineItemsItemType {
   /** Represents a 'added_to_project' event on a given issue or pull request. */
   AddedToProjectEvent = 'ADDED_TO_PROJECT_EVENT',
+  /** Represents a 'added_to_project_v2' event on a given issue or pull request. */
+  AddedToProjectV2Event = 'ADDED_TO_PROJECT_V2_EVENT',
   /** Represents an 'assigned' event on any assignable object. */
   AssignedEvent = 'ASSIGNED_EVENT',
   /** Represents a 'blocked_by_added' event on a given issue. */
@@ -10151,6 +10187,8 @@ export enum IssueTimelineItemsItemType {
   CommentDeletedEvent = 'COMMENT_DELETED_EVENT',
   /** Represents a 'connected' event on a given issue or pull request. */
   ConnectedEvent = 'CONNECTED_EVENT',
+  /** Represents a 'converted_from_draft' event on a given issue or pull request. */
+  ConvertedFromDraftEvent = 'CONVERTED_FROM_DRAFT_EVENT',
   /** Represents a 'converted_note_to_issue' event on a given issue or pull request. */
   ConvertedNoteToIssueEvent = 'CONVERTED_NOTE_TO_ISSUE_EVENT',
   /** Represents a 'converted_to_discussion' event on a given issue. */
@@ -10187,10 +10225,14 @@ export enum IssueTimelineItemsItemType {
   ParentIssueRemovedEvent = 'PARENT_ISSUE_REMOVED_EVENT',
   /** Represents a 'pinned' event on a given issue or pull request. */
   PinnedEvent = 'PINNED_EVENT',
+  /** Represents a 'project_v2_item_status_changed' event on a given issue or pull request. */
+  ProjectV2ItemStatusChangedEvent = 'PROJECT_V2_ITEM_STATUS_CHANGED_EVENT',
   /** Represents a 'referenced' event on a given `ReferencedSubject`. */
   ReferencedEvent = 'REFERENCED_EVENT',
   /** Represents a 'removed_from_project' event on a given issue or pull request. */
   RemovedFromProjectEvent = 'REMOVED_FROM_PROJECT_EVENT',
+  /** Represents a 'removed_from_project_v2' event on a given issue or pull request. */
+  RemovedFromProjectV2Event = 'REMOVED_FROM_PROJECT_V2_EVENT',
   /** Represents a 'renamed' event on a given issue or pull request */
   RenamedTitleEvent = 'RENAMED_TITLE_EVENT',
   /** Represents a 'reopened' event on any `Closable`. */
@@ -20030,6 +20072,14 @@ export type ProjectV2Edge = {
   node?: Maybe<ProjectV2>;
 };
 
+/** Represents an event related to a project on the timeline of an issue or pull request. */
+export type ProjectV2Event = {
+  /** Project referenced by event. */
+  project?: Maybe<ProjectV2>;
+  /** Did this event result from workflow automation? */
+  wasAutomated: Scalars['Boolean']['output'];
+};
+
 /** A field inside a project. */
 export type ProjectV2Field = Node & ProjectV2FieldCommon & {
   __typename?: 'ProjectV2Field';
@@ -20547,6 +20597,25 @@ export enum ProjectV2ItemOrderField {
   /** Order project v2 items by the their position in the project */
   Position = 'POSITION'
 }
+
+/** Represents a 'project_v2_item_status_changed' event on a given issue or pull request. */
+export type ProjectV2ItemStatusChangedEvent = Node & ProjectV2Event & {
+  __typename?: 'ProjectV2ItemStatusChangedEvent';
+  /** Identifies the actor who performed the event. */
+  actor?: Maybe<Actor>;
+  /** Identifies the date and time when the object was created. */
+  createdAt: Scalars['DateTime']['output'];
+  /** The Node ID of the ProjectV2ItemStatusChangedEvent object */
+  id: Scalars['ID']['output'];
+  /** The previous status of the project item. */
+  previousStatus: Scalars['String']['output'];
+  /** Project referenced by event. */
+  project?: Maybe<ProjectV2>;
+  /** The new status of the project item. */
+  status: Scalars['String']['output'];
+  /** Did this event result from workflow automation? */
+  wasAutomated: Scalars['Boolean']['output'];
+};
 
 /** The type of a project item. */
 export enum ProjectV2ItemType {
@@ -22508,7 +22577,7 @@ export type PullRequestTimelineItemEdge = {
 };
 
 /** An item in a pull request timeline */
-export type PullRequestTimelineItems = AddedToMergeQueueEvent | AddedToProjectEvent | AssignedEvent | AutoMergeDisabledEvent | AutoMergeEnabledEvent | AutoRebaseEnabledEvent | AutoSquashEnabledEvent | AutomaticBaseChangeFailedEvent | AutomaticBaseChangeSucceededEvent | BaseRefChangedEvent | BaseRefDeletedEvent | BaseRefForcePushedEvent | BlockedByAddedEvent | BlockedByRemovedEvent | BlockingAddedEvent | BlockingRemovedEvent | ClosedEvent | CommentDeletedEvent | ConnectedEvent | ConvertToDraftEvent | ConvertedNoteToIssueEvent | ConvertedToDiscussionEvent | CrossReferencedEvent | DemilestonedEvent | DeployedEvent | DeploymentEnvironmentChangedEvent | DisconnectedEvent | HeadRefDeletedEvent | HeadRefForcePushedEvent | HeadRefRestoredEvent | IssueComment | IssueTypeAddedEvent | IssueTypeChangedEvent | IssueTypeRemovedEvent | LabeledEvent | LockedEvent | MarkedAsDuplicateEvent | MentionedEvent | MergedEvent | MilestonedEvent | MovedColumnsInProjectEvent | ParentIssueAddedEvent | ParentIssueRemovedEvent | PinnedEvent | PullRequestCommit | PullRequestCommitCommentThread | PullRequestReview | PullRequestReviewThread | PullRequestRevisionMarker | ReadyForReviewEvent | ReferencedEvent | RemovedFromMergeQueueEvent | RemovedFromProjectEvent | RenamedTitleEvent | ReopenedEvent | ReviewDismissedEvent | ReviewRequestRemovedEvent | ReviewRequestedEvent | SubIssueAddedEvent | SubIssueRemovedEvent | SubscribedEvent | TransferredEvent | UnassignedEvent | UnlabeledEvent | UnlockedEvent | UnmarkedAsDuplicateEvent | UnpinnedEvent | UnsubscribedEvent | UserBlockedEvent;
+export type PullRequestTimelineItems = AddedToMergeQueueEvent | AddedToProjectEvent | AddedToProjectV2Event | AssignedEvent | AutoMergeDisabledEvent | AutoMergeEnabledEvent | AutoRebaseEnabledEvent | AutoSquashEnabledEvent | AutomaticBaseChangeFailedEvent | AutomaticBaseChangeSucceededEvent | BaseRefChangedEvent | BaseRefDeletedEvent | BaseRefForcePushedEvent | BlockedByAddedEvent | BlockedByRemovedEvent | BlockingAddedEvent | BlockingRemovedEvent | ClosedEvent | CommentDeletedEvent | ConnectedEvent | ConvertToDraftEvent | ConvertedFromDraftEvent | ConvertedNoteToIssueEvent | ConvertedToDiscussionEvent | CrossReferencedEvent | DemilestonedEvent | DeployedEvent | DeploymentEnvironmentChangedEvent | DisconnectedEvent | HeadRefDeletedEvent | HeadRefForcePushedEvent | HeadRefRestoredEvent | IssueComment | IssueTypeAddedEvent | IssueTypeChangedEvent | IssueTypeRemovedEvent | LabeledEvent | LockedEvent | MarkedAsDuplicateEvent | MentionedEvent | MergedEvent | MilestonedEvent | MovedColumnsInProjectEvent | ParentIssueAddedEvent | ParentIssueRemovedEvent | PinnedEvent | ProjectV2ItemStatusChangedEvent | PullRequestCommit | PullRequestCommitCommentThread | PullRequestReview | PullRequestReviewThread | PullRequestRevisionMarker | ReadyForReviewEvent | ReferencedEvent | RemovedFromMergeQueueEvent | RemovedFromProjectEvent | RemovedFromProjectV2Event | RenamedTitleEvent | ReopenedEvent | ReviewDismissedEvent | ReviewRequestRemovedEvent | ReviewRequestedEvent | SubIssueAddedEvent | SubIssueRemovedEvent | SubscribedEvent | TransferredEvent | UnassignedEvent | UnlabeledEvent | UnlockedEvent | UnmarkedAsDuplicateEvent | UnpinnedEvent | UnsubscribedEvent | UserBlockedEvent;
 
 /** The connection type for PullRequestTimelineItems. */
 export type PullRequestTimelineItemsConnection = {
@@ -22544,6 +22613,8 @@ export enum PullRequestTimelineItemsItemType {
   AddedToMergeQueueEvent = 'ADDED_TO_MERGE_QUEUE_EVENT',
   /** Represents a 'added_to_project' event on a given issue or pull request. */
   AddedToProjectEvent = 'ADDED_TO_PROJECT_EVENT',
+  /** Represents a 'added_to_project_v2' event on a given issue or pull request. */
+  AddedToProjectV2Event = 'ADDED_TO_PROJECT_V2_EVENT',
   /** Represents an 'assigned' event on any assignable object. */
   AssignedEvent = 'ASSIGNED_EVENT',
   /** Represents a 'automatic_base_change_failed' event on a given pull request. */
@@ -22578,6 +22649,8 @@ export enum PullRequestTimelineItemsItemType {
   CommentDeletedEvent = 'COMMENT_DELETED_EVENT',
   /** Represents a 'connected' event on a given issue or pull request. */
   ConnectedEvent = 'CONNECTED_EVENT',
+  /** Represents a 'converted_from_draft' event on a given issue or pull request. */
+  ConvertedFromDraftEvent = 'CONVERTED_FROM_DRAFT_EVENT',
   /** Represents a 'converted_note_to_issue' event on a given issue or pull request. */
   ConvertedNoteToIssueEvent = 'CONVERTED_NOTE_TO_ISSUE_EVENT',
   /** Represents a 'converted_to_discussion' event on a given issue. */
@@ -22628,6 +22701,8 @@ export enum PullRequestTimelineItemsItemType {
   ParentIssueRemovedEvent = 'PARENT_ISSUE_REMOVED_EVENT',
   /** Represents a 'pinned' event on a given issue or pull request. */
   PinnedEvent = 'PINNED_EVENT',
+  /** Represents a 'project_v2_item_status_changed' event on a given issue or pull request. */
+  ProjectV2ItemStatusChangedEvent = 'PROJECT_V2_ITEM_STATUS_CHANGED_EVENT',
   /** Represents a Git commit part of a pull request. */
   PullRequestCommit = 'PULL_REQUEST_COMMIT',
   /** Represents a commit comment thread part of a pull request. */
@@ -22646,6 +22721,8 @@ export enum PullRequestTimelineItemsItemType {
   RemovedFromMergeQueueEvent = 'REMOVED_FROM_MERGE_QUEUE_EVENT',
   /** Represents a 'removed_from_project' event on a given issue or pull request. */
   RemovedFromProjectEvent = 'REMOVED_FROM_PROJECT_EVENT',
+  /** Represents a 'removed_from_project_v2' event on a given issue or pull request. */
+  RemovedFromProjectV2Event = 'REMOVED_FROM_PROJECT_V2_EVENT',
   /** Represents a 'renamed' event on a given issue or pull request */
   RenamedTitleEvent = 'RENAMED_TITLE_EVENT',
   /** Represents a 'reopened' event on any `Closable`. */
@@ -23950,6 +24027,21 @@ export type RemovedFromProjectEvent = Node & {
    * @deprecated Projects (classic) is being deprecated in favor of the new Projects experience, see: https://github.blog/changelog/2024-05-23-sunset-notice-projects-classic/. Removal on 2025-04-01 UTC.
    */
   projectColumnName: Scalars['String']['output'];
+};
+
+/** Represents a 'removed_from_project_v2' event on a given issue or pull request. */
+export type RemovedFromProjectV2Event = Node & ProjectV2Event & {
+  __typename?: 'RemovedFromProjectV2Event';
+  /** Identifies the actor who performed the event. */
+  actor?: Maybe<Actor>;
+  /** Identifies the date and time when the object was created. */
+  createdAt: Scalars['DateTime']['output'];
+  /** The Node ID of the RemovedFromProjectV2Event object */
+  id: Scalars['ID']['output'];
+  /** Project referenced by event. */
+  project?: Maybe<ProjectV2>;
+  /** Did this event result from workflow automation? */
+  wasAutomated: Scalars['Boolean']['output'];
 };
 
 /** Represents a 'renamed' event on a given issue or pull request */
@@ -28770,10 +28862,7 @@ export enum SearchType {
   Discussion = 'DISCUSSION',
   /** Returns results matching issues in repositories. */
   Issue = 'ISSUE',
-  /**
-   * Returns results matching issues in repositories.
-   * @deprecated Search for issues and pull requests will be overridden by advanced search on November 4, 2025. You can read more about this change on https://github.blog/changelog/2025-03-06-github-issues-projects-api-support-for-issues-advanced-search-and-more/. Removal on 2025-11-04 UTC.
-   */
+  /** Returns results matching issues in repositories. */
   IssueAdvanced = 'ISSUE_ADVANCED',
   /** Returns results matching repositories. */
   Repository = 'REPOSITORY',
