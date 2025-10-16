@@ -1,5 +1,4 @@
 import * as v from 'valibot';
-import { Collection } from './collection';
 
 export const GitRepoMeta = v.object({
 	name: v.string(),
@@ -25,11 +24,6 @@ export const GitRepo = v.object({
 	owner: v.string(),
 	name: v.string(),
 	branch: v.optional(v.string())
-});
-
-export const GitRepoConfig = v.object({
-	collections: v.array(Collection),
-	updatedAt: v.optional(v.number())
 });
 
 export const NewGitBlob = v.object({
@@ -118,7 +112,6 @@ export type GitRepo = v.InferOutput<typeof GitRepo>;
 export type NewGitBlob = v.InferOutput<typeof NewGitBlob>;
 export type GitBlob = v.InferOutput<typeof GitBlob>;
 export type GitBlobRef = v.InferOutput<typeof GitBlobRef>;
-export type GitRepoConfig = v.InferOutput<typeof GitRepoConfig>;
 export type GitTree = v.InferOutput<typeof GitTree>;
 export type NewGitCommit = v.InferOutput<typeof NewGitCommit>;
 export type GitCommitRef = v.InferOutput<typeof GitCommitRef>;

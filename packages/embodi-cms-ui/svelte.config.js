@@ -9,6 +9,7 @@ const config = {
 
 	kit: {
 		adapter: adapter(),
+		outDir: 'dist/app',
 		alias: {
 			$core: 'src/core',
 			$layer: 'src/server/app',

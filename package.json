@@ -1,12 +1,14 @@
 {
   "name": "embodi-cms",
   "verions": "0.1.0",
-  "workspaces": ["packages/*", "!packages/test/**"],
-  "dependencies": {
+  "workspaces": [
+    "packages/*",
+    "!packages/test-*/**"
+  ],
+  "dependencies": {},
+  "devDependencies": {
+    "publint": "^0.3.14",
     "prettier": "^3.6.2",
     "vitest": "^3.2.4"
-  },
-  "devDependencies": {
-    "publint": "^0.3.14"
   }
 }

@@ -3,6 +3,8 @@ import * as table from '$lib/db/schema';
 import { createSelectSchema } from 'drizzle-valibot';
 import { Provider } from '$lib/db/schema';
 
+export * from './project.export.js';
+
 export const ProjectDatabase = createSelectSchema(table.project);
 export const Project = v.object({
 	...v.omit(ProjectDatabase, ['userId']).entries,

@@ -6,6 +6,8 @@ import {
   parseObject,
   parseNumber,
   parseArray,
+  imageTypeMock,
+  parseImage,
 } from "./zod.js";
 import { z } from "zod";
 import * as v from "valibot";
@@ -111,6 +113,15 @@ describe("parseZodSchema", () => {
         maxLength: 100,
         optional: false,
       },
+    });
+  });
+
+  test("image mock fits parser", () => {
+    const schema = imageTypeMock;
+    const result = parseImage(schema, "image");
+    expect(result).toEqual({
+      fieldName: "image",
+      type: "image",
     });
   });
 

@@ -1,6 +1,5 @@
 import type { Provider } from '$/lib/db/schema';
-import type { NewProject, Project } from '$core/model/project';
-import { GitRepoConfig } from '$core/model/repo';
+import { ProjectConfig, type NewProject, type Project } from '$core/model/project';
 import type { GetGitFileContent } from '$core/types/external';
 import * as v from 'valibot';
 
@@ -21,14 +20,14 @@ export const generateProject = (data: NewProject, provider: Provider): Project =
 	};
 };
 
-export const getProjectConfigFile = async (load: GetGitFileContent): Promise<GitRepoConfig> => {
+export const getProjectConfigFile = async (load: GetGitFileContent): Promise<ProjectConfig> => {
 	const jsonString = await load('.embodi/cms/config.json');
 	if (!jsonString) {
 		throw new Error('Config file not found');
 	}
 	try {
 		const config = JSON.parse(jsonString);
-		return v.parse(GitRepoConfig, config);
+		return v.parse(ProjectConfig, config);
 	} catch (error) {
 		console.error(error);
 		throw new Error('Invalid JSON');

@@ -1,13 +1,13 @@
 {
 	"name": "@embodi/cms",
-	"private": true,
-	"version": "0.1.0",
+	"private": false,
+	"version": "0.1.3",
 	"type": "module",
 	"scripts": {
 		"dev": "vite dev",
 		"build": "vite build",
 		"build:lib": "tsup",
-		"prepublishOnly": "npm run build && publint",
+		"prepublishOnly": "bun run build:lib && bun x publint",
 		"preview": "vite preview",
 		"prepare": "svelte-kit sync || echo ''",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
@@ -21,15 +21,19 @@
 		"db:migrate": "drizzle-kit migrate",
 		"db:studio": "drizzle-kit studio"
 	},
+	"files": [
+		"dist/lib"
+	],
+	"license": "Apache-2.0",
 	"exports": {
 		".": {
 			"import": {
-				"types": "./distLib/index.d.ts",
-				"default": "./distLib/index.js"
+				"types": "./dist/lib/index.d.ts",
+				"default": "./dist/lib/index.js"
 			},
 			"require": {
-				"types": "./distLib/index.d.ts",
-				"default": "./distLib/index.cjs"
+				"types": "./dist/lib/index.d.ts",
+				"default": "./dist/lib/index.cjs"
 			}
 		}
 	},

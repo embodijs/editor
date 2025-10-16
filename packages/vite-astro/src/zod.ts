@@ -21,6 +21,8 @@ const prepareTransformers = (
   return null;
 };
 
+export const imageTypeMock = z.string().meta({ type: "image" });
+
 const runTypeTransformer = (schema: z.core.$ZodType, fieldName: string) =>
   prepareTransformers(
     [
@@ -38,10 +40,12 @@ const runTypeTransformer = (schema: z.core.$ZodType, fieldName: string) =>
     fieldName,
   );
 
-export const parseZodSchema = (schema: z.ZodObject) => {
+export const parseZodSchema = (
+  schema: z.ZodObject,
+): collection.MetaInputField[] => {
   const def = getTypeDef(schema);
   if (def.type !== "object") {
-    return null;
+    throw new Error(`Expected object type, got ${def.type}`);
   }
   const { shape } = def;
   return Object.entries(shape)
@@ -68,6 +72,17 @@ const handleChecks = (def: z.core.$ZodTypeDef) => {
     })
     .filter((value) => value != null);
   return checks ? Object.fromEntries(checks) : {};
+};
+
+export const extractSchema = (
+  schema: z.ZodObject | ((...args: unknown[]) => z.ZodObject),
+) => {
+  if (typeof schema === "function") {
+    return schema({
+      image: () => imageTypeMock,
+    });
+  }
+  return schema;
 };
 
 export const parseString: TypeTransformer<collection.StringField> = (
@@ -115,7 +130,7 @@ const parseBoolean: TypeTransformer<collection.BooleanField> = (
   };
 };
 
-const parseImage: TypeTransformer<collection.ImageField> = (
+export const parseImage: TypeTransformer<collection.ImageField> = (
   schema,
   fieldName,
 ) => {

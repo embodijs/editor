@@ -3,11 +3,15 @@
   "module": "dist/plugin.js",
   "types": "dist/plugin.d.ts",
   "type": "module",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "scripts": {
     "test": "vitest",
-    "build": "bun build ./src/index.ts --outdir ./dist"
+    "build": "tsup",
+    "prepublishOnly": "bun run build"
   },
+  "files": [
+    "dist"
+  ],
   "exports": {
     ".": {
       "import": {
@@ -21,16 +25,17 @@
     }
   },
   "dependencies": {
-    "@embodi/cms": "workspace:"
+    "@embodi/cms": "workspace:*"
   },
   "devDependencies": {
     "@types/bun": "latest",
     "valibot": "^1.1.0"
   },
   "peerDependencies": {
-    "typescript": "^5.9.3",
-    "vite": "^5.4.20",
-    "zod": "^4.1.12",
-    "astro": "^5.14.4"
-  }
+    "typescript": "^5",
+    "vite": "^7",
+    "zod": "^4",
+    "astro": "^5"
+  },
+  "license": "Apache-2.0"
 }

@@ -1,6 +1,13 @@
 import { build, type Plugin, type Rollup } from "vite";
+import type * as loaders from "astro/loaders";
 import vm from "node:vm";
 import * as z from "zod";
+import * as cms from "@embodi/cms";
+import { extractSchema, parseZodSchema } from "./zod";
+import { extractFormats, parseLoader } from "./loaders";
+import { camelToReadable } from "./helper";
+import fs from "node:fs";
+import { resolve, dirname } from "node:path";
 
 export const mockImports = (): Plugin => ({
   name: "vite-embodi-mock-imports",
@@ -8,7 +15,6 @@ export const mockImports = (): Plugin => ({
     if (!importer) return;
     const split = importer.split("/");
     const name = split[split.length - 1];
-
 
     if (name?.includes("content.config.")) {
       console.log("Loading mock import:", id, importer);
@@ -43,8 +49,6 @@ export const virtualEntry = (): Plugin => ({
 });
 
 export default (): Plugin[] => {
-  const imageHelper = z.string().meta({ id: "image_field" });
-
   return [
     {
       name: "vite-embodi-astro-ast-analyses",
@@ -71,8 +75,8 @@ export default (): Plugin[] => {
           require: (id: string) => {
             if (id === "astro/loaders") {
               return {
-                glob: (i) => i,
-                file: (i) => i,
+                glob: (i: Parameters<typeof loaders.glob>[0]) => i,
+                file: (i: Parameters<typeof loaders.file>[0]) => i,
               };
             } else if (id === "zod") {
               return z;
@@ -82,31 +86,47 @@ export default (): Plugin[] => {
           module: { exports: {} },
           console: console,
         };
+        type AstroCollection = {
+          loader:
+            | Parameters<typeof loaders.glob>[0]
+            | Parameters<typeof loaders.file>[0];
+          schema: z.ZodObject<any> | ((...args: any[]) => z.ZodObject<any>);
+        };
+        const result: Record<string, AstroCollection> =
+          await vm.runInNewContext(code, sandbox);
+        const collections: cms.GitCollection[] = Object.entries(result)
+          .map(([key, value]) => {
+            const schema = extractSchema(value.schema);
 
-        const result = await vm.runInNewContext(code, sandbox);
-        const collections = Object.fromEntries(
-          Object.entries(result).map(([key, value]) => {
-            const { schema } = value;
-            if (typeof schema === "function") {
-              const result = schema({
-                image: () => imageHelper,
-              });
-              return [
-                key,
-                {
-                  ...value,
-                  schema: result,
-                },
-              ];
+            const loader = parseLoader(value.loader);
+            if (!loader) {
+              return null;
             }
-            return [key, value];
-          }),
+            const formats =
+              "pattern" in loader ? extractFormats(loader.pattern) : undefined;
+
+            return {
+              name: key,
+              displayName: camelToReadable(key),
+              loader: loader,
+              formats,
+              fields: parseZodSchema(schema),
+            };
+          })
+          .filter((entry) => entry != null);
+
+        const config: cms.GitProjectConfig = {
+          collections,
+          updatedAt: new Date().getTime(),
+        };
+
+        const path = resolve(".embodi/cms/config.json");
+        fs.mkdirSync(dirname(path), { recursive: true });
+        fs.writeFileSync(
+          resolve(".embodi/cms/config.json"),
+          JSON.stringify(config),
         );
-        console.log(
-          collections.blogs.schema._def.shape.image._def.innerType._def.shape.url.meta(),
-        );
-        console.log(JSON.stringify(collections.blogs.schema, null, 2));
-        // console.log(JSON.stringify(collections, null, 2));
+
         console.info("Finished cms config generation");
       },
     },
