@@ -5,7 +5,7 @@
 	import * as Sheet from '$lib/comp/ui/sheet/index.js';
 	import { superForm } from 'sveltekit-superforms';
 	import type { PageProps } from './$types';
-	import { MetaForm } from '$/lib/comp/collection';
+	import { MetaForm, ObjectField } from '$/lib/comp/collection';
 	import { Button } from '$/lib/comp/ui/form';
 	import { initFileContext } from '$/lib/context/filemanager';
 	import type { FileUpload } from '$core/model/article';
@@ -52,12 +52,14 @@
 		<MarkdownEditor {form} />
 		<form use:enhance method="POST">
 			<Sheet.Content>
-				<Sheet.Header>
-					<Sheet.Title>Meta Data</Sheet.Title>
-				</Sheet.Header>
 				<div class="mx-3 space-y-5">
-					<MetaForm fields={data.formFields} {form} objectPath={['meta']} excludeFirstFromName
-					></MetaForm>
+					<ObjectField
+						fields={data.formFields}
+						{form}
+						objectPath={['meta']}
+						label="Meta data"
+						description="Additional information about the article"
+					/>
 				</div>
 			</Sheet.Content>
 		</form>

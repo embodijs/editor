@@ -7,15 +7,19 @@
 	type Props = {
 		fields: MetaInputField[];
 		label?: string;
+		description?: string;
 		form: SuperForm<T>;
 		objectPath: (string | number)[];
 	};
 
-	const { fields, form, objectPath = false, label }: Props = $props();
+	const { fields, form, objectPath, label, description }: Props = $props();
 </script>
 
 <Field.Set>
 	<Field.Legend>{label}</Field.Legend>
+	{#if description}
+		<Field.Description>{description}</Field.Description>
+	{/if}
 	{#each fields as field (field.fieldName)}
 		<FieldMatcher {field} {form} objectPath={[...objectPath, field.fieldName]} />
 	{/each}

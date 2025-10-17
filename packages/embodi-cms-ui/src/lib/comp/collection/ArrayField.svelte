@@ -1,15 +1,17 @@
 <script lang="ts" generics="T extends { meta: Record<string, unknown>}">
 	import type { ArrayField } from '$core/model/collection';
-	import type { FormPath, SuperForm } from 'sveltekit-superforms';
+	import type { SuperForm } from 'sveltekit-superforms';
 	import FieldMatcher from './FieldMatcher.svelte';
 	import * as Field from '$lib/comp/ui/field/index.js';
 	import { getLabel, getPathValue, setPathValue } from './helpers.svelte.js';
 	import { generateRandomHash } from '$/lib/helpers/crypto';
+	import { Button } from '../core';
+	import { Plus } from '@lucide/svelte';
 
 	type Props = {
 		field: ArrayField;
 		form: SuperForm<T>;
-		objectPath: string[];
+		objectPath: (string | number)[];
 	};
 
 	const { field, form, objectPath }: Props = $props();
@@ -25,7 +27,25 @@
 </script>
 
 <Field.Set>
-	<Field.Legend>{getLabel(field)}</Field.Legend>
+	<Field.Legend class="w-full">
+		<div class="flex items-center justify-between">
+			{getLabel(field)}
+			<Button
+				variant="ghost"
+				onclick={() => {
+					fieldState.push({
+						content: {},
+						id: generateRandomHash()
+					});
+					setPathValue(
+						$formData,
+						objectPath,
+						fieldState.map((item) => item.content)
+					);
+				}}><Plus />Add</Button
+			>
+		</div>
+	</Field.Legend>
 	{#each fieldState as item, index (item.id)}
 		<FieldMatcher field={field.items} {form} objectPath={[...objectPath, index]} noLabel />
 	{/each}

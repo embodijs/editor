@@ -6,7 +6,6 @@
 	import * as Form from '$lib/comp/ui/form/index.js';
 	import { DatePicker } from '../core';
 	import { getLocale } from '$lib/paraglide/runtime.js';
-	import { Checkbox } from '$lib/comp/ui/checkbox/index.js';
 	import {
 		isArrayField,
 		isBooleanField,
