@@ -1,8 +1,8 @@
-import type { GitRepoMeta } from '$core/model/repo';
+import type { GitRepoMeta, GitRepoMetaMinimal } from '$core/model/repo';
 import { PLATFORMS, type InternalGitUser } from '$core/model/user';
 import { getReposFromGithub, getRepoMetaFromGitbub } from './github/repo';
 
-export const getRepos = (user: InternalGitUser) => {
+export const getRepos = (user: InternalGitUser): Promise<GitRepoMetaMinimal[]> => {
 	switch (user.platform) {
 		case PLATFORMS.GITHUB:
 			return getReposFromGithub(user);

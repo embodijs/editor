@@ -10,23 +10,22 @@ import { markExistingRepos } from '$core/logic/repo';
 
 export const load: PageServerLoad = async ({ locals }) => {
 	isAuthorized(locals);
+
 	const user = getInternalGitUser(locals.user, locals.session);
 
-	const [repos, formAdd, projects] = await Promise.all([
-		getRepos(user),
-		superValidate(valibot(NewProject)),
-		getProjects(user.id)
-	]);
+	const reposPromise = getRepos(user);
+	const projectPromise = getProjects(user.id);
+	const formAddPromise = superValidate(valibot(NewProject));
 
-	const reposByOwner = await Promise.all([
+	const reposByOwner = [
 		{
 			owner: {
 				id: user.id,
 				name: user.username
 			},
-			repos: markExistingRepos(repos, projects)
+			repos: markExistingRepos(reposPromise, projectPromise)
 		}
-	]);
+	];
 
-	return { reposByOwner, formAdd };
+	return { reposByOwner, formAdd: await formAddPromise };
 };
