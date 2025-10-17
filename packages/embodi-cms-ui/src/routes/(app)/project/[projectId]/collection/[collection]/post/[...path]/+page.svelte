@@ -5,7 +5,7 @@
 	import * as Sheet from '$lib/comp/ui/sheet/index.js';
 	import { superForm } from 'sveltekit-superforms';
 	import type { PageProps } from './$types';
-	import { MetaForm, ObjectField } from '$/lib/comp/collection';
+	import { ObjectField } from '$/lib/comp/collection';
 	import { Button } from '$/lib/comp/ui/form';
 	import { initFileContext } from '$/lib/context/filemanager';
 	import type { FileUpload } from '$core/model/article';
@@ -14,16 +14,29 @@
 	import { generateArticleFormSchema } from '$core/logic/article';
 	import type { GitRepo } from '$core/model/repo';
 	import { page } from '$app/state';
+	import { LoaderCircle } from '@lucide/svelte';
+	import { toast } from 'svelte-sonner';
 
 	const { data }: PageProps = $props();
 
 	const schema = generateArticleFormSchema(data.formFields);
 	const form = superForm(data.metaForm, {
 		dataType: 'json',
-		validators: valibotClient(schema)
+		validators: valibotClient(schema),
+		onError: ({ result }) => {
+			toast.error(`Something went wrong: <br /> ${result.error.message}`);
+		},
+		onUpdate: ({ form }) => {
+			if (!form.valid) {
+				toast.error('Meta data is invalid.');
+			} else {
+				toast.success('Saved successfully.');
+			}
+		}
 	});
+
 	const fileStore = writable<FileUpload[]>([]);
-	const { form: formData, enhance } = form;
+	const { form: formData, enhance, submitting } = form;
 	$effect(() => {
 		$formData.files = $fileStore;
 	});
@@ -42,7 +55,9 @@
 <Sheet.Root>
 	<SiteHeader title="Article">
 		{#snippet actions()}
-			<Button onclick={() => form.submit()}>Save</Button>
+			<Button disabled={$submitting} onclick={() => form.submit()}>
+				Save{#if $submitting}<LoaderCircle class="animate-spin" />{/if}
+			</Button>
 		{/snippet}
 	</SiteHeader>
 	<main class="relative">
