@@ -56,7 +56,8 @@
 					<Sheet.Title>Meta Data</Sheet.Title>
 				</Sheet.Header>
 				<div class="mx-3 space-y-5">
-					<MetaForm fields={data.formFields} {form}></MetaForm>
+					<MetaForm fields={data.formFields} {form} objectPath={['meta']} excludeFirstFromName
+					></MetaForm>
 				</div>
 			</Sheet.Content>
 		</form>

@@ -62,7 +62,7 @@ export const actions: Actions = {
 		const filePath = join(path, fileName);
 		await saveArticle(
 			{
-				meta: unflatMeta(meta),
+				meta,
 				markdown,
 				files
 			},

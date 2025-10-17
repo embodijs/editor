@@ -42,7 +42,7 @@ export const load: PageServerLoad = async ({ params, parent, locals }) => {
 		)
 	);
 	const metaForm = await superValidate(
-		{ meta: flatMeta(meta), markdown: content, files: [] },
+		{ meta, markdown: content, files: [] },
 		valibot(generateArticleFormSchema(fields))
 	);
 	return {
