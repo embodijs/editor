@@ -13,8 +13,6 @@
 
 	const { fields, form, objectPath, excludeFirstFromName = false }: Props = $props();
 	const { form: formData, errors } = form;
-	formData.subscribe(console.log);
-	errors.subscribe(console.log);
 </script>
 
 {#each fields as field (field.fieldName)}

@@ -8,22 +8,16 @@
 		fields: MetaInputField[];
 		label?: string;
 		form: SuperForm<T>;
-		objectPath: string[];
-		excludeFirstFromName?: boolean;
+		objectPath: (string | number)[];
 	};
 
-	const { fields, form, objectPath, excludeFirstFromName = false, label }: Props = $props();
+	const { fields, form, objectPath = false, label }: Props = $props();
 </script>
 
 <Field.Set>
 	<Field.Legend>{label}</Field.Legend>
 	{#each fields as field (field.fieldName)}
-		<FieldMatcher
-			{field}
-			{form}
-			objectPath={[...objectPath, field.fieldName]}
-			{excludeFirstFromName}
-		/>
+		<FieldMatcher {field} {form} objectPath={[...objectPath, field.fieldName]} />
 	{/each}
 </Field.Set>
 <Field.Separator />

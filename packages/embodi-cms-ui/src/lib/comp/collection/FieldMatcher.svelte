@@ -16,6 +16,7 @@
 	} from '$core/logic/collection';
 	import { getLabel, getPathValue, setPathValue } from './helpers.svelte.js';
 	import ArrayField from './ArrayField.svelte';
+	import { Switch } from '../ui/switch';
 
 	type Props = {
 		field: MetaInputField;
@@ -39,10 +40,12 @@
 	<Form.Control>
 		{#snippet children({ props })}
 			{#if isBooleanField(field)}
-				<Checkbox checked={!!fieldState} {...props} onCheckedChange={(v) => (fieldState = v)} />
-				{#if !noLabel}
-					<Form.Label>{getLabel(field)}</Form.Label>
-				{/if}
+				<div class="flex items-center justify-between">
+					{#if !noLabel}
+						<Form.Label>{getLabel(field)}</Form.Label>
+					{/if}
+					<Switch bind:checked={fieldState as boolean} {...props} />
+				</div>
 			{:else if isObjectField(field)}
 				<ObjectField label={getLabel(field)} {form} fields={field.fields} {objectPath} />
 			{:else if isArrayField(field)}
