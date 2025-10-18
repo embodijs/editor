@@ -29,7 +29,7 @@
 							{#if repo.projectId}
 								<Button variant="secondary" href="/project/{repo.projectId}">Open</Button>
 							{:else}
-								<Button href={`/import/${repo.owner}/${repo.name}`}>Import</Button>
+								<Button href={`/import/${repo.owner}/${repo.name}/validate`}>Import</Button>
 							{/if}
 						{/snippet}
 					</ProjectCard>

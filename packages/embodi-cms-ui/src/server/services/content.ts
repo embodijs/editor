@@ -16,7 +16,7 @@ export const getJsonContent = async (
 	path: string,
 	branch: GitRepo,
 	user: InternalGitUser
-): Promise<string> => {
+): Promise<string | Buffer | null> => {
 	switch (user.platform) {
 		case PLATFORMS.GITHUB:
 			return await github.getJsonContent(path, branch, user);
@@ -31,7 +31,7 @@ export const getFileContent = async (
 	path: string,
 	branch: GitRepo,
 	user: InternalGitUser
-): Promise<string> => {
+): Promise<string | Buffer | null> => {
 	switch (user.platform) {
 		case PLATFORMS.GITHUB:
 			return await github.getFileContent(path, branch, user);

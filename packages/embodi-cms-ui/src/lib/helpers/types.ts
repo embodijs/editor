@@ -7,3 +7,5 @@ export type PickNonNullable<T, K extends keyof T> = Omit<T, K> & {
 export type ExtractGuardType<T> = T extends (node: unknown, ...args: unknown[]) => node is infer R
 	? R
 	: never;
+
+export type MaybePromise<T> = T | Promise<T>;

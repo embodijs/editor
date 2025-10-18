@@ -1,4 +1,6 @@
 import type { Provider } from '$/lib/db/schema';
+import { JSONParseException } from '$core/error/data';
+import { GitFileNotFoundException } from '$core/error/repo';
 import { ProjectConfig, type NewProject, type Project } from '$core/model/project';
 import type { GetGitFileContent } from '$core/types/external';
 import * as v from 'valibot';
@@ -20,16 +22,30 @@ export const generateProject = (data: NewProject, provider: Provider): Project =
 	};
 };
 
-export const getProjectConfigFile = async (load: GetGitFileContent): Promise<ProjectConfig> => {
-	const jsonString = await load('.embodi/cms/config.json');
+export const hasValidProjectConfig = async (load: GetGitFileContent): Promise<boolean> => {
+	const configPath = '.embodi/cms/config.json';
+	const jsonString = await load(configPath);
+
+	if (jsonString) {
+		const config = JSON.parse(jsonString);
+		const result = v.safeParse(ProjectConfig, config);
+		return result.success;
+	}
+
+	return false;
+};
+
+export const getProjectConfig = async (load: GetGitFileContent): Promise<ProjectConfig> => {
+	const configPath = '.embodi/cms/config.json';
+	const jsonString = await load(configPath);
 	if (!jsonString) {
-		throw new Error('Config file not found');
+		throw new GitFileNotFoundException();
 	}
 	try {
 		const config = JSON.parse(jsonString);
 		return v.parse(ProjectConfig, config);
 	} catch (error) {
 		console.error(error);
-		throw new Error('Invalid JSON');
+		throw new JSONParseException(configPath);
 	}
 };

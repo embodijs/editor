@@ -10,6 +10,7 @@ import {
 	type NewGitTree
 } from '$core/model/repo';
 import type { InternalGitUser } from '$core/model/user';
+import { RequestError } from 'octokit';
 import { generateRestBase, getClient } from './github';
 import * as v from 'valibot';
 
@@ -17,50 +18,68 @@ export const getJsonContent = async (
 	path: string,
 	branch: GitRepo,
 	user: InternalGitUser
-): Promise<string> => {
-	const client = getClient();
-	const response = await client.request('GET /repos/{owner}/{repo}/contents/{path}', {
-		owner: branch.owner,
-		repo: branch.name,
-		path,
-		ref: branch.branch,
-		...generateRestBase(user, { Accept: 'application/vnd.github.raw+json' })
-	});
+): Promise<string | null> => {
+	try {
+		const client = getClient();
+		const response = await client.request('GET /repos/{owner}/{repo}/contents/{path}', {
+			owner: branch.owner,
+			repo: branch.name,
+			path,
+			ref: branch.branch,
+			...generateRestBase(user, { Accept: 'application/vnd.github.raw+json' })
+		});
 
-	const { status, data } = response;
-	if (status === 200 && typeof data === 'string') {
-		return data as string;
+		const { status, data } = response;
+		if (status === 200 && typeof data === 'string') {
+			return data as string;
+		}
+
+		return null;
+	} catch (error) {
+		if (error instanceof RequestError) {
+			if (error.status === 404) {
+				return null;
+			}
+		}
+		throw error;
 	}
-
-	throw new Error('File not found on Github');
 };
 
 export const getFileContent = async (
 	path: string,
 	branch: GitRepo,
 	user: InternalGitUser
-): Promise<Buffer> => {
-	const client = getClient();
-	const response = await client.request('GET /repos/{owner}/{repo}/contents/{path}', {
-		owner: branch.owner,
-		repo: branch.name,
-		path,
-		ref: branch.branch,
-		...generateRestBase(user)
-	});
+): Promise<Buffer | null> => {
+	try {
+		const client = getClient();
+		const response = await client.request('GET /repos/{owner}/{repo}/contents/{path}', {
+			owner: branch.owner,
+			repo: branch.name,
+			path,
+			ref: branch.branch,
+			...generateRestBase(user)
+		});
 
-	const { status, data } = response;
-	if (status === 200 && !Array.isArray(data) && data.type === 'file') {
-		if (data.download_url) {
-			const response = await fetch(data.download_url);
-			const buffer = await response.arrayBuffer();
-			return Buffer.from(buffer);
-		} else {
-			return Buffer.from(data.content, 'base64');
+		const { status, data } = response;
+		if (status === 200 && !Array.isArray(data) && data.type === 'file') {
+			if (data.download_url) {
+				const response = await fetch(data.download_url);
+				const buffer = await response.arrayBuffer();
+				return Buffer.from(buffer);
+			} else {
+				return Buffer.from(data.content, 'base64');
+			}
 		}
-	}
 
-	throw new Error('File not found on Github');
+		return null;
+	} catch (error) {
+		if (error instanceof RequestError) {
+			if (error.status === 404) {
+				return null;
+			}
+		}
+		throw error;
+	}
 };
 
 export const getDirContent = async (
