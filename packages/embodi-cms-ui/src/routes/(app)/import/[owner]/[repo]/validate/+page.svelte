@@ -11,7 +11,7 @@
 	const { hasValidConfig }: PageProps = $props();
 
 	const redirectIfExists = () => {
-		const next = new URL('config', page.url);
+		const next = new URL(`/import/${page.params.owner}/${page.params.repo}/config`, page.url);
 		goto(next);
 	};
 	let isLoading = $state(false);
@@ -61,6 +61,7 @@
 				<Button disabled={isLoading} size="sm" onclick={validateRepo}
 					><RefreshCcw class={isLoading ? 'animate-spin' : ''} />Revalidate</Button
 				>
+				<Button variant="outline" size="sm" href="/import">Cancel</Button>
 			</Empty.Content>
 		</Empty.Root>
 	{/if}
