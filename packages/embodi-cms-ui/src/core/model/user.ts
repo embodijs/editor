@@ -2,6 +2,7 @@ import * as table from '$lib/db/schema';
 import { createSelectSchema } from 'drizzle-valibot';
 import * as v from 'valibot';
 
+// User to use also in the Frontend, be careful to export data
 export const User = v.pick(createSelectSchema(table.user), ['id', 'email', 'name', 'avatar']);
 
 export enum PLATFORMS {

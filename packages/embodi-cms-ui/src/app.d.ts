@@ -6,6 +6,10 @@ declare global {
 			user: import('$services/session').SessionValidationResult['user'];
 			session: import('$services/session').SessionValidationResult['session'];
 		}
+		interface Error {
+			type: string;
+			message: string;
+		}
 	}
 }
 

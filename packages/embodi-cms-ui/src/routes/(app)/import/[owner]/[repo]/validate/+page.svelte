@@ -50,7 +50,7 @@
 				<Empty.Media variant="icon">
 					<Github class="size-8" />
 				</Empty.Media>
-				<Empty.Title>Your repository is not configurate yet</Empty.Title>
+				<Empty.Title>Your repository is not well configurate yet</Empty.Title>
 				<Empty.Description>
 					In the current Version of embodi cms we could not offer a automatic implementation for
 					this. Please add <code>@embodi/vite-astro-cms</code> to you project. It will generate the config

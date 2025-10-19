@@ -85,7 +85,7 @@ export const combineFrontmatterAndString = (frontmatter: Record<string, unknown>
 	};
 };
 
-export const getArticle = async (path: string, load: GetGitFileContent) => {
+export const getArticle = async (path: string, load: GetGitFileContent<string | Buffer>) => {
 	const fileContent = await load(path);
 	if (!fileContent) {
 		throw new Error('File not found');

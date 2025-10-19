@@ -2,42 +2,41 @@ import type { LayoutServerLoad } from './$types';
 import { getProjects } from '$services/project';
 import { isAuthorized } from '$/lib/server/guards';
 import { error } from '@sveltejs/kit';
-import { getJsonContent } from '$services/content';
-import { getInternalGitUser } from '$core/logic/user';
-import { getProjectConfig } from '$core/logic/project';
+import { getInternalGitUser } from '$core/logic/user.js';
+
 import { getProjectConfig } from '$layer/project';
 import { projectToRepo } from '$core/logic/repo';
+import { GitFileNotFoundException } from '$core/error/repo';
 
 export const load: LayoutServerLoad = async ({ locals, params }) => {
 	isAuthorized(locals);
-	const { user } = locals;
+	try {
+		const user = getInternalGitUser(locals);
+		const { projectId } = params;
+		const projects = await getProjects(user.id);
 
-	const { projectId } = params;
-	const projects = await getProjects(user.id);
+		const currentProject = projects.find((project) => project.id === projectId);
+		if (!currentProject) {
+			throw error(404, 'Project not found');
+		}
 
-	const currentProject = projects.find((project) => project.id === projectId);
-	if (!currentProject) {
-		throw error(404, 'Project not found');
+		const repo = projectToRepo(currentProject);
+		const projectConfig = await getProjectConfig(repo, locals);
+
+		await getProjectConfig(repo, locals);
+
+		return {
+			projects,
+			currentProject,
+			collections: projectConfig.collections
+		};
+	} catch (err) {
+		if (err instanceof GitFileNotFoundException) {
+			error(422, {
+				type: 'Project config invalid',
+				message: 'Your repo project config seems do be not valid anymore'
+			});
+		}
+		throw err;
 	}
-
-	const repo = projectToRepo(currentProject);
-	const projectConfig = await getProjectConfig(repo, locals);
-
-	await getProjectConfig((path: string) =>
-		getJsonContent(
-			path,
-			{
-				owner: currentProject.owner,
-				name: currentProject.repo
-			},
-			getInternalGitUser(locals)
-		)
-	);
-
-	return {
-		user,
-		projects,
-		currentProject,
-		collections: projectConfig.collections
-	};
 };

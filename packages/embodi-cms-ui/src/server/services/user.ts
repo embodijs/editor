@@ -1,6 +1,6 @@
 import { db } from '$lib/db/index.server';
 import { user, type NewDatabaseUser } from '$lib/db/schema';
-import type { User } from '$core/model/user';
+import type { ExternalUser } from '$core/model/user';
 import { eq } from 'drizzle-orm';
 
 export function getUserByGithubId(id: string): Promise<User | undefined> {

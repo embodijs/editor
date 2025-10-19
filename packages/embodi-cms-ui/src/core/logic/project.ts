@@ -22,12 +22,14 @@ export const generateProject = (data: NewProject, provider: Provider): Project =
 	};
 };
 
-export const hasValidProjectConfig = async (load: GetGitFileContent): Promise<boolean> => {
+export const hasValidProjectConfig = async (
+	load: GetGitFileContent<string | Buffer>
+): Promise<boolean> => {
 	const configPath = '.embodi/cms/config.json';
 	const jsonString = await load(configPath);
 
 	if (jsonString) {
-		const config = JSON.parse(jsonString);
+		const config = JSON.parse(jsonString.toString());
 		const result = v.safeParse(ProjectConfig, config);
 		return result.success;
 	}
@@ -35,14 +37,16 @@ export const hasValidProjectConfig = async (load: GetGitFileContent): Promise<bo
 	return false;
 };
 
-export const getProjectConfig = async (load: GetGitFileContent): Promise<ProjectConfig> => {
+export const getProjectConfig = async (
+	load: GetGitFileContent<string | Buffer>
+): Promise<ProjectConfig> => {
 	const configPath = '.embodi/cms/config.json';
 	const jsonString = await load(configPath);
 	if (!jsonString) {
 		throw new GitFileNotFoundException();
 	}
 	try {
-		const config = JSON.parse(jsonString);
+		const config = JSON.parse(jsonString.toString());
 		return v.parse(ProjectConfig, config);
 	} catch (error) {
 		console.error(error);
