@@ -11,8 +11,8 @@
 					{page.error.type}
 				{:else}
 					Unknown
-				{/if}</Empty.Title
-			>
+				{/if}
+			</Empty.Title>
 			<Empty.Description>
 				{#if page.error?.message}
 					{page.error.message}

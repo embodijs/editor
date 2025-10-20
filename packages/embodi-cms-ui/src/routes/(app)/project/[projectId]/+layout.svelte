@@ -1,6 +1,5 @@
 <script lang="ts">
-	import { page } from '$app/stores';
-	import { ProjectSwitch } from '$/lib/comp/sidebar/index';
+	import { ProjectSwitch, User } from '$/lib/comp/sidebar/index';
 	import * as Sidebar from '$lib/comp/ui/sidebar/index.js';
 	import type { LayoutProps } from './$types';
 	import { LayoutDashboard, SlidersHorizontal, CircleGauge, UsersRound } from '@lucide/svelte';
@@ -64,7 +63,9 @@
 				</Sidebar.GroupContent>
 			</Sidebar.Group>
 		</Sidebar.Content>
-		<Sidebar.Footer />
+		<Sidebar.Footer>
+			<User user={data.user} />
+		</Sidebar.Footer>
 	</Sidebar.Root>
 	<Sidebar.Inset>
 		{@render children()}
