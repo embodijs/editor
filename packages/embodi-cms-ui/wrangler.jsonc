@@ -1,0 +1,51 @@
+{
+	"name": "embodi",
+	"main": ".svelte-kit/cloudflare/_worker.js",
+	"compatibility_date": "2025-01-01",
+	"assets": {
+		"binding": "ASSETS",
+		"directory": ".svelte-kit/cloudflare"
+	},
+	"routes": [
+		{
+			"pattern": "app.embodi.site",
+			"custom_domain": true
+		}
+	],
+	"vars": {
+		"ORIGIN": "https://app.embodi.site",
+		"GITHUB_CLIENT_ID": "Ov23liJQGlS0El4Cc4be"
+	},
+	"env": {
+		"citest": {
+			"d1_databases": [
+				{
+					"binding": "DB",
+					"database_name": "test_embodi_app",
+					"database_id": "553dd2db-9ae6-4d12-95ed-dc905cf7505a",
+					"migrations_dir": "drizzle",
+					"migrations_table": "__drizzle_migrations"
+				}
+			],
+			"vars": {
+				"BUILD_FOR": "cloudflare",
+				"MAIL_PROVIDER": "mailpit",
+				"MAILPIT_DOMAIN": "http://localhost:8025",
+				"MAIL_FROM": "noreply@shrtn.io",
+				"ORIGIN": "http://localhost:5173",
+				"DATABASE_TYPE": "D1"
+			}
+		}
+	},
+
+	"compatibility_flags": ["nodejs_compat"],
+	"d1_databases": [
+		{
+			"binding": "DB",
+			"database_name": "embodi_app",
+			"database_id": "c72d2c49-2a59-4b30-a3f0-738abad0f72d",
+			"migrations_dir": "drizzle",
+			"migrations_table": "__drizzle_migrations"
+		}
+	]
+}

@@ -5,13 +5,15 @@
 	import * as Sheet from '$lib/comp/ui/sheet/index.js';
 	import { superForm } from 'sveltekit-superforms';
 	import type { PageProps } from './$types';
-	import { MetaForm } from '$/lib/comp/collection';
 	import { Button } from '$/lib/comp/ui/form';
 	import { initFileContext } from '$/lib/context/filemanager';
 	import type { FileUpload } from '$core/model/article';
 	import { writable } from 'svelte/store';
 	import { valibotClient } from 'sveltekit-superforms/adapters';
 	import { generateArticleFormSchema } from '$core/logic/article';
+	import { ObjectField } from '$/lib/comp/collection';
+	import { page } from '$app/state';
+	import type { GitRepo } from '$core/model/repo';
 
 	const { data }: PageProps = $props();
 
@@ -25,7 +27,16 @@
 	$effect(() => {
 		$formData.files = $fileStore;
 	});
-	initFileContext(data.path, fileStore);
+	const repo: GitRepo = {
+		owner: data.currentProject.owner,
+		name: data.currentProject.repo
+	};
+	initFileContext(
+		data.path,
+		fileStore,
+		repo,
+		new URL(`/${repo.owner}/${repo.name}/file/${data.path}/`, page.url.origin)
+	);
 </script>
 
 <Sheet.Root>
@@ -41,11 +52,14 @@
 		<MarkdownEditor {form} />
 		<form use:enhance method="POST">
 			<Sheet.Content>
-				<Sheet.Header>
-					<Sheet.Title>Meta Data</Sheet.Title>
-				</Sheet.Header>
 				<div class="mx-3 space-y-5">
-					<MetaForm fields={data.formFields} {form}></MetaForm>
+					<ObjectField
+						fields={data.formFields}
+						{form}
+						objectPath={['meta']}
+						label="Meta data"
+						description="Additional information about the article"
+					/>
 				</div>
 			</Sheet.Content>
 		</form>

@@ -1,10 +1,10 @@
-import { drizzle } from 'drizzle-orm/libsql';
-import { createClient } from '@libsql/client';
+import { drizzle } from 'drizzle-orm/d1';
 import * as schema from './schema';
-import { env } from '$env/dynamic/private';
-if (!env.DATABASE_URL) throw new Error('DATABASE_URL is not set');
-const client = createClient({ url: env.DATABASE_URL });
+import { getPlatformProxy } from 'wrangler';
 
-export const db = drizzle(client, {
+const { env } = await getPlatformProxy();
+if (!env.DB) throw new Error('DB is not set');
+
+export const db = drizzle(env.DB, {
 	schema
 });

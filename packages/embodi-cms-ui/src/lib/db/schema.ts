@@ -1,4 +1,3 @@
-import type { EmbodiConfig } from '$core/model/config';
 import type { InferInsertModel, InferSelectModel } from 'drizzle-orm';
 import { sqliteTable, text, integer, uniqueIndex } from 'drizzle-orm/sqlite-core';
 import { lower } from './helper';
@@ -23,7 +22,6 @@ export const session = sqliteTable('session', {
 	gitToken: text('git_token').notNull(),
 	provider: text('provider', { enum: [Provider.GITHUB, Provider.GITLAB] }).notNull(),
 	username: text('username').notNull(),
-	activeProjectConfig: text('active_project_config', { mode: 'json' }).$type<EmbodiConfig>(),
 	expiresAt: integer('expires_at', { mode: 'timestamp' }).notNull()
 });
 

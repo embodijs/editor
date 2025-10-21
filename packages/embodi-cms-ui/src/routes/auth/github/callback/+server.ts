@@ -1,6 +1,6 @@
 import { generateSessionToken, createSession, setSessionTokenCookie } from '$services/session';
 
-import { github } from '$services/oauth';
+import { getOauthStateCookie, github } from '$services/oauth';
 import { createUser, getUserByGithubId } from '$services/user';
 
 import type { RequestEvent } from '@sveltejs/kit';
@@ -12,7 +12,8 @@ import { Provider } from '$lib/db/schema';
 export async function GET(event: RequestEvent): Promise<Response> {
 	const code = event.url.searchParams.get('code');
 	const state = event.url.searchParams.get('state');
-	const storedState = event.cookies.get('github_oauth_state') ?? null;
+	const storedState = await getOauthStateCookie(event);
+	console.log({ state, storedState, code });
 	if (code === null || state === null || storedState === null) {
 		return new Response(null, {
 			status: 400
@@ -43,7 +44,6 @@ export async function GET(event: RequestEvent): Promise<Response> {
 			userId: existingUser.id,
 			gitToken: accessToken,
 			provider: Provider.GITHUB,
-			activeProjectConfig: null,
 			username: githubUser.login
 		});
 		setSessionTokenCookie(event, sessionToken, session.expiresAt);
@@ -69,7 +69,6 @@ export async function GET(event: RequestEvent): Promise<Response> {
 		userId: user.id,
 		gitToken: accessToken,
 		provider: Provider.GITHUB,
-		activeProjectConfig: null,
 		username: githubUser.login
 	});
 	setSessionTokenCookie(event, sessionToken, session.expiresAt);
