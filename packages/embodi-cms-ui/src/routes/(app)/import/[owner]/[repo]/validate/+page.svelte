@@ -19,8 +19,9 @@
 		const response = await fetch(window.location.href);
 		if (response.ok) {
 			redirectIfExists();
+		} else {
+			toast.error('Your configuration still not exists or is not valid');
 		}
-		toast.error('Your configuration still not exists or is not valid');
 		isLoading = false;
 	};
 </script>
