@@ -8,8 +8,7 @@
 	import { goto } from '$app/navigation';
 	import { toast } from 'svelte-sonner';
 
-	const { hasValidConfig }: PageProps = $props();
-
+	const { data }: PageProps = $props();
 	const redirectIfExists = () => {
 		const next = new URL(`/import/${page.params.owner}/${page.params.repo}/config`, page.url);
 		goto(next);
@@ -26,7 +25,7 @@
 	};
 </script>
 
-{#await hasValidConfig}
+{#await data.hasValidConfig}
 	<Empty.Root class="w-full">
 		<Empty.Header>
 			<Empty.Media variant="icon">

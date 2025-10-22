@@ -4,13 +4,8 @@
 	import * as Sidebar from '$lib/comp/ui/sidebar/index.js';
 	import { EllipsisVertical, LogOut } from '@lucide/svelte';
 	import ModeSwitcher from './ModeSwitcher.svelte';
-	import { Button } from '../core';
 	let { user }: { user: { name: string; email: string; avatar?: string | null } } = $props();
 	const sidebar = Sidebar.useSidebar();
-
-	const logout = () => {
-		console.log('logout');
-	};
 
 	const userInitials = (name: string) =>
 		name

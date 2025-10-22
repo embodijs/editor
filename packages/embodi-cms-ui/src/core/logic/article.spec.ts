@@ -132,7 +132,6 @@ describe('Article', () => {
 				]
 			}
 		};
-		console.log(unflatMeta(article));
 		expect(unflatMeta(article)).toEqual(expected);
 	});
 });

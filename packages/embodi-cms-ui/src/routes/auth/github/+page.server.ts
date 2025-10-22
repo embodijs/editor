@@ -8,7 +8,6 @@ export const load: PageServerLoad = async (event) => {
 	const state = generateState();
 	const scopes = ['user:email', 'repo', 'read:org'];
 	const url = github.createAuthorizationURL(state, scopes);
-	console.log({ state });
 	await setOauthStateCookie(event, state);
 
 	return redirect(302, url);

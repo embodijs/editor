@@ -19937,6 +19937,7 @@ export type ProjectV2ItemsArgs = {
   first?: InputMaybe<Scalars['Int']['input']>;
   last?: InputMaybe<Scalars['Int']['input']>;
   orderBy?: InputMaybe<ProjectV2ItemOrder>;
+  query?: InputMaybe<Scalars['String']['input']>;
 };
 
 
@@ -34084,11 +34085,11 @@ export type UpdateProjectV2FieldInput = {
   clientMutationId?: InputMaybe<Scalars['String']['input']>;
   /** The ID of the field to update. */
   fieldId: Scalars['ID']['input'];
-  /** Configuration for an iteration field. */
+  /** Configuration for a field of type ITERATION. Empty input is ignored, provided values overwrite the existing configuration, and existing configuration should be fetched for partial updates. */
   iterationConfiguration?: InputMaybe<ProjectV2IterationFieldConfigurationInput>;
   /** The name to update. */
   name?: InputMaybe<Scalars['String']['input']>;
-  /** Options for a field of type SINGLE_SELECT. If empty, no changes will be made to the options. If values are present, they will overwrite the existing options for the field. */
+  /** Options for a field of type SINGLE_SELECT. Empty input is ignored, provided values overwrite existing options, and existing options should be fetched for partial updates. */
   singleSelectOptions?: InputMaybe<Array<ProjectV2SingleSelectFieldOptionInput>>;
 };
 

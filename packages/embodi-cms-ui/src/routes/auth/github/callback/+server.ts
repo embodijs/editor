@@ -13,7 +13,6 @@ export async function GET(event: RequestEvent): Promise<Response> {
 	const code = event.url.searchParams.get('code');
 	const state = event.url.searchParams.get('state');
 	const storedState = await getOauthStateCookie(event);
-	console.log({ state, storedState, code });
 	if (code === null || state === null || storedState === null) {
 		return new Response(null, {
 			status: 400
