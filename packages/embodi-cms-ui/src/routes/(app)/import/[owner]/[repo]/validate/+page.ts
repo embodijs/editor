@@ -2,12 +2,12 @@ import type { PageLoad } from './$types';
 
 export const load: PageLoad = async ({ fetch, url }) => {
 	const load = async () => {
-		const repsonse: Response = await fetch(url);
-		if (repsonse.ok) {
-			return { hasValidConfig: true };
+		const response: Response = await fetch(url);
+		if (response.ok) {
+			return true;
 		} else {
-			return { hasValidConfig: false };
+			return false;
 		}
 	};
-	return load();
+	return { hasValidConfig: load() };
 };

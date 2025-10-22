@@ -1,7 +1,6 @@
 import { isAuthorized } from '$/lib/server/guards';
 import {
 	generateArticleFormSchema,
-	unflatMeta,
 	generateArticleFileName,
 	pathToFileId
 } from '$core/logic/article';
@@ -15,8 +14,9 @@ import { getProject } from '$services/project';
 import { projectToRepo } from '$core/logic/repo';
 import { saveArticle } from '$layer/article';
 import { join } from 'path';
+import { getDb } from '$/lib/db/index.server';
 
-const getCurrentCollection = (collections: Collection[], name: string) =>
+const getCurrentCollection = (collections: Collection[], name: string): Collection | undefined =>
 	collections.find((collection) => collection.name === name);
 
 export const load: PageServerLoad = async ({ params, parent, locals }) => {
@@ -24,7 +24,10 @@ export const load: PageServerLoad = async ({ params, parent, locals }) => {
 	const { collections } = await parent();
 	const { fields, loader } = getCurrentCollection(collections, params.collection) ?? {};
 	if (!fields || !loader) {
-		throw error(404, 'Collection not found');
+		throw error(404, {
+			type: 'Collection not found',
+			message: 'The Collection your try to open seems to be not exist'
+		});
 	}
 	const metaForm = await superValidate(valibot(generateArticleFormSchema(fields)));
 	return {
@@ -35,18 +38,25 @@ export const load: PageServerLoad = async ({ params, parent, locals }) => {
 };
 
 export const actions: Actions = {
-	default: async ({ request, params, locals }) => {
+	default: async ({ request, params, locals, platform }) => {
 		isAuthorized(locals);
-		const project = await getProject(params.projectId);
+		const dbConnection = getDb(platform?.env);
+		const project = await getProject(dbConnection, params.projectId);
 		if (!project) {
-			throw error(404, 'Project not found');
+			throw error(404, {
+				type: 'Project not found',
+				message: 'The Project your try to open seems to be not exist'
+			});
 		}
 		const repo = projectToRepo(project);
 		const { collections } = await getProjectConfig(repo, locals);
 		const { fields, loader } = getCurrentCollection(collections, params.collection) ?? {};
 
 		if (!fields || !loader) {
-			throw error(404, 'Collection not found');
+			throw error(404, {
+				type: 'Collection not found',
+				message: 'The Collection your try to open seems to be not exist'
+			});
 		}
 
 		const form = await superValidate(

@@ -12,7 +12,6 @@ export const getCollectionTree = async (
 		throw new Error('Invalid tree');
 	}
 	// TODO: Filter by pattern
-	console.log(tree, path.base.slice(1));
 
 	return tree.filter((el) => el.type === 'file') as unknown as GitFileMeta[];
 };

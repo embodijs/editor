@@ -11,8 +11,11 @@ export const GET: RequestHandler = async ({ params, locals }) => {
 	const config = await hasProjectConfig(gitRepo, locals);
 
 	if (!config) {
-		error(404, 'Project config not found');
+		error(404, {
+			type: 'Missing config',
+			message: 'It seems like your git repo does not have a project config.'
+		});
 	}
 
-	return json(config);
+	return json(true);
 };

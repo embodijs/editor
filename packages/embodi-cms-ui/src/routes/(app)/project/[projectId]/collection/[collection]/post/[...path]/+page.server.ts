@@ -5,7 +5,6 @@ import { getJsonContent } from '$services/content';
 import type { Actions, PageServerLoad } from './$types';
 import { superValidate, fail } from 'sveltekit-superforms';
 import { error } from '@sveltejs/kit';
-import { flatMeta } from '$core/logic/article';
 import { valibot } from 'sveltekit-superforms/adapters';
 import type { Collection } from '$core/model/collection';
 import { getProjectConfig } from '$layer/project';
@@ -14,6 +13,7 @@ import { projectToRepo } from '$core/logic/repo';
 import { saveArticle } from '$layer/article';
 import { dirname } from 'path';
 import { minimatch } from 'minimatch';
+import { getDb } from '$/lib/db/index.server';
 
 const getCurrentCollection = (collections: Collection[], name: string) =>
 	collections.find((collection) => collection.name === name);
@@ -25,11 +25,17 @@ export const load: PageServerLoad = async ({ params, parent, locals }) => {
 	const { currentProject, collections } = await parent();
 	const collection = getCurrentCollection(collections, params.collection);
 	if (!collection) {
-		throw error(404, 'Collection not found');
+		throw error(404, {
+			type: 'Collection not found',
+			message: 'The collections seems to be not exist'
+		});
 	}
 	const { fields, loader } = collection;
 	if (!minimatch(path, loader.pattern)) {
-		throw error(404, 'File type is not supported for this collection');
+		throw error(406, {
+			type: 'File type not supported',
+			message: 'File type is not supported for this collection'
+		});
 	}
 	const { meta, content } = await getArticle(path, (path: string) =>
 		getJsonContent(
@@ -53,19 +59,26 @@ export const load: PageServerLoad = async ({ params, parent, locals }) => {
 };
 
 export const actions: Actions = {
-	default: async ({ request, params, locals }) => {
+	default: async ({ request, params, locals, platform }) => {
 		isAuthorized(locals);
-		const project = await getProject(params.projectId);
+		const dbConnection = getDb(platform?.env);
+		const project = await getProject(dbConnection, params.projectId);
 		const { path } = params;
 		if (!project) {
-			throw error(404, 'Project not found');
+			throw error(404, {
+				type: 'Project not found',
+				message: 'The project you try to open does not exist'
+			});
 		}
 		const repo = projectToRepo(project);
 		const { collections } = await getProjectConfig(repo, locals);
 		const { fields } = getCurrentCollection(collections, params.collection) ?? {};
 
 		if (!fields) {
-			throw error(404, 'Collection not found');
+			throw error(404, {
+				type: 'Collection not found',
+				message: 'The collection you try to open does not exist'
+			});
 		}
 
 		const form = await superValidate(

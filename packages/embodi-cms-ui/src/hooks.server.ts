@@ -2,6 +2,7 @@ import { paraglideMiddleware } from '$lib/paraglide/server';
 import { sequence } from '@sveltejs/kit/hooks';
 import * as sessionService from '$services/session';
 import type { Handle } from '@sveltejs/kit';
+import { getDb } from './lib/db/index.server';
 
 const handleAuth: Handle = async ({ event, resolve }) => {
 	const sessionToken = event.cookies.get(sessionService.sessionCookieName);
@@ -12,7 +13,8 @@ const handleAuth: Handle = async ({ event, resolve }) => {
 		return resolve(event);
 	}
 
-	const { session, user } = await sessionService.validateSessionToken(sessionToken);
+	const dbConnection = getDb(event.platform?.env);
+	const { session, user } = await sessionService.validateSessionToken(dbConnection, sessionToken);
 
 	if (session) {
 		sessionService.setSessionTokenCookie(event, sessionToken, session.expiresAt);

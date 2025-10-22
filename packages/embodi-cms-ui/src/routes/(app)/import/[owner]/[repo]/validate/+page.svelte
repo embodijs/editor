@@ -8,8 +8,7 @@
 	import { goto } from '$app/navigation';
 	import { toast } from 'svelte-sonner';
 
-	const { hasValidConfig }: PageProps = $props();
-
+	const { data }: PageProps = $props();
 	const redirectIfExists = () => {
 		const next = new URL(`/import/${page.params.owner}/${page.params.repo}/config`, page.url);
 		goto(next);
@@ -20,13 +19,14 @@
 		const response = await fetch(window.location.href);
 		if (response.ok) {
 			redirectIfExists();
+		} else {
+			toast.error('Your configuration still not exists or is not valid');
 		}
-		toast.error('Your configuration still not exists or is not valid');
 		isLoading = false;
 	};
 </script>
 
-{#await hasValidConfig}
+{#await data.hasValidConfig}
 	<Empty.Root class="w-full">
 		<Empty.Header>
 			<Empty.Media variant="icon">

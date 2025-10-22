@@ -7,14 +7,16 @@ import { NewProject } from '$core/model/project';
 import { getInternalGitUser } from '$core/logic/user';
 import { getProjects } from '$services/project';
 import { markExistingRepos } from '$core/logic/repo';
+import { getDb } from '$/lib/db/index.server';
 
-export const load: PageServerLoad = async ({ locals }) => {
+export const load: PageServerLoad = async ({ locals, platform }) => {
 	isAuthorized(locals);
 
 	const user = getInternalGitUser(locals.user, locals.session);
 
 	const reposPromise = getRepos(user);
-	const projectPromise = getProjects(user.id);
+	const dbConnection = getDb(platform?.env);
+	const projectPromise = getProjects(dbConnection, user.id);
 	const formAddPromise = superValidate(valibot(NewProject));
 
 	const reposByOwner = [
