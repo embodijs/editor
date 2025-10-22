@@ -37,7 +37,10 @@ export const actions = {
 		const config = getProjectConfig(gitRepo, locals);
 
 		if (!config) {
-			error(403, 'Valid Config is missing in the repository');
+			error(424, {
+				type: 'Missing valid config',
+				message: 'It seems your git repository does not contain a valid config file.'
+			});
 		}
 
 		await updateSession({

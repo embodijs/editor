@@ -1,7 +1,6 @@
 import { isAuthorized } from '$/lib/server/guards';
 import {
 	generateArticleFormSchema,
-	unflatMeta,
 	generateArticleFileName,
 	pathToFileId
 } from '$core/logic/article';
@@ -24,7 +23,10 @@ export const load: PageServerLoad = async ({ params, parent, locals }) => {
 	const { collections } = await parent();
 	const { fields, loader } = getCurrentCollection(collections, params.collection) ?? {};
 	if (!fields || !loader) {
-		throw error(404, 'Collection not found');
+		throw error(404, {
+			type: 'Collection not found',
+			message: 'The Collection your try to open seems to be not exist'
+		});
 	}
 	const metaForm = await superValidate(valibot(generateArticleFormSchema(fields)));
 	return {
@@ -39,14 +41,20 @@ export const actions: Actions = {
 		isAuthorized(locals);
 		const project = await getProject(params.projectId);
 		if (!project) {
-			throw error(404, 'Project not found');
+			throw error(404, {
+				type: 'Project not found',
+				message: 'The Project your try to open seems to be not exist'
+			});
 		}
 		const repo = projectToRepo(project);
 		const { collections } = await getProjectConfig(repo, locals);
 		const { fields, loader } = getCurrentCollection(collections, params.collection) ?? {};
 
 		if (!fields || !loader) {
-			throw error(404, 'Collection not found');
+			throw error(404, {
+				type: 'Collection not found',
+				message: 'The Collection your try to open seems to be not exist'
+			});
 		}
 
 		const form = await superValidate(

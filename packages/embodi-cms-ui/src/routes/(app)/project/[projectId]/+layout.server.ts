@@ -17,7 +17,10 @@ export const load: LayoutServerLoad = async ({ locals, params }) => {
 
 		const currentProject = projects.find((project) => project.id === projectId);
 		if (!currentProject) {
-			throw error(404, 'Project not found');
+			throw error(404, {
+				type: 'Project not found',
+				message: 'Sorry, but the project you are looking for does not exist.'
+			});
 		}
 
 		const repo = projectToRepo(currentProject);
