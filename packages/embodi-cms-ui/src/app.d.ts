@@ -5,6 +5,7 @@ declare global {
 		interface Platform {
 			env: {
 				DB: D1Database;
+				// Add other environment variables here
 			};
 		}
 		interface Locals {

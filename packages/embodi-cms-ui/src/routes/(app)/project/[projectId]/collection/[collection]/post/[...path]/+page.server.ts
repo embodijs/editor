@@ -13,6 +13,7 @@ import { projectToRepo } from '$core/logic/repo';
 import { saveArticle } from '$layer/article';
 import { dirname } from 'path';
 import { minimatch } from 'minimatch';
+import { getDb } from '$/lib/db/index.server';
 
 const getCurrentCollection = (collections: Collection[], name: string) =>
 	collections.find((collection) => collection.name === name);
@@ -58,9 +59,10 @@ export const load: PageServerLoad = async ({ params, parent, locals }) => {
 };
 
 export const actions: Actions = {
-	default: async ({ request, params, locals }) => {
+	default: async ({ request, params, locals, platform }) => {
 		isAuthorized(locals);
-		const project = await getProject(params.projectId);
+		const dbConnection = getDb(platform?.env);
+		const project = await getProject(dbConnection, params.projectId);
 		const { path } = params;
 		if (!project) {
 			throw error(404, {

@@ -2,8 +2,8 @@ import type { RequestEvent } from '@sveltejs/kit';
 import { eq } from 'drizzle-orm';
 import { sha256 } from '@oslojs/crypto/sha2';
 import { encodeBase64url, encodeHexLowerCase } from '@oslojs/encoding';
-import { db } from '$lib/db/index.server';
 import * as table from '$lib/db/schema';
+import type { DatabaseConnection } from '$/lib/db/index.server';
 
 const DAY_IN_MS = 1000 * 60 * 60 * 24;
 
@@ -15,7 +15,11 @@ export function generateSessionToken() {
 	return token;
 }
 
-export async function createSession(token: string, data: Omit<table.Session, 'id' | 'expiresAt'>) {
+export async function createSession(
+	db: DatabaseConnection,
+	token: string,
+	data: Omit<table.Session, 'id' | 'expiresAt'>
+) {
 	const sessionId = encodeHexLowerCase(sha256(new TextEncoder().encode(token)));
 	const session: table.Session = {
 		...data,
@@ -26,7 +30,10 @@ export async function createSession(token: string, data: Omit<table.Session, 'id
 	return session;
 }
 
-export async function updateSession(data: Omit<table.Session, 'expiresAt'>) {
+export async function updateSession(
+	db: DatabaseConnection,
+	data: Omit<table.Session, 'expiresAt'>
+) {
 	const session: table.Session = {
 		...data,
 		expiresAt: new Date(Date.now() + DAY_IN_MS * 30)
@@ -35,7 +42,7 @@ export async function updateSession(data: Omit<table.Session, 'expiresAt'>) {
 	return session;
 }
 
-export async function validateSessionToken(token: string) {
+export async function validateSessionToken(db: DatabaseConnection, token: string) {
 	const sessionId = encodeHexLowerCase(sha256(new TextEncoder().encode(token)));
 	const result = await db
 		.select({
@@ -78,7 +85,7 @@ export async function validateSessionToken(token: string) {
 
 export type SessionValidationResult = Awaited<ReturnType<typeof validateSessionToken>>;
 
-export async function invalidateSession(sessionId: string) {
+export async function invalidateSession(db: DatabaseConnection, sessionId: string) {
 	await db.delete(table.session).where(eq(table.session.id, sessionId));
 }
 

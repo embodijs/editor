@@ -8,11 +8,13 @@ import type { OAuth2Tokens } from 'arctic';
 import { generateUserId } from '$core/model/user';
 import { getCurrentUser } from '$services/github/user';
 import { Provider } from '$lib/db/schema';
+import { getDb } from '$/lib/db/index.server';
 
 export async function GET(event: RequestEvent): Promise<Response> {
-	const code = event.url.searchParams.get('code');
-	const state = event.url.searchParams.get('state');
-	const storedState = await getOauthStateCookie(event);
+	const { url, platform } = event;
+	const code = url.searchParams.get('code');
+	const state = url.searchParams.get('state');
+	const storedState = getOauthStateCookie(event);
 	if (code === null || state === null || storedState === null) {
 		return new Response(null, {
 			status: 400
@@ -35,11 +37,13 @@ export async function GET(event: RequestEvent): Promise<Response> {
 		});
 	}
 	const accessToken = tokens.accessToken();
+	console.log('Access token obtained:', accessToken ? 'YES' : 'NO', 'Length:', accessToken?.length);
 	const githubUser = await getCurrentUser({ token: accessToken });
-	const existingUser = await getUserByGithubId(githubUser.id);
+	const dbConnection = getDb(platform?.env);
+	const existingUser = await getUserByGithubId(dbConnection, githubUser.id);
 	if (existingUser) {
 		const sessionToken = generateSessionToken();
-		const session = await createSession(sessionToken, {
+		const session = await createSession(dbConnection, sessionToken, {
 			userId: existingUser.id,
 			gitToken: accessToken,
 			provider: Provider.GITHUB,
@@ -54,8 +58,7 @@ export async function GET(event: RequestEvent): Promise<Response> {
 		});
 	}
 
-	// TODO: Replace this with your own DB query.
-	const user = await createUser({
+	const user = await createUser(dbConnection, {
 		id: generateUserId(),
 		githubId: githubUser.id,
 		name: githubUser.name ?? githubUser.login,
@@ -64,7 +67,7 @@ export async function GET(event: RequestEvent): Promise<Response> {
 	});
 
 	const sessionToken = generateSessionToken();
-	const session = await createSession(sessionToken, {
+	const session = await createSession(dbConnection, sessionToken, {
 		userId: user.id,
 		gitToken: accessToken,
 		provider: Provider.GITHUB,

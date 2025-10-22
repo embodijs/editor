@@ -5,10 +5,11 @@ import { getRepoMeta } from '$services/repo';
 import { createProject } from '$services/project';
 import { valibot } from 'sveltekit-superforms/adapters';
 import type { Actions, PageServerLoad } from './$types';
-import { message, superValidate } from 'sveltekit-superforms';
+import { superValidate } from 'sveltekit-superforms';
 import { NewProject } from '$core/model/project';
 import { generateProject } from '$core/logic/project';
 import { fail, redirect } from '@sveltejs/kit';
+import { getDb } from '$/lib/db/index.server';
 
 export const load: PageServerLoad = async ({ locals, params }) => {
 	isAuthorized(locals);
@@ -35,7 +36,7 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 };
 
 export const actions: Actions = {
-	async default({ request, locals }) {
+	async default({ request, locals, platform }) {
 		isAuthorized(locals);
 		const form = await superValidate(request, valibot(NewProject));
 		if (!form.valid) {
@@ -44,7 +45,8 @@ export const actions: Actions = {
 		const { user, session } = locals;
 		// TODO: Compare Repo Owner from url with form
 		const project = generateProject(form.data, session.provider);
-		await createProject(project, user.id);
+		const dbConnection = getDb(platform?.env);
+		await createProject(dbConnection, project, user.id);
 
 		return redirect(302, `/project/${project.id}`);
 	}

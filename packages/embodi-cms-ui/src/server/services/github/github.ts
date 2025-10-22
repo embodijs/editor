@@ -28,8 +28,10 @@ export const generateRestBase = (user: InternalGitUser, headers = {}) => {
 
 export const createGraphqlClient = (token: string) => {
 	return new GraphQLClient('https://api.github.com/graphql', {
+		fetch,
 		headers: {
-			authorization: `Bearer ${token}`
+			'User-Agent': 'Embodi CMS',
+			authorization: `bearer ${token}`
 		}
 	});
 };

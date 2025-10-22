@@ -1,10 +1,12 @@
 import { drizzle } from 'drizzle-orm/d1';
 import * as schema from './schema';
-import { getPlatformProxy } from 'wrangler';
+import assert from 'node:assert';
 
-const { env } = await getPlatformProxy();
-if (!env.DB) throw new Error('DB is not set');
+export const getDb = (env?: { DB: string }) => {
+	assert(env, 'DB environment variable is not set');
+	return drizzle(env.DB, {
+		schema
+	});
+};
 
-export const db = drizzle(env.DB, {
-	schema
-});
+export type DatabaseConnection = ReturnType<typeof getDb>;

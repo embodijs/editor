@@ -4,11 +4,13 @@ import { isAuthorized } from '$/lib/server/guards';
 import { getInternalGitUser } from '$core/logic/user';
 import type { GitRepo } from '$core/model/repo';
 import { getProject } from '$services/project';
+import { getDb } from '$/lib/db/index.server';
 
-export const GET: RequestHandler = async ({ params, locals }) => {
+export const GET: RequestHandler = async ({ params, locals, platform }) => {
 	isAuthorized(locals);
 	const user = getInternalGitUser(locals);
-	const project = await getProject(params.projectId);
+	const dbConnection = getDb(platform?.env);
+	const project = await getProject(dbConnection, params.projectId);
 	if (!project) {
 		throw new Error('Project not found');
 	}

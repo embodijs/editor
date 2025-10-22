@@ -1,9 +1,9 @@
-import { db } from '$lib/db/index.server';
 import { user, type NewDatabaseUser } from '$lib/db/schema';
-import type { ExternalUser } from '$core/model/user';
+import type { User } from '$core/model/user';
 import { eq } from 'drizzle-orm';
+import type { DatabaseConnection } from '$/lib/db/index.server';
 
-export function getUserByGithubId(id: string): Promise<User | undefined> {
+export function getUserByGithubId(db: DatabaseConnection, id: string): Promise<User | undefined> {
 	return db
 		.select({
 			id: user.id,
@@ -16,7 +16,7 @@ export function getUserByGithubId(id: string): Promise<User | undefined> {
 		.get();
 }
 
-export async function createUser(newUser: NewDatabaseUser): Promise<User> {
+export async function createUser(db: DatabaseConnection, newUser: NewDatabaseUser): Promise<User> {
 	const result = (await db.insert(user).values(newUser).returning({ insertedId: user.id }))[0];
 	return {
 		id: result.insertedId,

@@ -7,13 +7,15 @@ import { getInternalGitUser } from '$core/logic/user.js';
 import { getProjectConfig } from '$layer/project';
 import { projectToRepo } from '$core/logic/repo';
 import { GitFileNotFoundException } from '$core/error/repo';
+import { getDb } from '$/lib/db/index.server';
 
-export const load: LayoutServerLoad = async ({ locals, params }) => {
+export const load: LayoutServerLoad = async ({ locals, params, platform }) => {
 	isAuthorized(locals);
 	try {
 		const user = getInternalGitUser(locals);
 		const { projectId } = params;
-		const projects = await getProjects(user.id);
+		const dbConnection = getDb(platform?.env);
+		const projects = await getProjects(dbConnection, user.id);
 
 		const currentProject = projects.find((project) => project.id === projectId);
 		if (!currentProject) {

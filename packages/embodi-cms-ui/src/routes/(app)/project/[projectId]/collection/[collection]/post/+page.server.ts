@@ -14,8 +14,9 @@ import { getProject } from '$services/project';
 import { projectToRepo } from '$core/logic/repo';
 import { saveArticle } from '$layer/article';
 import { join } from 'path';
+import { getDb } from '$/lib/db/index.server';
 
-const getCurrentCollection = (collections: Collection[], name: string) =>
+const getCurrentCollection = (collections: Collection[], name: string): Collection | undefined =>
 	collections.find((collection) => collection.name === name);
 
 export const load: PageServerLoad = async ({ params, parent, locals }) => {
@@ -37,9 +38,10 @@ export const load: PageServerLoad = async ({ params, parent, locals }) => {
 };
 
 export const actions: Actions = {
-	default: async ({ request, params, locals }) => {
+	default: async ({ request, params, locals, platform }) => {
 		isAuthorized(locals);
-		const project = await getProject(params.projectId);
+		const dbConnection = getDb(platform?.env);
+		const project = await getProject(dbConnection, params.projectId);
 		if (!project) {
 			throw error(404, {
 				type: 'Project not found',
