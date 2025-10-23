@@ -1,0 +1,32 @@
+# Privacy Policy
+
+**Responsible Party**
+Wolfgang Rathgeb
+wr@dropanote.de
+Germany
+
+**What Data is Stored?**
+
+On my servers (Cloudflare):
+- Login session (cookie)
+- Basic user data from your Git provider (email, name, avatar URL)
+- Project metadata (repository name, last sync)
+- Cached Git data (max. 24 hours to avoid API rate limits)
+- Possibly language cookie (set by paraglide)
+
+Your content stays in your Git repository. I only access it when you actively use the CMS.
+
+**No Data Sharing**
+Your data is not sold or shared with third parties. Access only happens through your Git provider's API.
+
+**Analytics**
+Privacy-focused analytics via Umami (self-hosted, no personal data, no tracking cookies).
+
+**Deletion**
+Account deletion not yet implemented. Cached data is automatically deleted after max. 24 hours. You can revoke access anytime in your GitHub settings.
+
+**Your Rights (GDPR)**
+You have the right to access, correct, and delete your data. Contact: wr@dropanote.de
+
+**Changes**
+This privacy policy may be updated. Last updated: October 2024

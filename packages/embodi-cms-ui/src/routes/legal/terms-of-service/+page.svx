@@ -1,0 +1,21 @@
+# Terms of Use
+
+**Provider**
+Wolfgang Rathgeb
+wr@dropanote.de
+Germany
+
+**Service**
+embodi cms is a CMS interface for static site generators. The software is in alpha and free to use.
+
+**Use at Your Own Risk**
+No warranties provided. I'm not liable for data loss, downtime, or any other damages. Since all your content is versioned in your Git repository, you can always revert to previous versions.
+
+**Repository Access**
+You grant embodi cms access to your Git repositories only when you explicitly click the import button. Access happens exclusively through your Git provider's official API (currently GitHub, GitLab/Codeberg coming later).
+
+**Termination**
+You can stop using the service anytime by revoking OAuth access in your GitHub settings. Account deletion is not currently implemented.
+
+**Changes**
+I may update these terms. You'll be notified by email for significant changes.

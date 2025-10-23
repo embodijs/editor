@@ -15,7 +15,10 @@
 			</div>
 			Embodi
 		</a>
-		<LoginCard>
+		<LoginCard
+			privacyPolicyLink="/legal/privacy-policy"
+			termsOfServiceLink="/legal/terms-of-service"
+		>
 			<form method="GET" action="/auth/github">
 				<Button variant="outline" type="submit" class="w-full">
 					<Github />

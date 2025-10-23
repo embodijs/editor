@@ -35,7 +35,9 @@
 	<div
 		class="text-muted-foreground *:[a]:hover:text-primary text-center text-xs text-balance *:[a]:underline *:[a]:underline-offset-4"
 	>
-		By clicking continue, you agree to our <a href={termsOfServiceLink}>Terms of Service</a>
-		and <a href={privacyPolicyLink}>Privacy Policy</a>.
+		By clicking continue, you agree to our <a href={termsOfServiceLink} target="_blank"
+			>Terms of Service</a
+		>
+		and <a href={privacyPolicyLink} target="_blank">Privacy Policy</a>.
 	</div>
 </div>
