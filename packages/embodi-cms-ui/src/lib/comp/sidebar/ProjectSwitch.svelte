@@ -65,7 +65,7 @@
 							{/if}
 						</div>
 						{project.name}
-						<DropdownMenu.Shortcut>⌘{index + 1}</DropdownMenu.Shortcut>
+						<!-- <DropdownMenu.Shortcut>⌘{index + 1}</DropdownMenu.Shortcut> -->
 					</DropdownMenu.Item>
 				{/each}
 				<DropdownMenu.Separator />
