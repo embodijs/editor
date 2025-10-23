@@ -183,7 +183,6 @@ export const parseEnum: TypeTransformer<collection.EnumField> = (
     return null;
   }
   const { entries } = def as z.core.$ZodEnumDef;
-  console.log({ entries });
   return {
     fieldName,
     type: "enum",

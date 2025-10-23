@@ -37,7 +37,6 @@ export async function GET(event: RequestEvent): Promise<Response> {
 		});
 	}
 	const accessToken = tokens.accessToken();
-	console.log('Access token obtained:', accessToken ? 'YES' : 'NO', 'Length:', accessToken?.length);
 	const githubUser = await getCurrentUser({ token: accessToken });
 	const dbConnection = getDb(platform?.env);
 	const existingUser = await getUserByGithubId(dbConnection, githubUser.id);
