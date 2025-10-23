@@ -5,11 +5,13 @@ import type { Actions, PageServerLoad } from './$types';
 import { updateSession } from '$services/session';
 import { getProjectConfig } from '$layer/project';
 import { getDb } from '$/lib/db/index.server';
+import { getProject } from '$services/project';
 
-export const load: PageServerLoad = async ({ locals, params }) => {
+export const load: PageServerLoad = async ({ locals, params, platform }) => {
 	isAuthorized(locals);
-
-	return {};
+	const dbConnection = getDb(platform?.env);
+	const project = await getProject(dbConnection, params.projectId);
+	return { project };
 };
 
 export const actions = {

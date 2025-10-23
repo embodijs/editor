@@ -2,15 +2,14 @@
 	import { ProjectSwitch, User } from '$/lib/comp/sidebar/index';
 	import * as Sidebar from '$lib/comp/ui/sidebar/index.js';
 	import type { LayoutProps } from './$types';
-	import { LayoutDashboard, SlidersHorizontal, CircleGauge, UsersRound } from '@lucide/svelte';
+	import { LayoutDashboard } from '@lucide/svelte';
 
 	const { data, children }: LayoutProps = $props();
 
 	const staticMenu = [
-		{ label: 'Dashboard', href: '/', icon: LayoutDashboard },
-		{ label: 'Settings', href: '/about', icon: SlidersHorizontal },
-		{ label: 'Analytics', href: '/contact', icon: CircleGauge },
-		{ label: 'Team', href: '/help', icon: UsersRound }
+		{ label: 'Dashboard', href: `/project/${data.currentProject.id}`, icon: LayoutDashboard }
+		// { label: 'Settings', href: '/about', icon: SlidersHorizontal },
+		// { label: 'Team', href: '/help', icon: UsersRound }
 	] as const;
 </script>
 
