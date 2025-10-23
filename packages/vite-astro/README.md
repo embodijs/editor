@@ -1,15 +1,28 @@
-# vite-astro
+# @embodi/vite-astro-cms
 
-To install dependencies:
+Automatically generates CMS configuration from your Astro content collections. Part of [embodi cms](https://app.embodi.site).
 
-```bash
-bun install
-```
-
-To run:
+## Installation
 
 ```bash
-bun run index.ts
+npm install --save-dev @embodi/vite-astro-cms
 ```
 
-This project was created using `bun init` in bun v1.3.0. [Bun](https://bun.com) is a fast all-in-one JavaScript runtime.
+Add to your `astro.config.js`:
+
+```ts
+import { defineConfig } from "astro/config";
+import viteEmbodiCms from "@embodi/vite-astro-cms";
+
+export default defineConfig({
+  vite: {
+    plugins: [viteEmbodiCms()],
+  },
+});
+```
+
+## How it works
+
+The plugin reads your Astro content collections schema and generates CMS configuration files in `./embodi/` during build. Commit these files to your repository so the CMS knows your content structure.
+
+Then open your project in [app.embodi.site](https://app.embodi.site) to manage content through the CMS interface.
