@@ -18390,6 +18390,40 @@ export enum OrganizationOrderField {
   Login = 'LOGIN'
 }
 
+/** Parameters to be used for the organization_property condition */
+export type OrganizationPropertyConditionTarget = {
+  __typename?: 'OrganizationPropertyConditionTarget';
+  /** Array of organization properties that must not match. */
+  exclude: Array<OrganizationPropertyTargetDefinition>;
+  /** Array of organization properties that must match */
+  include: Array<OrganizationPropertyTargetDefinition>;
+};
+
+/** Parameters to be used for the organization_property condition */
+export type OrganizationPropertyConditionTargetInput = {
+  /** Array of organization properties that must not match. */
+  exclude: Array<OrganizationPropertyTargetDefinitionInput>;
+  /** Array of organization properties that must match */
+  include: Array<OrganizationPropertyTargetDefinitionInput>;
+};
+
+/** A property that must match */
+export type OrganizationPropertyTargetDefinition = {
+  __typename?: 'OrganizationPropertyTargetDefinition';
+  /** The name of the property */
+  name: Scalars['String']['output'];
+  /** The values to match for */
+  propertyValues: Array<Scalars['String']['output']>;
+};
+
+/** A property that must match */
+export type OrganizationPropertyTargetDefinitionInput = {
+  /** The name of the property */
+  name: Scalars['String']['input'];
+  /** The values to match for */
+  propertyValues: Array<Scalars['String']['input']>;
+};
+
 /** An organization teams hovercard context */
 export type OrganizationTeamsHovercardContext = HovercardContext & {
   __typename?: 'OrganizationTeamsHovercardContext';
@@ -27594,6 +27628,8 @@ export type RepositoryRule = Node & {
 /** Set of conditions that determine if a ruleset will evaluate */
 export type RepositoryRuleConditions = {
   __typename?: 'RepositoryRuleConditions';
+  /** Configuration for the organization_property condition */
+  organizationProperty?: Maybe<OrganizationPropertyConditionTarget>;
   /** Configuration for the ref_name condition */
   refName?: Maybe<RefNameConditionTarget>;
   /** Configuration for the repository_id condition */
@@ -27606,6 +27642,8 @@ export type RepositoryRuleConditions = {
 
 /** Specifies the conditions required for a ruleset to evaluate */
 export type RepositoryRuleConditionsInput = {
+  /** Configuration for the organization_property condition */
+  organizationProperty?: InputMaybe<OrganizationPropertyConditionTargetInput>;
   /** Configuration for the ref_name condition */
   refName?: InputMaybe<RefNameConditionTargetInput>;
   /** Configuration for the repository_id condition */
@@ -28192,6 +28230,8 @@ export type RepositoryVulnerabilityAlertConnection = {
 export enum RepositoryVulnerabilityAlertDependencyRelationship {
   /** A direct dependency of your project */
   Direct = 'DIRECT',
+  /** The relationship could not be determined */
+  Inconclusive = 'INCONCLUSIVE',
   /** A transitive dependency of your project */
   Transitive = 'TRANSITIVE',
   /** The relationship is unknown */
@@ -34085,11 +34125,11 @@ export type UpdateProjectV2FieldInput = {
   clientMutationId?: InputMaybe<Scalars['String']['input']>;
   /** The ID of the field to update. */
   fieldId: Scalars['ID']['input'];
-  /** Configuration for an iteration field. */
+  /** Configuration for a field of type ITERATION. Empty input is ignored, provided values overwrite the existing configuration, and existing configuration should be fetched for partial updates. */
   iterationConfiguration?: InputMaybe<ProjectV2IterationFieldConfigurationInput>;
   /** The name to update. */
   name?: InputMaybe<Scalars['String']['input']>;
-  /** Options for a field of type SINGLE_SELECT. If empty, no changes will be made to the options. If values are present, they will overwrite the existing options for the field. */
+  /** Options for a field of type SINGLE_SELECT. Empty input is ignored, provided values overwrite existing options, and existing options should be fetched for partial updates. */
   singleSelectOptions?: InputMaybe<Array<ProjectV2SingleSelectFieldOptionInput>>;
 };
 
@@ -35948,41 +35988,49 @@ export type GetReposQueryVariables = Exact<{
 }>;
 
 
-export type GetReposQuery = { __typename?: 'Query', viewer: { __typename?: 'User', repositories: { __typename?: 'RepositoryConnection', nodes?: Array<{ __typename?: 'Repository', id: string, url: string, description?: string | null, name: string, nameWithOwner: string, isPrivate: boolean, viewerPermission?: RepositoryPermission | null, owner:
-          | { __typename?: 'Organization', login: string }
-          | { __typename?: 'User', login: string }
-        , defaultBranchRef?: { __typename?: 'Ref', name: string } | null, hasEmbodiConfigTs?:
-          | { __typename?: 'Blob', id: string }
-          | { __typename?: 'Commit', id: string }
-          | { __typename?: 'Tag', id: string }
-          | { __typename?: 'Tree', id: string }
-         | null, hasEmbodiConfigJs?:
-          | { __typename?: 'Blob', id: string }
-          | { __typename?: 'Commit', id: string }
-          | { __typename?: 'Tag', id: string }
-          | { __typename?: 'Tree', id: string }
-         | null, hasAstroConfigJs?:
-          | { __typename?: 'Blob', id: string }
-          | { __typename?: 'Commit', id: string }
-          | { __typename?: 'Tag', id: string }
-          | { __typename?: 'Tree', id: string }
-         | null, hasAstroConfigTs?:
-          | { __typename?: 'Blob', id: string }
-          | { __typename?: 'Commit', id: string }
-          | { __typename?: 'Tag', id: string }
-          | { __typename?: 'Tree', id: string }
-         | null, hasAstroConfigMjs?:
-          | { __typename?: 'Blob', id: string }
-          | { __typename?: 'Commit', id: string }
-          | { __typename?: 'Tag', id: string }
-          | { __typename?: 'Tree', id: string }
-         | null } | null> | null } } };
+export type GetReposQuery = { __typename?: 'Query', viewer: { __typename?: 'User', repositories: { __typename?: 'RepositoryConnection', pageInfo: { __typename?: 'PageInfo', hasNextPage: boolean, endCursor?: string | null }, nodes?: Array<(
+        { __typename?: 'Repository' }
+        & { ' $fragmentRefs'?: { 'RepositoryFieldsFragment': RepositoryFieldsFragment } }
+      ) | null> | null }, organizations: { __typename?: 'OrganizationConnection', pageInfo: { __typename?: 'PageInfo', hasNextPage: boolean, endCursor?: string | null }, nodes?: Array<{ __typename?: 'Organization', name?: string | null, repositories: { __typename?: 'RepositoryConnection', pageInfo: { __typename?: 'PageInfo', hasNextPage: boolean, endCursor?: string | null }, nodes?: Array<(
+            { __typename?: 'Repository' }
+            & { ' $fragmentRefs'?: { 'RepositoryFieldsFragment': RepositoryFieldsFragment } }
+          ) | null> | null } } | null> | null } } };
+
+export type RepositoryFieldsFragment = { __typename?: 'Repository', id: string, url: string, description?: string | null, name: string, nameWithOwner: string, isPrivate: boolean, viewerPermission?: RepositoryPermission | null, owner:
+    | { __typename?: 'Organization', login: string }
+    | { __typename?: 'User', login: string }
+  , defaultBranchRef?: { __typename?: 'Ref', name: string } | null, hasEmbodiConfigTs?:
+    | { __typename?: 'Blob', id: string }
+    | { __typename?: 'Commit', id: string }
+    | { __typename?: 'Tag', id: string }
+    | { __typename?: 'Tree', id: string }
+   | null, hasEmbodiConfigJs?:
+    | { __typename?: 'Blob', id: string }
+    | { __typename?: 'Commit', id: string }
+    | { __typename?: 'Tag', id: string }
+    | { __typename?: 'Tree', id: string }
+   | null, hasAstroConfigJs?:
+    | { __typename?: 'Blob', id: string }
+    | { __typename?: 'Commit', id: string }
+    | { __typename?: 'Tag', id: string }
+    | { __typename?: 'Tree', id: string }
+   | null, hasAstroConfigTs?:
+    | { __typename?: 'Blob', id: string }
+    | { __typename?: 'Commit', id: string }
+    | { __typename?: 'Tag', id: string }
+    | { __typename?: 'Tree', id: string }
+   | null, hasAstroConfigMjs?:
+    | { __typename?: 'Blob', id: string }
+    | { __typename?: 'Commit', id: string }
+    | { __typename?: 'Tag', id: string }
+    | { __typename?: 'Tree', id: string }
+   | null } & { ' $fragmentName'?: 'RepositoryFieldsFragment' };
 
 export type GetUserQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type GetUserQuery = { __typename?: 'Query', viewer: { __typename?: 'User', name?: string | null, id: string, email: string, avatarUrl: string, login: string } };
 
-
-export const GetReposDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetRepos"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"amount"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"viewer"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"repositories"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"first"},"value":{"kind":"Variable","name":{"kind":"Name","value":"amount"}}},{"kind":"Argument","name":{"kind":"Name","value":"orderBy"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"field"},"value":{"kind":"EnumValue","value":"UPDATED_AT"}},{"kind":"ObjectField","name":{"kind":"Name","value":"direction"},"value":{"kind":"EnumValue","value":"DESC"}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"nodes"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"url"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"owner"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"login"}}]}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"nameWithOwner"}},{"kind":"Field","name":{"kind":"Name","value":"isPrivate"}},{"kind":"Field","name":{"kind":"Name","value":"viewerPermission"}},{"kind":"Field","name":{"kind":"Name","value":"defaultBranchRef"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}}]}},{"kind":"Field","alias":{"kind":"Name","value":"hasEmbodiConfigTs"},"name":{"kind":"Name","value":"object"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"expression"},"value":{"kind":"StringValue","value":"HEAD:.embodi.ts","block":false}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}},{"kind":"Field","alias":{"kind":"Name","value":"hasEmbodiConfigJs"},"name":{"kind":"Name","value":"object"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"expression"},"value":{"kind":"StringValue","value":"HEAD:.embodi.js","block":false}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}},{"kind":"Field","alias":{"kind":"Name","value":"hasAstroConfigJs"},"name":{"kind":"Name","value":"object"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"expression"},"value":{"kind":"StringValue","value":"HEAD:astro.config.js","block":false}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}},{"kind":"Field","alias":{"kind":"Name","value":"hasAstroConfigTs"},"name":{"kind":"Name","value":"object"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"expression"},"value":{"kind":"StringValue","value":"HEAD:astro.config.ts","block":false}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}},{"kind":"Field","alias":{"kind":"Name","value":"hasAstroConfigMjs"},"name":{"kind":"Name","value":"object"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"expression"},"value":{"kind":"StringValue","value":"HEAD:astro.config.mjs","block":false}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]}}]}}]}}]} as unknown as DocumentNode<GetReposQuery, GetReposQueryVariables>;
+export const RepositoryFieldsFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"RepositoryFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Repository"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"url"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"owner"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"login"}}]}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"nameWithOwner"}},{"kind":"Field","name":{"kind":"Name","value":"isPrivate"}},{"kind":"Field","name":{"kind":"Name","value":"viewerPermission"}},{"kind":"Field","name":{"kind":"Name","value":"defaultBranchRef"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}}]}},{"kind":"Field","alias":{"kind":"Name","value":"hasEmbodiConfigTs"},"name":{"kind":"Name","value":"object"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"expression"},"value":{"kind":"StringValue","value":"HEAD:.embodi.ts","block":false}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}},{"kind":"Field","alias":{"kind":"Name","value":"hasEmbodiConfigJs"},"name":{"kind":"Name","value":"object"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"expression"},"value":{"kind":"StringValue","value":"HEAD:.embodi.js","block":false}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}},{"kind":"Field","alias":{"kind":"Name","value":"hasAstroConfigJs"},"name":{"kind":"Name","value":"object"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"expression"},"value":{"kind":"StringValue","value":"HEAD:astro.config.js","block":false}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}},{"kind":"Field","alias":{"kind":"Name","value":"hasAstroConfigTs"},"name":{"kind":"Name","value":"object"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"expression"},"value":{"kind":"StringValue","value":"HEAD:astro.config.ts","block":false}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}},{"kind":"Field","alias":{"kind":"Name","value":"hasAstroConfigMjs"},"name":{"kind":"Name","value":"object"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"expression"},"value":{"kind":"StringValue","value":"HEAD:astro.config.mjs","block":false}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]} as unknown as DocumentNode<RepositoryFieldsFragment, unknown>;
+export const GetReposDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetRepos"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"amount"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"viewer"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"repositories"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"first"},"value":{"kind":"Variable","name":{"kind":"Name","value":"amount"}}},{"kind":"Argument","name":{"kind":"Name","value":"orderBy"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"field"},"value":{"kind":"EnumValue","value":"UPDATED_AT"}},{"kind":"ObjectField","name":{"kind":"Name","value":"direction"},"value":{"kind":"EnumValue","value":"DESC"}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"pageInfo"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"hasNextPage"}},{"kind":"Field","name":{"kind":"Name","value":"endCursor"}}]}},{"kind":"Field","name":{"kind":"Name","value":"nodes"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"RepositoryFields"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"organizations"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"first"},"value":{"kind":"Variable","name":{"kind":"Name","value":"amount"}}},{"kind":"Argument","name":{"kind":"Name","value":"orderBy"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"field"},"value":{"kind":"EnumValue","value":"LOGIN"}},{"kind":"ObjectField","name":{"kind":"Name","value":"direction"},"value":{"kind":"EnumValue","value":"DESC"}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"pageInfo"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"hasNextPage"}},{"kind":"Field","name":{"kind":"Name","value":"endCursor"}}]}},{"kind":"Field","name":{"kind":"Name","value":"nodes"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"repositories"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"first"},"value":{"kind":"Variable","name":{"kind":"Name","value":"amount"}}},{"kind":"Argument","name":{"kind":"Name","value":"orderBy"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"field"},"value":{"kind":"EnumValue","value":"UPDATED_AT"}},{"kind":"ObjectField","name":{"kind":"Name","value":"direction"},"value":{"kind":"EnumValue","value":"DESC"}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"pageInfo"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"hasNextPage"}},{"kind":"Field","name":{"kind":"Name","value":"endCursor"}}]}},{"kind":"Field","name":{"kind":"Name","value":"nodes"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"RepositoryFields"}}]}}]}}]}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"RepositoryFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Repository"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"url"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"owner"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"login"}}]}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"nameWithOwner"}},{"kind":"Field","name":{"kind":"Name","value":"isPrivate"}},{"kind":"Field","name":{"kind":"Name","value":"viewerPermission"}},{"kind":"Field","name":{"kind":"Name","value":"defaultBranchRef"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}}]}},{"kind":"Field","alias":{"kind":"Name","value":"hasEmbodiConfigTs"},"name":{"kind":"Name","value":"object"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"expression"},"value":{"kind":"StringValue","value":"HEAD:.embodi.ts","block":false}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}},{"kind":"Field","alias":{"kind":"Name","value":"hasEmbodiConfigJs"},"name":{"kind":"Name","value":"object"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"expression"},"value":{"kind":"StringValue","value":"HEAD:.embodi.js","block":false}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}},{"kind":"Field","alias":{"kind":"Name","value":"hasAstroConfigJs"},"name":{"kind":"Name","value":"object"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"expression"},"value":{"kind":"StringValue","value":"HEAD:astro.config.js","block":false}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}},{"kind":"Field","alias":{"kind":"Name","value":"hasAstroConfigTs"},"name":{"kind":"Name","value":"object"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"expression"},"value":{"kind":"StringValue","value":"HEAD:astro.config.ts","block":false}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}},{"kind":"Field","alias":{"kind":"Name","value":"hasAstroConfigMjs"},"name":{"kind":"Name","value":"object"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"expression"},"value":{"kind":"StringValue","value":"HEAD:astro.config.mjs","block":false}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]} as unknown as DocumentNode<GetReposQuery, GetReposQueryVariables>;
 export const GetUserDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetUser"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"viewer"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"avatarUrl"}},{"kind":"Field","name":{"kind":"Name","value":"login"}}]}}]}}]} as unknown as DocumentNode<GetUserQuery, GetUserQueryVariables>;

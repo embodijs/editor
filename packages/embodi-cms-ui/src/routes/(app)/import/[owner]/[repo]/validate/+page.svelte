@@ -7,11 +7,11 @@
 	import { Github, RefreshCcw } from '@lucide/svelte';
 	import { goto } from '$app/navigation';
 	import { toast } from 'svelte-sonner';
+	import { resolve } from '$app/paths';
 
 	const { data }: PageProps = $props();
 	const redirectIfExists = () => {
-		const next = new URL(`/import/${page.params.owner}/${page.params.repo}/config`, page.url);
-		goto(next);
+		goto(resolve(`/import/${page.params.owner}/${page.params.repo}/config`));
 	};
 	let isLoading = $state(false);
 	const validateRepo = async () => {

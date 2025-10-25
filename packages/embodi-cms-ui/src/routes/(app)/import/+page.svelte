@@ -3,7 +3,7 @@
 	import { ProjectCard } from '$/lib/comp/project';
 	import { Button } from '$lib/comp/core';
 	import { Skeleton } from '$lib/comp/ui/skeleton/index.js';
-	import { fade, scale } from 'svelte/transition';
+	import { fade } from 'svelte/transition';
 	import { flip } from 'svelte/animate';
 
 	type Props = { data: PageData };
@@ -12,16 +12,16 @@
 </script>
 
 <h1>Your GitHub Repos</h1>
+{#await data.reposByOwner}
+	<Skeleton class="h-24 w-full" />
+{:then reposByOwner}
+	{#each reposByOwner as { owner, repos } (owner)}
+		<section animate:flip class="mx-auto mt-5 mb-11 flex flex-col gap-3">
+			<h2 class="text-xl font-semibold">{owner}</h2>
 
-{#each data.reposByOwner as { owner, repos } (owner.id)}
-	<section animate:flip class="flex flex-col gap-3">
-		<h2 class="text-xl font-semibold">{owner.name}</h2>
-		{#await repos}
-			<Skeleton class="h-24 w-full" />
-		{:then repos}
 			<div
 				transition:fade
-				class="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4"
+				class="grid grid-cols-1 gap-2 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4"
 			>
 				{#each repos as repo (repo.id)}
 					<ProjectCard class="w-full" title={repo.name} description={repo.description}>
@@ -35,8 +35,8 @@
 					</ProjectCard>
 				{/each}
 			</div>
-		{:catch}
-			Something went wrong
-		{/await}
-	</section>
-{/each}
+		</section>
+	{/each}
+{:catch}
+	Something went wrong
+{/await}

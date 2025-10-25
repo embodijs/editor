@@ -3,6 +3,7 @@
 	import * as DropdownMenu from '$lib/comp/ui/dropdown-menu/index.js';
 	import * as Sidebar from '$lib/comp/ui/sidebar/index.js';
 	import { useSidebar } from '$lib/comp/ui/sidebar/index.js';
+	import { resolve } from '$app/paths';
 
 	import { ChevronsUpDown, Plus } from '@lucide/svelte';
 
@@ -55,13 +56,13 @@
 				sideOffset={4}
 			>
 				<DropdownMenu.Label class="text-muted-foreground text-xs">Teams</DropdownMenu.Label>
-				{#each projects as project, index (project.id)}
+				{#each projects as project (project.id)}
 					<DropdownMenu.Item onSelect={() => (activeProject = project)} class="gap-2 p-2">
 						<div class="flex size-6 items-center justify-center rounded-md border">
 							{#if activeProject.url}
 								<img src={getFaviconUrl(project.url)} alt="Favicon" class="w-full" />
 							{:else}
-								<div class="bg-muted size-3.5 shrink-0 rounded-full" />
+								<div class="bg-muted size-3.5 shrink-0 rounded-full"></div>
 							{/if}
 						</div>
 						{project.name}
@@ -69,7 +70,7 @@
 					</DropdownMenu.Item>
 				{/each}
 				<DropdownMenu.Separator />
-				<DropdownMenu.Item class="gap-2 p-2" onSelect={() => goto('/import')}>
+				<DropdownMenu.Item class="gap-2 p-2" onSelect={() => goto(resolve('/import'))}>
 					<div class="flex size-6 items-center justify-center rounded-md border bg-transparent">
 						<Plus class="size-4" />
 					</div>

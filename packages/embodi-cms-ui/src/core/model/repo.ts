@@ -20,6 +20,12 @@ export const GitRepoMetaMinimal = v.pick(GitRepoMeta, [
 	'id'
 ]);
 
+export const GitRepoOverview = v.object({
+	pageRef: v.nullish(v.string()),
+	owner: v.string(),
+	repos: v.array(GitRepoMetaMinimal)
+});
+
 export const GitRepo = v.object({
 	owner: v.string(),
 	name: v.string(),
@@ -108,6 +114,7 @@ export const GitRefResult = v.object({
 
 export type GitRepoMeta = v.InferOutput<typeof GitRepoMeta>;
 export type GitRepoMetaMinimal = v.InferOutput<typeof GitRepoMetaMinimal>;
+export type GitRepoOverview = v.InferOutput<typeof GitRepoOverview>;
 export type GitRepo = v.InferOutput<typeof GitRepo>;
 export type NewGitBlob = v.InferOutput<typeof NewGitBlob>;
 export type GitBlob = v.InferOutput<typeof GitBlob>;
