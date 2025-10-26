@@ -1,6 +1,10 @@
 import { z } from "zod";
 import type * as collection from "@embodi/cms";
 
+function isZodSchema(value: unknown): value is z.ZodType {
+  return value instanceof z.ZodType;
+}
+
 function getTypeDef<T extends z.core.$ZodType>(schema: T): T["_zod"]["def"] {
   return schema._zod.def;
 }
@@ -77,12 +81,12 @@ const handleChecks = (def: z.core.$ZodTypeDef) => {
 export const extractSchema = (
   schema: z.ZodObject | ((...args: unknown[]) => z.ZodObject),
 ) => {
-  if (typeof schema === "function") {
-    return schema({
-      image: () => imageTypeMock,
-    });
+  if (isZodSchema(schema)) {
+    return schema;
   }
-  return schema;
+  return schema({
+    image: () => imageTypeMock,
+  });
 };
 
 export const parseString: TypeTransformer<collection.StringField> = (
