@@ -5,7 +5,7 @@ import * as z from "zod";
 import * as cms from "@embodi/cms";
 import { extractSchema, parseZodSchema } from "./zod";
 import { extractFormats, parseLoader } from "./loaders";
-import { camelToReadable } from "./helper";
+import { camelToReadable, hasFile } from "./helper";
 import fs from "node:fs";
 import { resolve, dirname } from "node:path";
 
@@ -16,7 +16,10 @@ export const mockImports = (): Plugin => ({
     const split = importer.split("/");
     const name = split[split.length - 1];
 
-    if (name?.includes("content.config.")) {
+    if (
+      name?.includes("content.config.") ||
+      name?.includes("content/config.")
+    ) {
       console.log("Loading mock import:", id, importer);
 
       return `\0virtual:${id}`;
@@ -41,9 +44,17 @@ export const virtualEntry = (): Plugin => ({
   },
   load(id) {
     if (id === "\0embodi-config") {
-      return `import {collections} from './src/content.config.js';
-        export { collections };
+      if (hasFile(resolve("src"), "content.config.*")) {
+        return `
+        export { collections } from './src/content.config.js';
       `;
+      } else if (hasFile(resolve("src"), "content/config.*")) {
+        return `
+        export { collections } from './src/content/config.js';
+      `;
+      }
+
+      throw new Error("No content config found");
     }
   },
 });

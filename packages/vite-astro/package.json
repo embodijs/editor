@@ -3,7 +3,7 @@
   "module": "dist/plugin.js",
   "types": "dist/plugin.d.ts",
   "type": "module",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "scripts": {
     "test": "vitest",
     "build": "tsup",
@@ -25,7 +25,8 @@
     }
   },
   "dependencies": {
-    "@embodi/cms": "workspace:*"
+    "@embodi/cms": "workspace:*",
+    "minimatch": "^10.0.3"
   },
   "devDependencies": {
     "@types/bun": "latest",
