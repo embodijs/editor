@@ -16,6 +16,11 @@
 	const sidebar = useSidebar();
 	let activeProject = $state(projects.find((project) => project.id === currentId)!);
 
+	const switchProject = (project: (typeof projects)[number]) => async () => {
+		await goto(resolve(`/project/${project.id}`));
+		activeProject = project;
+	};
+
 	const getFaviconUrl = (url: string | URL) => {
 		const { hostname } = new URL(url);
 		return `https://icons.duckduckgo.com/ip3/${hostname}.ico`;
@@ -57,7 +62,7 @@
 			>
 				<DropdownMenu.Label class="text-muted-foreground text-xs">Teams</DropdownMenu.Label>
 				{#each projects as project (project.id)}
-					<DropdownMenu.Item onSelect={() => (activeProject = project)} class="gap-2 p-2">
+					<DropdownMenu.Item onSelect={switchProject(project)} class="gap-2 p-2">
 						<div class="flex size-6 items-center justify-center rounded-md border">
 							{#if activeProject.url}
 								<img src={getFaviconUrl(project.url)} alt="Favicon" class="w-full" />

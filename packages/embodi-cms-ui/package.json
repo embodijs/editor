@@ -7,6 +7,7 @@
 		"dev": "vite dev",
 		"build": "vite build",
 		"build:lib": "tsup",
+		"deploy": "bun run build && bun x wrangler deploy --env=''",
 		"prepublishOnly": "bun run build:lib && bun x publint",
 		"preview": "vite preview",
 		"prepare": "svelte-kit sync || echo ''",
