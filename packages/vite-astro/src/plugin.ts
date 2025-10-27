@@ -14,11 +14,12 @@ export const mockImports = (): Plugin => ({
   resolveId(id, importer) {
     if (!importer) return;
     const split = importer.split("/");
+    const folder = split[split.length - 2];
     const name = split[split.length - 1];
 
     if (
       name?.includes("content.config.") ||
-      name?.includes("content/config.")
+      (name?.includes("config.") && folder === "content")
     ) {
       console.log("Loading mock import:", id, importer);
 
