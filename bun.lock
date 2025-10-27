@@ -107,7 +107,6 @@
         "preact": "^10.27.2",
         "sharp": "^0.34.4",
         "tailwindcss": "^4.1.14",
-        "zod": "^4.1.12",
       },
       "devDependencies": {
         "@babel/parser": "^7.28.4",
@@ -123,10 +122,11 @@
     },
     "packages/vite-astro": {
       "name": "@embodi/vite-astro-cms",
-      "version": "0.2.0",
+      "version": "0.3.1",
       "dependencies": {
         "@embodi/cms": "workspace:*",
         "minimatch": "^10.0.3",
+        "zod": "^4.1.12",
       },
       "devDependencies": {
         "@types/bun": "latest",
