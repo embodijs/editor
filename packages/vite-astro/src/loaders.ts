@@ -16,6 +16,25 @@ export const extractFormats = (pattern: string): string[] => {
   return extMatch && extMatch[1] ? [extMatch[1]] : [];
 };
 
+export const legacyLoader = (
+  key: string,
+  type: "data" | "content" | undefined,
+): cms.Loader => {
+  if (type === "data") {
+    return {
+      type: "glob",
+      base: `src/content/${key}`,
+      pattern: "**/*.{json,yaml,yml}",
+    };
+  } else {
+    return {
+      type: "glob",
+      base: `src/content/${key}`,
+      pattern: "**/*.{md,mdx}",
+    };
+  }
+};
+
 export const parseLoader = (
   loader:
     | Parameters<typeof loaders.glob>[0]

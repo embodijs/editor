@@ -4,7 +4,7 @@ import vm from "node:vm";
 import * as z from "zod";
 import * as cms from "@embodi/cms";
 import { extractSchema, parseZodSchema } from "./zod";
-import { extractFormats, parseLoader } from "./loaders";
+import { extractFormats, legacyLoader, parseLoader } from "./loaders";
 import { camelToReadable, hasFile } from "./helper";
 import fs from "node:fs";
 import { resolve, dirname } from "node:path";
@@ -47,10 +47,12 @@ export const virtualEntry = (): Plugin => ({
       if (hasFile(resolve("src"), "content.config.*")) {
         return `
         export { collections } from './src/content.config.js';
+        export const legacy = false;
       `;
       } else if (hasFile(resolve("src"), "content/config.*")) {
         return `
         export { collections } from './src/content/config.js';
+        export const legacy = true;
       `;
       }
 
@@ -93,23 +95,29 @@ export default (): Plugin[] => {
               return z;
             }
           },
-          exports: {},
+          exports: { collections: {}, legacy: false },
           module: { exports: {} },
           console: console,
         };
         type AstroCollection = {
+          type?: "data" | "content";
           loader:
             | Parameters<typeof loaders.glob>[0]
             | Parameters<typeof loaders.file>[0];
           schema: z.ZodObject<any> | ((...args: any[]) => z.ZodObject<any>);
         };
-        const result: Record<string, AstroCollection> =
-          await vm.runInNewContext(code, sandbox);
-        const collections: cms.GitCollection[] = Object.entries(result)
+
+        await vm.runInNewContext(code, sandbox);
+        const collectionsRaw: Record<string, AstroCollection> =
+          sandbox.exports.collections;
+        const isLegacy = sandbox.exports.legacy as boolean;
+        const collections: cms.GitCollection[] = Object.entries(collectionsRaw)
           .map(([key, value]) => {
             const schema = extractSchema(value.schema);
 
-            const loader = parseLoader(value.loader);
+            const loader = isLegacy
+              ? legacyLoader(key, value.type)
+              : parseLoader(value.loader);
             if (!loader) {
               return null;
             }
