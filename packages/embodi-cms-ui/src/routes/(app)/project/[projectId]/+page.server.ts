@@ -11,6 +11,13 @@ export const load: PageServerLoad = async ({ locals, params, platform }) => {
 	isAuthorized(locals);
 	const dbConnection = getDb(platform?.env);
 	const project = await getProject(dbConnection, params.projectId);
+	if (!project) {
+		error(404, {
+			type: 'Project not found',
+			message: 'The requested project could not be found.'
+		});
+	}
+
 	return { project };
 };
 

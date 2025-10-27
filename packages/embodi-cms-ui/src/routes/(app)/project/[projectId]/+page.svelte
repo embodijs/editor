@@ -2,6 +2,7 @@
 	import type { PageProps } from './$types';
 	import * as Card from '$/lib/comp/ui/card/index.js';
 	import { SiteHeader } from '$/lib/comp/core/index.js';
+	import { Skeleton } from '$/lib/comp/ui/skeleton';
 
 	let { data }: PageProps = $props();
 </script>
