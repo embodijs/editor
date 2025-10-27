@@ -20,6 +20,19 @@ const blogsCollection = defineCollection({
     }),
 });
 
+const simpleTestCollection = defineCollection({
+  loader: glob({ pattern: "**/*.{md,mdx}", base: "./src/content/blogs" }),
+  schema: z.object({
+    title: z.string(),
+    description: z.string(),
+    pubDate: z.date(),
+    author: z.string().optional(),
+    tags: z.array(z.string()).optional(),
+    draft: z.boolean().optional(),
+  }),
+});
+
 export const collections = {
   blogs: blogsCollection,
+  simpleTest: simpleTestCollection,
 };
