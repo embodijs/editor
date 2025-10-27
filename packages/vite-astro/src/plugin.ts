@@ -49,7 +49,7 @@ export const virtualEntry = (): Plugin => ({
         export { collections } from './src/content.config.js';
         export const legacy = false;
       `;
-      } else if (hasFile(resolve("src"), "content/config.*")) {
+      } else if (hasFile(resolve("src/content"), "config.*")) {
         return `
         export { collections } from './src/content/config.js';
         export const legacy = true;
