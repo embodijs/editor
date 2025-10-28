@@ -36,7 +36,6 @@ export class FileManager {
 		const lastDot = name.lastIndexOf('.');
 
 		if (lastDot === -1) {
-			// Keine Extension (z.B. "README")
 			return `${name}-${hash}`;
 		}
 
@@ -69,12 +68,5 @@ export class FileManager {
 			return base64;
 		}
 		return path;
-		if (!this.refUrl) {
-			return '';
-		}
-		const url = new URL(path, this.refUrl);
-		const result = await fetch(url);
-		const blob = await result.blob();
-		return URL.createObjectURL(blob);
 	}
 }
