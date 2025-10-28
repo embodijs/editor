@@ -7,6 +7,7 @@
 	import { generateRandomHash } from '$/lib/helpers/crypto';
 	import { Button } from '../core';
 	import { Plus } from '@lucide/svelte';
+	import { tick } from 'svelte';
 
 	type Props = {
 		field: ArrayField;
@@ -18,32 +19,28 @@
 	const { form: formData } = form;
 
 	let fieldState: { id: string; content: unknown }[] = $state([]);
-	(getPathValue($formData, objectPath) as unknown[]).forEach((item) => {
+	((getPathValue($formData, objectPath) as unknown[]) ?? []).forEach((item) => {
 		fieldState.push({
 			content: item,
 			id: generateRandomHash()
 		});
 	});
+	formData.subscribe(console.log);
+	const addItem = async () => {
+		console.log(objectPath.join('.'));
+		await tick();
+		fieldState.push({
+			content: {},
+			id: generateRandomHash()
+		});
+	};
 </script>
 
 <Field.Set>
 	<Field.Legend class="w-full">
 		<div class="flex items-center justify-between">
 			{getLabel(field)}
-			<Button
-				variant="ghost"
-				onclick={() => {
-					fieldState.push({
-						content: {},
-						id: generateRandomHash()
-					});
-					setPathValue(
-						$formData,
-						objectPath,
-						fieldState.map((item) => item.content)
-					);
-				}}><Plus />Add</Button
-			>
+			<Button variant="ghost" onclick={addItem}><Plus />Add</Button>
 		</div>
 	</Field.Legend>
 	{#each fieldState as item, index (item.id)}

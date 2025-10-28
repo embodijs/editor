@@ -16,6 +16,7 @@
 	import { getLabel, getPathValue, setPathValue } from './helpers.svelte.js';
 	import ArrayField from './ArrayField.svelte';
 	import { Switch } from '../ui/switch';
+	import ImageField from './ImageField.svelte';
 
 	type Props = {
 		field: MetaInputField;
@@ -49,6 +50,8 @@
 				<ObjectField label={getLabel(field)} {form} fields={field.fields} {objectPath} />
 			{:else if isArrayField(field)}
 				<ArrayField {form} {field} {objectPath} />
+			{:else if isImageField(field)}
+				<ImageField {form} {field} {objectPath} />
 			{:else}
 				{#if !noLabel}
 					<Form.Label>{getLabel(field)}</Form.Label>
