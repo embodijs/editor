@@ -11,11 +11,12 @@
 	let { data }: PageProps = $props();
 	const form = superForm(data.form, {
 		validators: valibotClient(NewProject),
-		result: ({ form: f }) => {
-			if (f.valid) {
-				toast.success(`You submitted ${JSON.stringify(f.data, null, 2)}`);
-			} else {
-				toast.error('Please fix the errors in the form.');
+		onError: ({ result }) => {
+			toast.error(`Something went wrong: <br /> ${result.error.message}`);
+		},
+		onResult: ({ result }) => {
+			if (result.type === 'success') {
+				toast.success(`Project created successfully`);
 			}
 		}
 	});

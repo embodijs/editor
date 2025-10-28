@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { ProjectSwitch, User } from '$/lib/comp/sidebar/index';
+	import { resolve } from '$app/paths';
 	import * as Sidebar from '$lib/comp/ui/sidebar/index.js';
 	import type { LayoutProps } from './$types';
 	import { LayoutDashboard } from '@lucide/svelte';
@@ -30,7 +31,9 @@
 								<Sidebar.MenuButton>
 									{#snippet child({ props })}
 										<a
-											href="/project/{data.currentProject.id}/collection/{collection.name}"
+											href={resolve(
+												`/project/${data.currentProject.id}/collection/${collection.name}`
+											)}
 											{...props}
 										>
 											<span>{collection.displayName}</span>
@@ -50,7 +53,7 @@
 							<Sidebar.MenuItem>
 								<Sidebar.MenuButton>
 									{#snippet child({ props })}
-										<a href={item.href} {...props}>
+										<a href={resolve(item.href)} {...props}>
 											<item.icon />
 											<span>{item.label}</span>
 										</a>
