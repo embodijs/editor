@@ -10,9 +10,10 @@
 		description?: string;
 		form: SuperForm<T>;
 		objectPath: (string | number)[];
+		noSeparator?: boolean;
 	};
 
-	const { fields, form, objectPath, label, description }: Props = $props();
+	const { fields, form, objectPath, label, description, noSeparator }: Props = $props();
 </script>
 
 <Field.Set>
@@ -24,4 +25,6 @@
 		<FieldMatcher {field} {form} objectPath={[...objectPath, field.fieldName]} />
 	{/each}
 </Field.Set>
-<Field.Separator />
+{#if !noSeparator}
+	<Field.Separator />
+{/if}

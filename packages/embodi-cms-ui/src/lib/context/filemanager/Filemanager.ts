@@ -62,6 +62,13 @@ export class FileManager {
 		return upload.relativePath;
 	}
 
+	remove(path: string): void {
+		if (!this.store.has(path)) {
+			return Promise.resolve();
+		}
+		this.store.delete(path);
+	}
+
 	async getFile(path: string): Promise<string> {
 		if (this.store.has(path)) {
 			const { base64 } = this.store.get(path)!;

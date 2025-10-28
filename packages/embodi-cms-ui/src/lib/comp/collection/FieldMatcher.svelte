@@ -6,6 +6,7 @@
 	import * as Form from '$lib/comp/ui/form/index.js';
 	import { DatePicker } from '../core';
 	import { getLocale } from '$lib/paraglide/runtime.js';
+	import * as InputGroup from '$lib/comp/ui/input-group/index.js';
 	import {
 		isArrayField,
 		isBooleanField,
@@ -53,16 +54,20 @@
 			{:else if isImageField(field)}
 				<ImageField {form} {field} {objectPath} />
 			{:else}
-				{#if !noLabel}
-					<Form.Label>{getLabel(field)}</Form.Label>
-				{/if}
-				{#if isDateField(field)}
-					<DatePicker {...props} bind:value={fieldState as Date} local={getLocale()} />
-				{:else if isImageField(field)}
-					<Input {...props} bind:value={fieldState}></Input>
-				{:else}
-					<Input {...props} bind:value={fieldState as string}></Input>
-				{/if}
+				<InputGroup.Root>
+					{#if !noLabel}
+						<InputGroup.Addon align="block-start">
+							<Form.Label>{getLabel(field)}</Form.Label>
+						</InputGroup.Addon>
+					{/if}
+					{#if isDateField(field)}
+						<DatePicker {...props} bind:value={fieldState as Date} local={getLocale()} />
+					{:else if isImageField(field)}
+						<InputGroup.Input {...props} bind:value={fieldState}></InputGroup.Input>
+					{:else}
+						<InputGroup.Input {...props} bind:value={fieldState as string}></InputGroup.Input>
+					{/if}
+				</InputGroup.Root>
 			{/if}
 		{/snippet}
 	</Form.Control>

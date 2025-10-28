@@ -59,6 +59,7 @@
 						objectPath={['meta']}
 						label="Meta data"
 						description="Additional information about the article"
+						noSeparator
 					/>
 				</div>
 			</Sheet.Content>

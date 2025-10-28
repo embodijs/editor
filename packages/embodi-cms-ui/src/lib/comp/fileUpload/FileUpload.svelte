@@ -3,6 +3,8 @@
 	import type { WithChildren } from 'bits-ui';
 	import type { HTMLInputAttributes } from 'svelte/elements';
 	import Empty from './Empty.svelte';
+	import * as InputGroup from '$lib/comp/ui/input-group/index.js';
+	import { File as FileIcon, X } from '@lucide/svelte';
 
 	type FileRejectedReason =
 		| 'Maximum file size exceeded'
@@ -12,6 +14,8 @@
 	type FileDropZonePropsWithoutHTML = WithChildren<{
 		ref?: HTMLInputElement | null;
 		onupload: (file: File) => Promise<void> | void;
+		optional?: boolean;
+		onremove?: (file: File) => Promise<void> | void;
 		/** Called when a file does not meet the upload criteria (size, or type) */
 		onFileRejected?: (opts: { reason: FileRejectedReason; file: File }) => void;
 
@@ -42,6 +46,9 @@
 
 	let {
 		id = useId(),
+		optional,
+		onremove,
+		value,
 		children,
 		disabled = false,
 		onupload: onUpload,
@@ -126,28 +133,39 @@
 	};
 </script>
 
-<label
-	ondragover={(e) => e.preventDefault()}
-	ondrop={drop}
-	for={id}
-	aria-disabled={uploading}
-	class:group={children}
->
-	{#if children}
-		{@render children()}
-	{:else}
-		<Empty />
-	{/if}
-	<input
-		{...rest}
-		disabled={uploading}
-		{id}
-		{accept}
-		type="file"
-		onchange={change}
-		class="hidden"
-	/>
-</label>
+<InputGroup.Root>
+	<label
+		ondragover={(e) => e.preventDefault()}
+		ondrop={drop}
+		for={id}
+		aria-disabled={uploading}
+		class:group={children}
+	>
+		{#if children}
+			{@render children()}
+		{:else}
+			<Empty />
+		{/if}
+		<input
+			{...rest}
+			disabled={uploading}
+			{id}
+			{accept}
+			type="file"
+			onchange={change}
+			class="hidden"
+		/>
+	</label>
+	<InputGroup.Addon align="block-end" class="border-t">
+		<InputGroup.Text>
+			<FileIcon />
+			{value}
+		</InputGroup.Text>
+		{#if optional}
+			<InputGroup.Button title="Remove" class="ml-auto" onclick={onremove}><X /></InputGroup.Button>
+		{/if}
+	</InputGroup.Addon>
+</InputGroup.Root>
 
 <style lang="postcss">
 	@reference "../../../app.css";
@@ -155,7 +173,6 @@
 		@apply block;
 		@apply flex flex-col place-items-center justify-center gap-3;
 		@apply min-h-48 w-full p-3;
-		@apply border-border rounded-lg border-2 border-dashed;
 		@apply hover:bg-accent/25 transition-all hover:cursor-pointer aria-disabled:opacity-50 aria-disabled:hover:cursor-not-allowed;
 	}
 </style>

@@ -16,7 +16,6 @@
 
 	const { field, form, objectPath }: Props = $props();
 	const { form: formData } = form;
-
 	let fieldState: string | undefined = $state(getPathValue($formData, objectPath) as string);
 	const name = `${objectPath.join('.')}` as FormPath<T>;
 
@@ -24,16 +23,29 @@
 		formData.update((data) => setPathValue(data, objectPath, fieldState));
 	});
 
+	const handleOnRemove = async () => {
+		if (fieldState) {
+			fileManager?.remove(fieldState);
+			fieldState = undefined;
+		}
+	};
+
 	const handleUpload = async (file: File) => {
 		fieldState = await fileManager?.set(file);
 	};
 </script>
 
 <Form.Field {form} {name}>
-	<Upload.FileUpload onupload={handleUpload} accept="image/*">
+	<Upload.FileUpload
+		onupload={handleUpload}
+		value={fieldState}
+		optional={field.optional}
+		onremove={handleOnRemove}
+		accept="image/*"
+	>
 		{@const image = fieldState ? fileManager?.getFile(fieldState) : undefined}
 		{#if image}
-			<Upload.ImageReplace>
+			<Upload.ImageReplace optional={true}>
 				{#await image then image}<img src={image} alt="Uploaded Image" />{/await}
 			</Upload.ImageReplace>
 		{:else}

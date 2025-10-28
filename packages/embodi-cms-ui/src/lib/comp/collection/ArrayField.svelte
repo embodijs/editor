@@ -3,8 +3,9 @@
 	import type { SuperForm } from 'sveltekit-superforms';
 	import FieldMatcher from './FieldMatcher.svelte';
 	import * as Field from '$lib/comp/ui/field/index.js';
-	import { getLabel, getPathValue, setPathValue } from './helpers.svelte.js';
+	import { getLabel, getPathValue } from './helpers.svelte.js';
 	import { generateRandomHash } from '$/lib/helpers/crypto';
+	import * as Card from '$lib/comp/ui/card/index.js';
 	import { Button } from '../core';
 	import { Plus } from '@lucide/svelte';
 	import { tick } from 'svelte';
@@ -13,9 +14,10 @@
 		field: ArrayField;
 		form: SuperForm<T>;
 		objectPath: (string | number)[];
+		noSeparator?: boolean;
 	};
 
-	const { field, form, objectPath }: Props = $props();
+	const { field, form, objectPath, noSeparator } = $props();
 	const { form: formData } = form;
 
 	let fieldState: { id: string; content: unknown }[] = $state([]);
@@ -47,4 +49,6 @@
 		<FieldMatcher field={field.items} {form} objectPath={[...objectPath, index]} noLabel />
 	{/each}
 </Field.Set>
-<Field.Separator />
+{#if !noSeparator}
+	<Field.Separator />
+{/if}
