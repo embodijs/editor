@@ -1,9 +1,8 @@
 <script lang="ts">
-	import { Replace } from '@lucide/svelte';
-	import UploadIcon from '@lucide/svelte/icons/upload';
 	import { useId } from 'bits-ui';
 	import type { WithChildren } from 'bits-ui';
 	import type { HTMLInputAttributes } from 'svelte/elements';
+	import Empty from './Empty.svelte';
 
 	type FileRejectedReason =
 		| 'Maximum file size exceeded'
@@ -135,31 +134,9 @@
 	class:group={children}
 >
 	{#if children}
-		<div class="child-wrapper">
-			<div class="absolute z-10 hidden h-full w-full group-hover:block">
-				<div class="grid h-full w-full place-content-center">
-					<span class="bg-accent/30 rounded-full p-3 shadow-lg">
-						<Replace />
-					</span>
-				</div>
-			</div>
-			<div class="group-hover:blur-xs">
-				{@render children()}
-			</div>
-		</div>
+		{@render children()}
 	{:else}
-		<div class="flex flex-col place-items-center justify-center gap-2">
-			<div
-				class="border-border text-muted-foreground flex size-14 place-items-center justify-center rounded-full border border-dashed"
-			>
-				<UploadIcon class="size-7" />
-			</div>
-			<div class="flex flex-col gap-0.5 text-center">
-				<span class="text-muted-foreground font-medium">
-					Drag 'n' drop files here, or click to select files
-				</span>
-			</div>
-		</div>
+		<Empty />
 	{/if}
 	<input
 		{...rest}
@@ -180,9 +157,5 @@
 		@apply min-h-48 w-full p-3;
 		@apply border-border rounded-lg border-2 border-dashed;
 		@apply hover:bg-accent/25 transition-all hover:cursor-pointer aria-disabled:opacity-50 aria-disabled:hover:cursor-not-allowed;
-	}
-
-	div.child-wrapper {
-		@apply relative overflow-hidden rounded-lg;
 	}
 </style>

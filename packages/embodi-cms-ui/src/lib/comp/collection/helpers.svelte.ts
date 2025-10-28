@@ -21,11 +21,25 @@ export const getLabel = ({ displayName, fieldName }: MetaInputField): string => 
 };
 
 export const getPathValue = (data: unknown, path: (string | number)[]): unknown => {
+	if (data == null) {
+		return undefined;
+	}
 	if (path.length === 0) {
 		return data;
 	}
 	const [next, ...rest] = path;
 	return getPathValue((data as Record<string, unknown>)[next], rest);
+};
+
+const getArraySlice = (
+	data: Array<unknown> | undefined,
+	start: number,
+	end?: number
+): Array<unknown> => {
+	if (!data || start === end || (end && end > data.length)) {
+		return [];
+	}
+	return data.slice(start, end);
 };
 
 export const setPathValue = <T = unknown>(
@@ -39,9 +53,9 @@ export const setPathValue = <T = unknown>(
 	const [next, ...rest] = path;
 	if (typeof next === 'number') {
 		return [
-			...(data as Array<unknown>).slice(0, next),
-			setPathValue((data as Array<unknown>)[next], rest, value),
-			...(data as Array<unknown>).slice(next + 1)
+			...getArraySlice(data as Array<unknown>, 0, next),
+			setPathValue((data as Array<unknown>)?.[next], rest, value),
+			...getArraySlice(data as Array<unknown>, next + 1)
 		] as T;
 	}
 	return {

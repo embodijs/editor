@@ -1,7 +1,7 @@
 <script lang="ts" generics="T extends { meta: Record<string, unknown>}">
 	import { getFileContext } from '$/lib/context/filemanager';
 	import type { ImageField } from '$core/model/collection';
-	import { FileUpload } from '$lib/comp/core/index.js';
+	import * as Upload from '$lib/comp/fileUpload/index.js';
 	import type { FormPath, SuperForm } from 'sveltekit-superforms';
 	import * as Form from '$lib/comp/ui/form/index.js';
 	import { getPathValue, setPathValue } from './helpers.svelte.js';
@@ -30,10 +30,14 @@
 </script>
 
 <Form.Field {form} {name}>
-	<FileUpload onupload={handleUpload} accept="image/*">
+	<Upload.FileUpload onupload={handleUpload} accept="image/*">
 		{@const image = fieldState ? fileManager?.getFile(fieldState) : undefined}
 		{#if image}
-			{#await image then image}<img src={image} alt="Uploaded Image" />{/await}
+			<Upload.ImageReplace>
+				{#await image then image}<img src={image} alt="Uploaded Image" />{/await}
+			</Upload.ImageReplace>
+		{:else}
+			<Upload.Empty />
 		{/if}
-	</FileUpload>
+	</Upload.FileUpload>
 </Form.Field>
