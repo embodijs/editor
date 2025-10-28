@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { Replace } from '@lucide/svelte';
 	import UploadIcon from '@lucide/svelte/icons/upload';
 	import { useId } from 'bits-ui';
 	import type { WithChildren } from 'bits-ui';
@@ -131,10 +132,21 @@
 	ondrop={drop}
 	for={id}
 	aria-disabled={uploading}
-	class="border-border hover:bg-accent/25 flex h-48 w-full place-items-center justify-center rounded-lg border-2 border-dashed p-6 transition-all hover:cursor-pointer aria-disabled:opacity-50 aria-disabled:hover:cursor-not-allowed"
+	class:group={children}
 >
 	{#if children}
-		{@render children()}
+		<div class="child-wrapper">
+			<div class="absolute z-10 hidden h-full w-full group-hover:block">
+				<div class="grid h-full w-full place-content-center">
+					<span class="bg-accent/30 rounded-full p-3 shadow-lg">
+						<Replace />
+					</span>
+				</div>
+			</div>
+			<div class="group-hover:blur-xs">
+				{@render children()}
+			</div>
+		</div>
 	{:else}
 		<div class="flex flex-col place-items-center justify-center gap-2">
 			<div
@@ -159,3 +171,18 @@
 		class="hidden"
 	/>
 </label>
+
+<style lang="postcss">
+	@reference "../../../app.css";
+	label {
+		@apply block;
+		@apply flex flex-col place-items-center justify-center gap-3;
+		@apply min-h-48 w-full p-3;
+		@apply border-border rounded-lg border-2 border-dashed;
+		@apply hover:bg-accent/25 transition-all hover:cursor-pointer aria-disabled:opacity-50 aria-disabled:hover:cursor-not-allowed;
+	}
+
+	div.child-wrapper {
+		@apply relative overflow-hidden rounded-lg;
+	}
+</style>
