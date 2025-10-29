@@ -13,13 +13,14 @@ import { error } from '@sveltejs/kit';
 import { valibot } from 'sveltekit-superforms/adapters';
 import type { Collection, Loader } from '$core/model/collection';
 import { getProjectConfig } from '$layer/project';
-import { getProject } from '$services/project';
 import { projectToRepo } from '$core/logic/repo';
 import { saveArticle } from '$layer/article';
 import { dirname } from 'path';
 import { minimatch } from 'minimatch';
 import { getDb } from '$/lib/db/index.server';
 import * as path from 'node:path';
+import { getProject } from '$services/project';
+import type { GitRepo } from '$core/model/repo';
 
 const getCurrentCollection = (collections: Collection[], name: string) =>
 	collections.find((collection) => collection.name === name);
@@ -33,11 +34,24 @@ const getFilePath = (params: RouteParams, loader: Loader, article: Articel) => {
 	}
 };
 
-export const load: PageServerLoad = async ({ params, parent, locals }) => {
+export const load: PageServerLoad = async ({ params, parent, locals, platform }) => {
 	isAuthorized(locals);
 	const { path } = params;
 	const user = getInternalGitUser(locals);
-	const { currentProject, collections } = await parent();
+	const dbConnection = getDb(platform?.env);
+
+	const currentProject = await getProject(dbConnection, params.projectId);
+	if (!currentProject) {
+		throw error(404, {
+			type: 'Project not found',
+			message: 'The Project your try to open seems to be not exist'
+		});
+	}
+	const repo: GitRepo = {
+		owner: currentProject.owner,
+		name: currentProject.repo
+	};
+	const { collections } = (await getProjectConfig(repo, locals)) ?? {};
 	const collection = getCurrentCollection(collections, params.collection);
 	if (!collection) {
 		throw error(404, {
@@ -70,14 +84,18 @@ export const load: PageServerLoad = async ({ params, parent, locals }) => {
 		return {
 			metaForm,
 			formFields: fields,
-			path: dirname(path)
+			path: dirname(path),
+			collection,
+			currentProject
 		};
 	} else {
 		const metaForm = await superValidate(valibot(generateArticleFormSchema(fields)));
 		return {
 			metaForm,
 			formFields: fields,
-			path: loader.base
+			path: loader.base,
+			collection,
+			currentProject
 		};
 	}
 };

@@ -64,7 +64,7 @@ export class FileManager {
 
 	remove(path: string): void {
 		if (!this.store.has(path)) {
-			return Promise.resolve();
+			return;
 		}
 		this.store.delete(path);
 	}

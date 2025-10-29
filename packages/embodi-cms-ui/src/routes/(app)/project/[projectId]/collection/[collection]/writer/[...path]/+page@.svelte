@@ -1,12 +1,8 @@
 <script lang="ts">
 	import MarkdownEditor from '$/lib/comp/collection/MarkdownEditor.svelte';
-	import { SiteHeader } from '$/lib/comp/core';
-	import { buttonVariants } from '$/lib/comp/ui/button';
-	import * as Sheet from '$lib/comp/ui/sheet/index.js';
 	import { superForm } from 'sveltekit-superforms';
 	import type { PageProps } from './$types';
 	import { ObjectField } from '$/lib/comp/collection';
-	import { Button } from '$/lib/comp/ui/form';
 	import { initFileContext } from '$/lib/context/filemanager';
 	import type { FileUpload } from '$core/model/article';
 	import { writable } from 'svelte/store';
@@ -14,8 +10,11 @@
 	import { generateArticleFormSchema } from '$core/logic/article';
 	import type { GitRepo } from '$core/model/repo';
 	import { page } from '$app/state';
-	import { LoaderCircle } from '@lucide/svelte';
 	import { toast } from 'svelte-sonner';
+	import * as Sidebar from '$lib/comp/ui/sidebar/index.js';
+	import { Button, Spinner } from '$/lib/comp/core';
+	import { ChevronLeft } from '@lucide/svelte';
+	import { resolve } from '$app/paths';
 
 	const { data }: PageProps = $props();
 
@@ -37,9 +36,7 @@
 
 	const fileStore = writable<FileUpload[]>([]);
 	const { form: formData, enhance, submitting } = form;
-	$effect(() => {
-		$formData.files = $fileStore;
-	});
+
 	const repo: GitRepo = {
 		owner: data.currentProject.owner,
 		name: data.currentProject.repo
@@ -50,24 +47,49 @@
 		repo,
 		new URL(`/${repo.owner}/${repo.name}/file/${data.path}/`, page.url.origin)
 	);
+
+	$effect(() => {
+		$formData.files = $fileStore;
+	});
 </script>
 
-<Sheet.Root>
-	<SiteHeader title="Article">
-		{#snippet actions()}
-			<Button disabled={$submitting} onclick={() => form.submit()}>
-				Save{#if $submitting}<LoaderCircle class="animate-spin" />{/if}
-			</Button>
-		{/snippet}
-	</SiteHeader>
-	<main class="relative">
-		<header class="m-3 flex justify-end">
-			<Sheet.Trigger class={buttonVariants({ variant: 'link' })}>Meta</Sheet.Trigger>
-		</header>
-		<MarkdownEditor {form} />
-		<form use:enhance method="POST">
-			<Sheet.Content>
-				<div class="mx-3 space-y-5">
+<main class="relative">
+	<Sidebar.Provider style="--sidebar-width: 27rem; --sidebar-width-mobile: 20rem;">
+		<Sidebar.Inset>
+			<header class="flex items-center justify-between px-2 py-1">
+				<div>
+					<Button
+						variant="ghost"
+						href={resolve('/(app)/project/[projectId]/collection/[collection]', {
+							projectId: data.currentProject.id,
+							collection: data.collection.name
+						})}
+					>
+						<ChevronLeft />{data.collection.displayName}
+					</Button>
+				</div>
+				<div class="flex items-center">
+					<Button
+						on:click={async () => {
+							form.submit();
+						}}
+						variant="ghost"
+						type="submit"
+						disabled={$submitting}
+						class="ml-2"
+						>{#if $submitting}<Spinner /> Saving...
+						{:else}Save{/if}</Button
+					>
+					<Sidebar.Trigger />
+				</div>
+			</header>
+
+			<MarkdownEditor {form} />
+		</Sidebar.Inset>
+
+		<Sidebar.Root side="right">
+			<Sidebar.Content class="mx-3 my-5 space-y-5">
+				<form use:enhance method="POST">
 					<ObjectField
 						fields={data.formFields}
 						{form}
@@ -76,8 +98,8 @@
 						description="Additional information about the article"
 						noSeparator
 					/>
-				</div>
-			</Sheet.Content>
-		</form>
-	</main>
-</Sheet.Root>
+				</form>
+			</Sidebar.Content>
+		</Sidebar.Root>
+	</Sidebar.Provider>
+</main>
