@@ -2,7 +2,6 @@
 	import type { MetaInputField } from '$core/model/collection';
 	import ObjectField from './ObjectField.svelte';
 	import type { FormPath, SuperForm } from 'sveltekit-superforms';
-	import { Input } from '$lib/comp/ui/input/index.js';
 	import * as Form from '$lib/comp/ui/form/index.js';
 	import { DatePicker } from '../core';
 	import { getLocale } from '$lib/paraglide/runtime.js';
@@ -31,7 +30,7 @@
 
 	let fieldState: unknown = $state(getPathValue($formData, objectPath));
 	const name = `${objectPath.join('.')}` as FormPath<T>;
-
+	formData.subscribe(console.log);
 	$effect(() => {
 		formData.update((data) => setPathValue(data, objectPath, fieldState));
 	});
@@ -45,11 +44,7 @@
 					{#if !noLabel}
 						<Form.Label>{getLabel(field)}</Form.Label>
 					{/if}
-					<Switch
-						checked={fieldState as boolean}
-						ontoggle={() => (fieldState = !fieldState)}
-						{...props}
-					/>
+					<Switch bind:checked={fieldState as boolean} {...props} />
 				</div>
 			{:else if isObjectField(field)}
 				<ObjectField label={getLabel(field)} {form} fields={field.fields} {objectPath} />

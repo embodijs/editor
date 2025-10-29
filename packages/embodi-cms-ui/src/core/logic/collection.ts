@@ -29,8 +29,9 @@ export const isEnumField = (field: MetaInputField): field is EnumField => field.
 
 const handleOptional = <T extends v.BaseSchema<unknown, unknown, v.BaseIssue<unknown>>>(
 	fields: MetaInputField,
-	schema: T
-) => (fields.optional ? v.optional(schema) : schema);
+	schema: T,
+	defaultValue?: unknown
+) => (fields.optional ? v.optional(schema, defaultValue) : schema);
 
 export const parseString: Transformer = (field) => {
 	if (!isStringField(field)) {
@@ -46,7 +47,7 @@ export const parseString: Transformer = (field) => {
 	} else if (field.pattern === 'url') {
 		deepParams.push(v.url());
 	}
-	return v.pipe(v.string(), ...deepParams);
+	return handleOptional(field, v.pipe(v.string(), ...deepParams));
 };
 
 const parseNumber: Transformer = (field) => {
@@ -59,17 +60,20 @@ const parseNumber: Transformer = (field) => {
 	} else if (field.max) {
 		deepParams.push(v.maxValue(field.max));
 	}
-	return v.pipe(v.number(), ...deepParams);
+	return handleOptional(field, v.pipe(v.number(), ...deepParams));
 };
 
 const parseDate: Transformer = (field) => {
 	if (!isDateField(field)) {
 		return null;
 	}
-	return v.pipe(
-		v.date(),
-		field.min ? v.minValue(new Date(field.min)) : v.check<Date>(() => true),
-		field.max ? v.maxValue(new Date(field.max)) : v.check<Date>(() => true)
+	return handleOptional(
+		field,
+		v.pipe(
+			v.date(),
+			field.min ? v.minValue(new Date(field.min)) : v.check<Date>(() => true),
+			field.max ? v.maxValue(new Date(field.max)) : v.check<Date>(() => true)
+		)
 	);
 };
 
@@ -81,7 +85,7 @@ const parseArray: Transformer = (field) => {
 	if (!itemSchema) {
 		return null;
 	}
-	return v.array(itemSchema);
+	return handleOptional(field, v.array(itemSchema));
 };
 
 const parseObject: Transformer = (field) => {
@@ -99,28 +103,28 @@ const parseObject: Transformer = (field) => {
 		},
 		{} as Record<string, v.BaseSchema<unknown, unknown, v.BaseIssue<unknown>>>
 	);
-	return v.object(objectSchema);
+	return handleOptional(field, v.object(objectSchema));
 };
 
 const parserBoolean: Transformer = (field) => {
 	if (!isBooleanField(field)) {
 		return null;
 	}
-	return v.boolean();
+	return handleOptional(field, v.boolean(), false);
 };
 
 const parseImage: Transformer = (field) => {
 	if (!isImageField(field)) {
 		return null;
 	}
-	return v.string();
+	return handleOptional(field, v.string());
 };
 
 const parseEnum: Transformer = (field) => {
 	if (!isEnumField(field)) {
 		return null;
 	}
-	return v.enum(field.options);
+	return handleOptional(field, v.enum(field.options));
 };
 
 type Transformer = (
@@ -142,7 +146,7 @@ const runSchemaTransformer = (field: MetaInputField) => {
 	for (const parser of transformer) {
 		const result = parser(field);
 		if (result) {
-			return handleOptional(field, result);
+			return result;
 		}
 	}
 	return null;
