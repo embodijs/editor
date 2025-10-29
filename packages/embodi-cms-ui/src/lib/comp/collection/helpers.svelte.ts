@@ -59,7 +59,7 @@ export const setPathValue = <T = unknown>(
 		] as T;
 	}
 	return {
-		...(data as Record<string, unknown>),
-		[next]: setPathValue((data as Record<string, unknown>)[next], rest, value)
+		...((data as Record<string, unknown>) ?? {}),
+		[next]: setPathValue((data as Record<string, unknown>)?.[next], rest, value)
 	} as T;
 };
