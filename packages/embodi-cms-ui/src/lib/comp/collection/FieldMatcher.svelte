@@ -65,7 +65,13 @@
 						</InputGroup.Addon>
 					{/if}
 					{#if isDateField(field)}
-						<DatePicker {...props} bind:value={fieldState as Date} local={getLocale()} />
+						<DatePicker
+							data-slot="input-group-control"
+							{...props}
+							class="border-input selection:bg-primary selection:text-primary-foreground ring-offset-background placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive flex h-9 w-full min-w-0 flex-1 rounded-none border-0 bg-transparent px-3 py-1 text-base shadow-none transition-[color,box-shadow] outline-none focus-visible:ring-0 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm dark:bg-transparent"
+							bind:value={fieldState as Date}
+							local={getLocale()}
+						/>
 					{:else if isImageField(field)}
 						<InputGroup.Input {...props} bind:value={fieldState}></InputGroup.Input>
 					{:else}

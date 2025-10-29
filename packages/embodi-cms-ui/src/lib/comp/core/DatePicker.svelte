@@ -2,9 +2,9 @@
 	import * as Popover from '$lib/comp/ui/popover/index.js';
 	import { Button } from '$lib/comp/ui/button/index.js';
 	import { Calendar } from '$lib/comp/ui/calendar/index.js';
+	import { Input } from '$lib/comp/ui/input/index.js';
 	import CalendarIcon from '@lucide/svelte/icons/calendar';
 	import { parseDate } from 'chrono-node';
-	import * as InputGroup from '$lib/comp/ui/input-group/index.js';
 	import { CalendarDate, getLocalTimeZone, type DateValue } from '@internationalized/date';
 	import { untrack } from 'svelte';
 
@@ -12,9 +12,11 @@
 		name: string;
 		value?: Date;
 		local: Intl.LocalesArgument;
+		'data-slot'?: string;
+		class?: string;
 	};
 
-	let { name, value = $bindable(), local }: Props = $props();
+	let { name, value = $bindable(), local, ...props }: Props = $props();
 
 	const formatDate = (date: DateValue | Date | string | undefined) => {
 		if (!date) return '';
@@ -46,32 +48,33 @@
 	);
 </script>
 
-<InputGroup.Input
-	{name}
-	value={formatDate(value)}
-	onchange={(e: Event) => {
-		const userInput = (e.target as HTMLInputElement).value;
-		const date = parseDate(userInput);
-		if (date) {
-			value = date;
-			internalValue = new CalendarDate(date.getFullYear(), date.getMonth() + 1, date.getDate());
-		}
-	}}
-	placeholder="Tomorrow or next week"
-	class="bg-background pr-10"
-	onkeydown={(e) => {
-		if (e.key === 'ArrowDown') {
-			e.preventDefault();
-			open = true;
-		}
-	}}
-/>
-<InputGroup.Addon align="inline-end">
+<div class="relative flex w-full gap-2" data-slot="input-group-control">
+	<Input
+		{name}
+		{...props}
+		value={formatDate(value)}
+		onchange={(e: Event) => {
+			const userInput = (e.target as HTMLInputElement).value;
+			const date = parseDate(userInput);
+			if (date) {
+				value = date;
+				internalValue = new CalendarDate(date.getFullYear(), date.getMonth() + 1, date.getDate());
+			}
+		}}
+		placeholder="Tomorrow or next week"
+		onkeydown={(e) => {
+			if (e.key === 'ArrowDown') {
+				e.preventDefault();
+				open = true;
+			}
+		}}
+	/>
+
 	<Popover.Root bind:open>
 		<Popover.Trigger id="{id}-date-picker">
 			{#snippet child({ props })}
 				<Button {...props} variant="ghost" class="absolute top-1/2 right-2 size-6 -translate-y-1/2">
-					<CalendarIcon />
+					<CalendarIcon class="size-3.5" />
 					<span class="sr-only">Select date</span>
 				</Button>
 			{/snippet}
@@ -88,4 +91,4 @@
 			/>
 		</Popover.Content>
 	</Popover.Root>
-</InputGroup.Addon>
+</div>
