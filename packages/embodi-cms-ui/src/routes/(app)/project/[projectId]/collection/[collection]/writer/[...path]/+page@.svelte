@@ -70,7 +70,7 @@
 				</div>
 				<div class="flex items-center">
 					<Button
-						on:click={async () => {
+						onclick={async () => {
 							form.submit();
 						}}
 						variant="ghost"
