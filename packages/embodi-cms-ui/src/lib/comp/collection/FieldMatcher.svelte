@@ -45,7 +45,11 @@
 					{#if !noLabel}
 						<Form.Label>{getLabel(field)}</Form.Label>
 					{/if}
-					<Switch bind:checked={fieldState as boolean} {...props} />
+					<Switch
+						checked={fieldState as boolean}
+						ontoggle={() => (fieldState = !fieldState)}
+						{...props}
+					/>
 				</div>
 			{:else if isObjectField(field)}
 				<ObjectField label={getLabel(field)} {form} fields={field.fields} {objectPath} />
