@@ -5,7 +5,6 @@
 	import * as Field from '$lib/comp/ui/field/index.js';
 	import { getLabel, getPathValue } from './helpers.svelte.js';
 	import { generateRandomHash } from '$/lib/helpers/crypto';
-	import * as Card from '$lib/comp/ui/card/index.js';
 	import { Button } from '../core';
 	import { Plus } from '@lucide/svelte';
 	import { tick } from 'svelte';
@@ -17,7 +16,7 @@
 		noSeparator?: boolean;
 	};
 
-	const { field, form, objectPath, noSeparator } = $props();
+	const { field, form, objectPath, noSeparator }: Props = $props();
 	const { form: formData } = form;
 
 	let fieldState: { id: string; content: unknown }[] = $state([]);
