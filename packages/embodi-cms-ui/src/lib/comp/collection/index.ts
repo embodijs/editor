@@ -3,3 +3,4 @@ export { default as MarkdownEditor } from './MarkdownEditor.svelte';
 export { default as ObjectField } from './ObjectField.svelte';
 export { default as ArrayField } from './ArrayField.svelte';
 export { default as FieldMatcher } from './FieldMatcher.svelte';
+export { default as FormBuilder } from './FormBuilder.svelte';

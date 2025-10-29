@@ -2,7 +2,7 @@
 	import MarkdownEditor from '$/lib/comp/collection/MarkdownEditor.svelte';
 	import { superForm } from 'sveltekit-superforms';
 	import type { PageProps } from './$types';
-	import { ObjectField } from '$/lib/comp/collection';
+	import { FormBuilder } from '$/lib/comp/collection';
 	import { initFileContext } from '$/lib/context/filemanager';
 	import type { FileUpload } from '$core/model/article';
 	import { writable } from 'svelte/store';
@@ -79,9 +79,13 @@
 						type="submit"
 						disabled={$submitting}
 						class="ml-2"
-						>{#if $submitting}<Spinner /> Saving...
-						{:else}Save{/if}</Button
 					>
+						{#if $submitting}
+							<Spinner /> Saving...
+						{:else}
+							Save
+						{/if}
+					</Button>
 					<Sidebar.Trigger />
 				</div>
 			</header>
@@ -90,16 +94,9 @@
 		</Sidebar.Inset>
 
 		<Sidebar.Root side="right">
-			<Sidebar.Content class="mx-3 my-5 space-y-5">
+			<Sidebar.Content>
 				<form use:enhance method="POST">
-					<ObjectField
-						fields={data.formFields}
-						{form}
-						objectPath={['meta']}
-						label="Meta data"
-						description="Additional information about the article"
-						noSeparator
-					/>
+					<FormBuilder fields={data.formFields} {form} objectPath={['meta']} label="Settings" />
 				</form>
 			</Sidebar.Content>
 		</Sidebar.Root>

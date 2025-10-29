@@ -17,6 +17,7 @@
 	import ArrayField from './ArrayField.svelte';
 	import { Switch } from '../ui/switch';
 	import ImageField from './ImageField.svelte';
+	import TagInput from '../core/TagInput.svelte';
 
 	type Props = {
 		field: MetaInputField;
@@ -30,7 +31,6 @@
 
 	let fieldState: unknown = $state(getPathValue($formData, objectPath));
 	const name = `${objectPath.join('.')}` as FormPath<T>;
-	formData.subscribe(console.log);
 	$effect(() => {
 		formData.update((data) => setPathValue(data, objectPath, fieldState));
 	});
@@ -47,9 +47,17 @@
 					<Switch bind:checked={fieldState as boolean} {...props} />
 				</div>
 			{:else if isObjectField(field)}
-				<ObjectField label={getLabel(field)} {form} fields={field.fields} {objectPath} />
+				<ObjectField {form} {field} {objectPath} />
 			{:else if isArrayField(field)}
-				<ArrayField {form} {field} {objectPath} />
+				{#if field.items.type === 'string' || field.items.type === 'number'}
+					<TagInput placeholder="Add..." bind:value={fieldState as string[]} {...props}>
+						{#snippet label()}
+							<Form.Label>{getLabel(field)}</Form.Label>
+						{/snippet}
+					</TagInput>
+				{:else}
+					<ArrayField {form} {field} {objectPath} />
+				{/if}
 			{:else if isImageField(field)}
 				<ImageField {form} {field} {objectPath} />
 			{:else}

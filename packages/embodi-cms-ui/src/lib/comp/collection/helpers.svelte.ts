@@ -20,6 +20,17 @@ export const getLabel = ({ displayName, fieldName }: MetaInputField): string => 
 	// return label;
 };
 
+export const hasPathValue = (data: unknown, path: (string | number)[]): boolean => {
+	if (data == null) {
+		return false;
+	}
+	if (path.length === 0) {
+		return true;
+	}
+	const [next, ...rest] = path;
+	return hasPathValue((data as Record<string, unknown>)[next], rest);
+};
+
 export const getPathValue = (data: unknown, path: (string | number)[]): unknown => {
 	if (data == null) {
 		return undefined;

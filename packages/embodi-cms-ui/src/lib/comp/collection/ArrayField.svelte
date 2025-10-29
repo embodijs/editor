@@ -6,7 +6,6 @@
 	import { getLabel, getPathValue } from './helpers.svelte.js';
 	import { generateRandomHash } from '$/lib/helpers/crypto';
 	import { Button } from '../core';
-	import { Plus } from '@lucide/svelte';
 	import { tick } from 'svelte';
 
 	type Props = {
@@ -38,14 +37,17 @@
 </script>
 
 <Field.Set>
-	<Field.Legend class="w-full">
-		<div class="flex items-center justify-between">
-			{getLabel(field)}
-			<Button variant="ghost" onclick={addItem}><Plus />Add</Button>
-		</div>
+	<Field.Legend class="flex w-full items-center justify-between">
+		{getLabel(field)}
+		<Button variant="ghost" size="sm" class="text-xs" onclick={addItem}>Add</Button>
 	</Field.Legend>
 	{#each fieldState as item, index (item.id)}
-		<FieldMatcher field={field.items} {form} objectPath={[...objectPath, index]} noLabel />
+		<FieldMatcher
+			field={{ ...field.items, optional: true }}
+			{form}
+			objectPath={[...objectPath, index]}
+			noLabel
+		/>
 	{/each}
 </Field.Set>
 {#if !noSeparator}
