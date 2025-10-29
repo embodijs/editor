@@ -45,7 +45,7 @@
 	>
 		{@const image = fieldState ? fileManager?.getFile(fieldState) : undefined}
 		{#if image}
-			<Upload.ImageReplace optional={true}>
+			<Upload.ImageReplace>
 				{#await image then image}<img src={image} alt="Uploaded Image" />{/await}
 			</Upload.ImageReplace>
 		{:else}

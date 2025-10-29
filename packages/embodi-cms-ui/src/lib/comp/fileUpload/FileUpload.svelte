@@ -139,7 +139,7 @@
 		ondrop={drop}
 		for={id}
 		aria-disabled={uploading}
-		class:group={children}
+		class="group/file"
 	>
 		{#if children}
 			{@render children()}
