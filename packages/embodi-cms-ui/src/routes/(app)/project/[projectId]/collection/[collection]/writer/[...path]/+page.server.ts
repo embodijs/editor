@@ -1,12 +1,17 @@
 import { isAuthorized } from '$/lib/server/guards';
-import { generateArticleFormSchema, unflatMeta, getArticle } from '$core/logic/article';
+import {
+	generateArticleFormSchema,
+	unflatMeta,
+	getArticle,
+	generateArticleFileName
+} from '$core/logic/article';
 import { getInternalGitUser } from '$core/logic/user';
 import { getJsonContent } from '$services/content';
-import type { Actions, PageServerLoad } from './$types';
+import type { Actions, RouteParams, PageServerLoad } from './$types';
 import { superValidate, fail } from 'sveltekit-superforms';
 import { error } from '@sveltejs/kit';
 import { valibot } from 'sveltekit-superforms/adapters';
-import type { Collection } from '$core/model/collection';
+import type { Collection, Loader } from '$core/model/collection';
 import { getProjectConfig } from '$layer/project';
 import { getProject } from '$services/project';
 import { projectToRepo } from '$core/logic/repo';
@@ -14,9 +19,19 @@ import { saveArticle } from '$layer/article';
 import { dirname } from 'path';
 import { minimatch } from 'minimatch';
 import { getDb } from '$/lib/db/index.server';
+import * as path from 'node:path';
 
 const getCurrentCollection = (collections: Collection[], name: string) =>
 	collections.find((collection) => collection.name === name);
+
+const getFilePath = (params: RouteParams, loader: Loader, article: Articel) => {
+	if (params.path) {
+		return params.path;
+	} else {
+		const fileName = generateArticleFileName(article);
+		return path.join(loader.base, fileName);
+	}
+};
 
 export const load: PageServerLoad = async ({ params, parent, locals }) => {
 	isAuthorized(locals);
@@ -27,35 +42,44 @@ export const load: PageServerLoad = async ({ params, parent, locals }) => {
 	if (!collection) {
 		throw error(404, {
 			type: 'Collection not found',
-			message: 'The collections seems to be not exist'
+			message: 'The Collection your try to open seems to be not exist'
 		});
 	}
 	const { fields, loader } = collection;
-	if (!minimatch(path, loader.pattern)) {
-		throw error(406, {
-			type: 'File type not supported',
-			message: 'File type is not supported for this collection'
-		});
+	if (path?.length !== 0) {
+		if (!minimatch(path, loader.pattern)) {
+			throw error(406, {
+				type: 'File type not supported',
+				message: 'File type is not supported for this collection'
+			});
+		}
+		const { meta, content } = await getArticle(path, (path: string) =>
+			getJsonContent(
+				path,
+				{
+					owner: currentProject.owner,
+					name: currentProject.repo
+				},
+				user
+			)
+		);
+		const metaForm = await superValidate(
+			{ meta, markdown: content, files: [] },
+			valibot(generateArticleFormSchema(fields))
+		);
+		return {
+			metaForm,
+			formFields: fields,
+			path: dirname(path)
+		};
+	} else {
+		const metaForm = await superValidate(valibot(generateArticleFormSchema(fields)));
+		return {
+			metaForm,
+			formFields: fields,
+			path: loader.base
+		};
 	}
-	const { meta, content } = await getArticle(path, (path: string) =>
-		getJsonContent(
-			path,
-			{
-				owner: currentProject.owner,
-				name: currentProject.repo
-			},
-			user
-		)
-	);
-	const metaForm = await superValidate(
-		{ meta, markdown: content, files: [] },
-		valibot(generateArticleFormSchema(fields))
-	);
-	return {
-		metaForm,
-		formFields: fields,
-		path: dirname(path)
-	};
 };
 
 export const actions: Actions = {
@@ -63,7 +87,6 @@ export const actions: Actions = {
 		isAuthorized(locals);
 		const dbConnection = getDb(platform?.env);
 		const project = await getProject(dbConnection, params.projectId);
-		const { path } = params;
 		if (!project) {
 			throw error(404, {
 				type: 'Project not found',
@@ -72,9 +95,9 @@ export const actions: Actions = {
 		}
 		const repo = projectToRepo(project);
 		const { collections } = await getProjectConfig(repo, locals);
-		const { fields } = getCurrentCollection(collections, params.collection) ?? {};
+		const { fields, loader } = getCurrentCollection(collections, params.collection) ?? {};
 
-		if (!fields) {
+		if (!fields || !loader) {
 			throw error(404, {
 				type: 'Collection not found',
 				message: 'The collection you try to open does not exist'
@@ -89,6 +112,7 @@ export const actions: Actions = {
 			return fail(400, { form });
 		}
 		const { meta, markdown, files } = form.data;
+		const path = getFilePath(params, loader, form.data);
 		await saveArticle(
 			{
 				meta: unflatMeta(meta),

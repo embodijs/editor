@@ -4,6 +4,7 @@
 	import { page } from '$app/state';
 	import { FilePlus2 } from '@lucide/svelte';
 	import type { PageProps } from './$types';
+	import { resolve } from '$app/paths';
 
 	let { data }: PageProps = $props();
 
@@ -12,7 +13,7 @@
 
 <SiteHeader title={currentCollection?.displayName ?? 'Unknown Collection'}>
 	{#snippet actions()}
-		<Button href="{data.collectionName}/post">
+		<Button href="{data.collectionName}/writer">
 			<FilePlus2 />
 			Add
 		</Button>
@@ -24,8 +25,9 @@
 			<ArticleCard
 				name={meta.name}
 				path={meta.path}
-				opento="/project/{page.params.projectId}/collection/{page.params
-					.collection}/post/{meta.path}"
+				opento={resolve(
+					`/project/${page.params.projectId}/collection/${page.params.collection}/writer/${meta.path}`
+				)}
 			/>
 		{/each}
 	</div>
