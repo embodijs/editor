@@ -17,16 +17,18 @@
 	import { resolve } from '$app/paths';
 
 	const { data }: PageProps = $props();
-
+	let open = $state(false);
 	const schema = generateArticleFormSchema(data.formFields);
 	const form = superForm(data.metaForm, {
 		dataType: 'json',
 		validators: valibotClient(schema),
 		onError: ({ result }) => {
+			open = true;
 			toast.error(`Something went wrong: <br /> ${result.error.message}`);
 		},
 		onUpdate: ({ form }) => {
 			if (!form.valid) {
+				open = true;
 				toast.error('Meta data is invalid.');
 			} else {
 				toast.success('Saved successfully.');
@@ -54,7 +56,7 @@
 </script>
 
 <main class="relative">
-	<Sidebar.Provider style="--sidebar-width: 27rem; --sidebar-width-mobile: 20rem;">
+	<Sidebar.Provider bind:open style="--sidebar-width: 27rem; --sidebar-width-mobile: 20rem;">
 		<Sidebar.Inset>
 			<header class="flex items-center justify-between px-2 py-1">
 				<div>
