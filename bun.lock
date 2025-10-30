@@ -37,6 +37,7 @@
         "octokit": "^5.0.4",
         "openapi-typescript": "^7.10.1",
         "svelte-sonner": "^1.0.5",
+        "yaml": "^2.8.1",
       },
       "devDependencies": {
         "@eslint/compat": "^1.4.1",
