@@ -1,11 +1,5 @@
 import { isAuthorized } from '$/lib/server/guards';
-import {
-	generateArticleFormSchema,
-	unflatMeta,
-	,
-	generateArticleFileName
-} from '$core/logic/file';
-import { getInternalGitUser } from '$core/logic/user';
+import { generateArticleFormSchema, unflatMeta, generateArticleFileName } from '$core/logic/file';
 import type { Actions, RouteParams, PageServerLoad } from './$types';
 import { superValidate, fail } from 'sveltekit-superforms';
 import { error } from '@sveltejs/kit';
@@ -33,10 +27,9 @@ const getFilePath = (params: RouteParams, loader: Loader, article: Articel) => {
 	}
 };
 
-export const load: PageServerLoad = async ({ params, parent, locals, platform }) => {
+export const load: PageServerLoad = async ({ params, locals, platform }) => {
 	isAuthorized(locals);
 	const { path } = params;
-	const user = getInternalGitUser(locals);
 	const dbConnection = getDb(platform?.env);
 
 	const currentProject = await getProject(dbConnection, params.projectId);
@@ -63,7 +56,7 @@ export const load: PageServerLoad = async ({ params, parent, locals, platform })
 				message: 'File type is not supported for this collection'
 			});
 		}
-		const { meta, content } = await getArticle(path, repo, locals)
+		const { meta, content } = await getArticle(path, repo, locals);
 		const metaForm = await superValidate(
 			{ meta, markdown: content, files: [] },
 			valibot(generateArticleFormSchema(fields))
