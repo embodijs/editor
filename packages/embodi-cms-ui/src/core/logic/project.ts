@@ -2,11 +2,20 @@ import type { Provider } from '$/lib/db/schema';
 import { JSONParseException } from '$core/error/data';
 import { GitFileNotFoundException } from '$core/error/repo';
 import { ProjectConfig, type NewProject, type Project } from '$core/model/project';
+import type { GitRepo } from '$core/model/repo';
 import type { GetGitFileContent } from '$core/types/external';
 import * as v from 'valibot';
 
 const generateId = (): string => {
 	return `p_${crypto.randomUUID()}`;
+};
+
+export const projectToRepo = (project: Project, branch?: string): GitRepo => {
+	return {
+		owner: project.owner,
+		name: project.repo,
+		branch
+	};
 };
 
 export const generateProject = (data: NewProject, provider: Provider): Project => {

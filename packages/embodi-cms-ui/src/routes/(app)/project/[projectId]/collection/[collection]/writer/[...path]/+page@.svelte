@@ -4,10 +4,10 @@
 	import type { PageProps } from './$types';
 	import { FormBuilder } from '$/lib/comp/collection';
 	import { initFileContext } from '$/lib/context/filemanager';
-	import type { FileUpload } from '$core/model/article';
+	import type { FileUpload } from '$core/model/file';
 	import { writable } from 'svelte/store';
 	import { valibotClient } from 'sveltekit-superforms/adapters';
-	import { generateArticleFormSchema } from '$core/logic/article';
+	import { generateArticleFormSchema } from '$core/logic/file';
 	import type { GitRepo } from '$core/model/repo';
 	import { page } from '$app/state';
 	import { toast } from 'svelte-sonner';

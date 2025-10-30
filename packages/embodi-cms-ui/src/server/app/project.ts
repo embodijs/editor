@@ -1,11 +1,11 @@
 import * as core from '$core/logic/project';
 import { getInternalGitUser, type UserLocals } from '$core/logic/user';
 import type { GitRepo } from '$core/model/repo';
-import { getJsonContent } from '$services/content';
+import { getRawContent } from '$services/content';
 
 export const hasProjectConfig = (repo: GitRepo, locals: UserLocals) =>
 	core.hasValidProjectConfig((path: string) =>
-		getJsonContent(
+		getRawContent(
 			path,
 			{
 				owner: repo.owner,
@@ -17,7 +17,7 @@ export const hasProjectConfig = (repo: GitRepo, locals: UserLocals) =>
 
 export const getProjectConfig = (repo: GitRepo, locals: UserLocals) =>
 	core.getProjectConfig((path: string) =>
-		getJsonContent(
+		getRawContent(
 			path,
 			{
 				owner: repo.owner,

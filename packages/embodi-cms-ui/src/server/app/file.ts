@@ -1,8 +1,13 @@
 import { getInternalGitUser, type UserLocals } from '$core/logic/user';
 import type { GitRepo, NewGitBlob, NewGitCommit, NewGitTree } from '$core/model/repo';
-import * as core from '$core/logic/article';
+import * as core from '$core/logic/file';
 import * as service from '$services/content';
-import type { Article } from '$core/model/article';
+import type { Article } from '$core/model/file';
+
+export const getArticle = (path: string, repo: GitRepo, locals: UserLocals) => {
+	const user = getInternalGitUser(locals);
+	return core.getArticle(path, (path: string) => service.getRawContent(path, repo, user));
+};
 
 export const saveArticle = (
 	article: Article,

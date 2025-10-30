@@ -1,4 +1,4 @@
-import { Article } from '$core/model/article';
+import { Article } from '$core/model/file';
 import type { MetaInputField } from '$core/model/collection';
 import { convertMetaFiledsToValibotSchmea } from './collection';
 import { isRecord, removeEmpty } from '$lib/helpers/object';
@@ -93,6 +93,21 @@ export const getArticle = async (path: string, load: GetGitFileContent<string | 
 
 	const { data, content } = matter(fileContent);
 	return { meta: data, content };
+};
+
+export const getData = async (path: string, load: GetGitFileContent<string | Buffer>) => {
+	const fileContent = await load(path);
+	if (!fileContent) {
+		throw new Error('File not found');
+	}
+
+	if (path.endsWith('.json')) {
+		return JSON.parse(fileContent.toString());
+	} else if (path.endsWith('.yaml') || path.endsWith('.yml')) {
+		return yaml.load(fileContent.toString());
+	}
+
+	throw new Error('Current file type is not supported');
 };
 
 export const slugify = (str: string) => {

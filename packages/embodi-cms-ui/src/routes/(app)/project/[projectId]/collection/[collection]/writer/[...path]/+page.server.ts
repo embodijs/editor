@@ -2,11 +2,10 @@ import { isAuthorized } from '$/lib/server/guards';
 import {
 	generateArticleFormSchema,
 	unflatMeta,
-	getArticle,
+	,
 	generateArticleFileName
-} from '$core/logic/article';
+} from '$core/logic/file';
 import { getInternalGitUser } from '$core/logic/user';
-import { getJsonContent } from '$services/content';
 import type { Actions, RouteParams, PageServerLoad } from './$types';
 import { superValidate, fail } from 'sveltekit-superforms';
 import { error } from '@sveltejs/kit';
@@ -14,7 +13,7 @@ import { valibot } from 'sveltekit-superforms/adapters';
 import type { Collection, Loader } from '$core/model/collection';
 import { getProjectConfig } from '$layer/project';
 import { projectToRepo } from '$core/logic/repo';
-import { saveArticle } from '$layer/article';
+import { saveArticle, getArticle } from '$layer/file';
 import { dirname } from 'path';
 import { minimatch } from 'minimatch';
 import { getDb } from '$/lib/db/index.server';
@@ -47,10 +46,7 @@ export const load: PageServerLoad = async ({ params, parent, locals, platform })
 			message: 'The Project your try to open seems to be not exist'
 		});
 	}
-	const repo: GitRepo = {
-		owner: currentProject.owner,
-		name: currentProject.repo
-	};
+	const repo: GitRepo = projectToRepo(currentProject);
 	const { collections } = (await getProjectConfig(repo, locals)) ?? {};
 	const collection = getCurrentCollection(collections, params.collection);
 	if (!collection) {
@@ -67,16 +63,7 @@ export const load: PageServerLoad = async ({ params, parent, locals, platform })
 				message: 'File type is not supported for this collection'
 			});
 		}
-		const { meta, content } = await getArticle(path, (path: string) =>
-			getJsonContent(
-				path,
-				{
-					owner: currentProject.owner,
-					name: currentProject.repo
-				},
-				user
-			)
-		);
+		const { meta, content } = await getArticle(path, repo, locals)
 		const metaForm = await superValidate(
 			{ meta, markdown: content, files: [] },
 			valibot(generateArticleFormSchema(fields))
