@@ -70,10 +70,22 @@ const parseDate: Transformer = (field) => {
 	}
 	return handleOptional(
 		field,
-		v.pipe(
-			v.date(),
-			field.min ? v.minValue(new Date(field.min)) : v.check<Date>(() => true),
-			field.max ? v.maxValue(new Date(field.max)) : v.check<Date>(() => true)
+		v.fallback(
+			v.pipe(
+				v.date(),
+				field.min ? v.minValue(new Date(field.min)) : v.check<Date>(() => true),
+				field.max ? v.maxValue(new Date(field.max)) : v.check<Date>(() => true)
+			),
+			(data) => {
+				try {
+					if (typeof data === 'string') {
+						return new Date(data);
+					}
+					return undefined;
+				} catch (_) {
+					return undefined;
+				}
+			}
 		)
 	);
 };

@@ -3,10 +3,18 @@ import type { GitRepo, NewGitBlob, NewGitCommit, NewGitTree } from '$core/model/
 import * as core from '$core/logic/file';
 import * as service from '$services/content';
 import type { Article, DataRecord } from '$core/model/file';
+import type { Collection } from '$core/model/collection';
 
-export const getRecord = (path: string, repo: GitRepo, locals: UserLocals) => {
+export const getRecord = (
+	path: string,
+	collection: Collection,
+	repo: GitRepo,
+	locals: UserLocals
+) => {
 	const user = getInternalGitUser(locals);
-	return core.getRecord(path, (path: string) => service.getRawContent(path, repo, user));
+	return core.getRecord(path, collection, (path: string) =>
+		service.getRawContent(path, repo, user)
+	);
 };
 
 export const getArticle = (path: string, repo: GitRepo, locals: UserLocals) => {

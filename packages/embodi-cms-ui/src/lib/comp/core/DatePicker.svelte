@@ -18,7 +18,7 @@
 
 	let { name, value = $bindable(), local, ...props }: Props = $props();
 
-	const formatDate = (date: DateValue | Date | string | undefined) => {
+	const formatDate = (date: DateValue | Date | string | undefined): string => {
 		if (!date) return '';
 		if (date instanceof Date) {
 			return date.toLocaleDateString('en', {
@@ -46,6 +46,9 @@
 			return undefined;
 		})
 	);
+	$effect(() => {
+		console.log(value);
+	});
 </script>
 
 <div class="relative flex w-full gap-2" data-slot="input-group-control">
@@ -57,8 +60,8 @@
 			const userInput = (e.target as HTMLInputElement).value;
 			const date = parseDate(userInput);
 			if (date) {
-				value = date;
 				internalValue = new CalendarDate(date.getFullYear(), date.getMonth() + 1, date.getDate());
+				value = internalValue.toDate(getLocalTimeZone());
 			}
 		}}
 		placeholder="Tomorrow or next week"

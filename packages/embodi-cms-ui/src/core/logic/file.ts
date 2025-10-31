@@ -1,5 +1,5 @@
 import { Article, RawUpload, FileUpload, DataRecord } from '$core/model/file';
-import type { FormInputField } from '$core/model/collection';
+import type { Collection, FormInputField, Loader } from '$core/model/collection';
 import { convertMetaFiledsToValibotSchmea } from './collection';
 import { isRecord, removeEmpty } from '$lib/helpers/object';
 import * as v from 'valibot';
@@ -15,11 +15,18 @@ import {
 	type NewGitCommit
 } from '$core/model/repo';
 import * as yaml from 'yaml';
+import superjson from 'superjson';
 import type { GetGitFileContent } from '$core/types/external';
+import { minimatch } from 'minimatch';
+import { camelToReadable } from '$/lib/helpers/string';
 
 export const pathToFileId = (path: string) => Buffer.from(path).toString('base64url');
 
 export const fileIdToPath = (id: string) => Buffer.from(id, 'base64url').toString('utf8');
+
+export const isValidFilePath = (loader: Loader, path: string) =>
+	(loader.type === 'glob' && !minimatch(path, loader.pattern)) ||
+	(loader.type === 'file' && path !== loader.path.replace(/^.\//, ''));
 
 export const flatMeta = (
 	meta: Record<string, unknown>,
@@ -94,19 +101,32 @@ export const combineFrontmatterAndString = (frontmatter: Record<string, unknown>
 	};
 };
 
-export const getArticle = async (path: string, load: GetGitFileContent<string | Buffer>) => {
+export const getArticle = async (
+	path: string,
+	load: GetGitFileContent<string | Buffer>
+): Promise<Article | null> => {
 	const fileContent = await load(path);
 	if (!fileContent) {
 		return null;
 	}
 
 	const { data, content } = matter(fileContent);
-	return { meta: data, content };
+	return { meta: data, markdown: content, files: [] };
 };
 
-const convertGitDataRecordFile = (content: string, path: string) => {
+export const stringifyRecord = async (data: Record<string, unknown>, filePath: string) => {
+	if (filePath.endsWith('.json')) {
+		return superjson.stringify(data);
+	} else if (filePath.endsWith('.yaml') || filePath.endsWith('.yml')) {
+		return yaml.stringify(data);
+	}
+
+	throw new Error('Unsupported file type');
+};
+
+const parseRecord = (content: string | Buffer, path: string) => {
 	if (path.endsWith('.json')) {
-		return JSON.parse(content.toString());
+		return superjson.parse(content.toString());
 	} else if (path.endsWith('.yaml') || path.endsWith('.yml')) {
 		return yaml.parse(content.toString());
 	}
@@ -114,17 +134,32 @@ const convertGitDataRecordFile = (content: string, path: string) => {
 	throw new Error('Current file type is not supported');
 };
 
+export const filepathToName = (path: string) => {
+	const fileName = path.split('/').pop()!.split('.')[0];
+	return camelToReadable(fileName);
+};
+
+const getRecordName = (path: string, collection: Collection) => {
+	if (collection.loader.type === 'file') {
+		return collection.displayName;
+	} else {
+		return filepathToName(path);
+	}
+};
+
 export const getRecord = async (
 	path: string,
+	collection: Collection,
 	load: GetGitFileContent<string | Buffer>
 ): Promise<DataRecord | null> => {
+	const name = getRecordName(path, collection);
 	const fileContent = await load(path);
 	if (!fileContent) {
-		return { files: [], data: {}, name: path };
+		return { files: [], data: {}, name };
 	}
 
-	const data = convertGitDataRecordFile(fileContent.toString(), path);
-	return { files: [], data, name: path };
+	const data = parseRecord(fileContent, path);
+	return { files: [], data, name };
 };
 
 export const slugify = (str: string) => {
@@ -180,16 +215,6 @@ export const saveArticle = async (
 	);
 };
 
-export const stringifyData = async (data: Record<string, unknown>, filePath: string) => {
-	if (filePath.endsWith('.json')) {
-		return JSON.stringify(data, null, 2);
-	} else if (filePath.endsWith('.yaml') || filePath.endsWith('.yml')) {
-		return yaml.stringify(data);
-	}
-
-	throw new Error('Unsupported file type');
-};
-
 export const saveRecord = async (
 	record: DataRecord,
 	filePath: string,
@@ -200,7 +225,7 @@ export const saveRecord = async (
 		storeBlob: (blob: NewGitBlob) => Promise<GitBlobRef>;
 	}
 ) => {
-	const content = await stringifyData(record.data, filePath);
+	const content = await stringifyRecord(record.data, filePath);
 	return saveFiles(
 		{
 			content,

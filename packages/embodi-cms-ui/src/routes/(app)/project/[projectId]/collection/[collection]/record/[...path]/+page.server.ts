@@ -1,5 +1,5 @@
 import { isAuthorized } from '$/lib/server/guards';
-import { generateRecordFormSchema } from '$core/logic/file';
+import { generateRecordFormSchema, isValidFilePath } from '$core/logic/file';
 import type { Actions, RouteParams, PageServerLoad } from './$types';
 import { superValidate, fail } from 'sveltekit-superforms';
 import { error } from '@sveltejs/kit';
@@ -9,7 +9,6 @@ import { getProjectConfig } from '$layer/project';
 import { projectToRepo } from '$core/logic/project';
 import { getRecord, saveRecord } from '$layer/file';
 import { dirname } from 'path';
-import { minimatch } from 'minimatch';
 import { getDb } from '$/lib/db/index.server';
 import * as path from 'node:path';
 import { getProject } from '$services/project';
@@ -45,16 +44,13 @@ export const load: PageServerLoad = async ({ params, parent, locals }) => {
 	}
 	const { fields, loader } = collection;
 	if (path?.length !== 0) {
-		if (
-			(loader.type === 'glob' && !minimatch(path, loader.pattern)) ||
-			(loader.type === 'file' && path !== loader.path.replace(/^.\//, ''))
-		) {
+		if (isValidFilePath(loader, path)) {
 			throw error(406, {
 				type: 'File type not supported',
 				message: 'The file type is not supported for this collection'
 			});
 		}
-		const record = await getRecord(path, projectToRepo(currentProject), locals);
+		const record = await getRecord(path, collection, projectToRepo(currentProject), locals);
 		const recordForm = await superValidate(record, valibot(generateRecordFormSchema(fields)));
 		return {
 			recordForm,

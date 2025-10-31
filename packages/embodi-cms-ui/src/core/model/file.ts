@@ -18,6 +18,12 @@ export const ArticleSchema = v.object({
 	files: v.array(FileUpload)
 });
 
+export const NewDataRecord = v.object({
+	name: v.optional(v.string()),
+	data: v.record(v.string(), v.unknown()),
+	files: v.array(FileUpload)
+});
+
 export const DataRecord = v.object({
 	name: v.string(),
 	data: v.record(v.string(), v.unknown()),

@@ -1,16 +1,20 @@
 import { isAuthorized } from '$/lib/server/guards';
-import { generateArticleFormSchema, generateArticleFileName } from '$core/logic/file';
+import {
+	generateArticleFormSchema,
+	generateArticleFileName,
+	isValidFilePath
+} from '$core/logic/file';
 import type { Actions, RouteParams, PageServerLoad } from './$types';
 import { superValidate, fail } from 'sveltekit-superforms';
 import { error } from '@sveltejs/kit';
 import { valibot } from 'sveltekit-superforms/adapters';
+import { getDirPath } from '$core/logic/collection.js';
 import type { Collection, Loader } from '$core/model/collection';
 import { getProjectConfig } from '$layer/project';
 import { projectToRepo } from '$core/logic/project';
 import { saveArticle, getArticle } from '$layer/file';
 import { dirname } from 'path';
-import { minimatch } from 'minimatch';
-import { getDb } from '$/lib/db/index.server';
+import { getDb } from '$/lib/db/index.server.js';
 import * as path from 'node:path';
 import { getProject } from '$services/project';
 import type { GitRepo } from '$core/model/repo';
@@ -52,17 +56,14 @@ export const load: PageServerLoad = async ({ params, locals, platform }) => {
 	}
 	const { fields, loader } = collection;
 	if (path?.length !== 0) {
-		if (!minimatch(path, loader.pattern)) {
+		if (isValidFilePath(loader, path)) {
 			throw error(406, {
 				type: 'File type not supported',
 				message: 'File type is not supported for this collection'
 			});
 		}
-		const { meta, content } = await getArticle(path, repo, locals);
-		const metaForm = await superValidate(
-			{ meta, markdown: content, files: [] },
-			valibot(generateArticleFormSchema(fields))
-		);
+		const article = await getArticle(path, repo, locals);
+		const metaForm = await superValidate(article, valibot(generateArticleFormSchema(fields)));
 		return {
 			metaForm,
 			formFields: fields,
@@ -75,7 +76,7 @@ export const load: PageServerLoad = async ({ params, locals, platform }) => {
 		return {
 			metaForm,
 			formFields: fields,
-			path: loader.base,
+			path: getDirPath(loader),
 			collection,
 			currentProject
 		};

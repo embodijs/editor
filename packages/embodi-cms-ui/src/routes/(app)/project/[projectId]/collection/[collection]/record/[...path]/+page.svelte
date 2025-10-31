@@ -11,10 +11,11 @@
 	import type { GitRepo } from '$core/model/repo';
 	import { generateRecordFormSchema } from '$core/logic/file';
 	import { toast } from 'svelte-sonner';
+	import * as Form from '$lib/comp/ui/form/index.js';
+	import * as InputGroup from '$lib/comp/ui/input-group/index.js';
 
 	const { data }: PageProps = $props();
 	const schema = generateRecordFormSchema(data.formFields);
-
 	const form = superForm(data.recordForm, {
 		dataType: 'json',
 		validators: valibotClient(schema),
@@ -32,6 +33,7 @@
 
 	const fileStore = writable<FileUpload[]>([]);
 	const { form: formData, enhance } = form;
+	const hasFileName = !!$formData.name;
 
 	$effect(() => {
 		$formData.files = $fileStore;
@@ -59,6 +61,20 @@
 
 <main class="relative">
 	<form use:enhance method="POST" class="mx-auto max-w-3xl">
+		<Form.Field {form} name="name">
+			<Form.Control>
+				{#snippet children({ props })}
+					<InputGroup.Root>
+						<InputGroup.Addon align="block-start">
+							<Form.Label>Name</Form.Label>
+						</InputGroup.Addon>
+						<InputGroup.Input disabled={hasFileName} {...props} bind:value={$formData.name}
+						></InputGroup.Input>
+					</InputGroup.Root>
+				{/snippet}
+			</Form.Control>
+			<Form.FieldErrors />
+		</Form.Field>
 		<FormBuilder fields={data.formFields} {form} objectPath={['data']} />
 	</form>
 </main>
