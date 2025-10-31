@@ -38,52 +38,56 @@
 			<ProjectSwitch projects={data.projects} currentId={data.currentProject.id}></ProjectSwitch>
 		</Sidebar.Header>
 		<Sidebar.Content>
-			<Sidebar.Group>
-				<Sidebar.GroupLabel>Collections</Sidebar.GroupLabel>
-				<Sidebar.GroupContent>
-					<Sidebar.Menu>
-						{#each collections as collection (collection.name)}
-							<Sidebar.MenuItem>
-								<Sidebar.MenuButton>
-									{#snippet child({ props })}
-										<a
-											href={resolve(
-												`/project/${data.currentProject.id}/collection/${collection.name}`
-											)}
-											{...props}
-										>
-											<span>{collection.displayName}</span>
-										</a>
-									{/snippet}
-								</Sidebar.MenuButton>
-							</Sidebar.MenuItem>
-						{/each}
-					</Sidebar.Menu>
-				</Sidebar.GroupContent>
-			</Sidebar.Group>
-			<Sidebar.Group>
-				<Sidebar.GroupLabel>Records</Sidebar.GroupLabel>
-				<Sidebar.GroupContent>
-					<Sidebar.Menu>
-						{#each records as dataRecord (dataRecord.name)}
-							<Sidebar.MenuItem>
-								<Sidebar.MenuButton>
-									{#snippet child({ props })}
-										<a
-											href={resolve(
-												`/project/${data.currentProject.id}/collection/${dataRecord.name}/open/${dataRecord.loader.path}`
-											)}
-											{...props}
-										>
-											<span>{dataRecord.displayName}</span>
-										</a>
-									{/snippet}
-								</Sidebar.MenuButton>
-							</Sidebar.MenuItem>
-						{/each}
-					</Sidebar.Menu>
-				</Sidebar.GroupContent>
-			</Sidebar.Group>
+			{#if collections?.length > 0}
+				<Sidebar.Group>
+					<Sidebar.GroupLabel>Collections</Sidebar.GroupLabel>
+					<Sidebar.GroupContent>
+						<Sidebar.Menu>
+							{#each collections as collection (collection.name)}
+								<Sidebar.MenuItem>
+									<Sidebar.MenuButton>
+										{#snippet child({ props })}
+											<a
+												href={resolve(
+													`/project/${data.currentProject.id}/collection/${collection.name}`
+												)}
+												{...props}
+											>
+												<span>{collection.displayName}</span>
+											</a>
+										{/snippet}
+									</Sidebar.MenuButton>
+								</Sidebar.MenuItem>
+							{/each}
+						</Sidebar.Menu>
+					</Sidebar.GroupContent>
+				</Sidebar.Group>
+			{/if}
+			{#if records?.length > 0}
+				<Sidebar.Group>
+					<Sidebar.GroupLabel>Records</Sidebar.GroupLabel>
+					<Sidebar.GroupContent>
+						<Sidebar.Menu>
+							{#each records as dataRecord (dataRecord.name)}
+								<Sidebar.MenuItem>
+									<Sidebar.MenuButton>
+										{#snippet child({ props })}
+											<a
+												href={resolve(
+													`/project/${data.currentProject.id}/collection/${dataRecord.name}/open/${dataRecord.loader.path}`
+												)}
+												{...props}
+											>
+												<span>{dataRecord.displayName}</span>
+											</a>
+										{/snippet}
+									</Sidebar.MenuButton>
+								</Sidebar.MenuItem>
+							{/each}
+						</Sidebar.Menu>
+					</Sidebar.GroupContent>
+				</Sidebar.Group>
+			{/if}
 			<Sidebar.Separator />
 			<Sidebar.Group>
 				<Sidebar.GroupContent>
