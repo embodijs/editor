@@ -8,17 +8,19 @@
 
 	const { data, children }: LayoutProps = $props();
 
-	const { collections, records } = data.collections.reduce(
-		(acc, collection) => {
-			const { loader } = collection;
-			if (loader.type === 'glob') {
-				acc.collections.push(collection);
-			} else if (loader.type === 'file') {
-				acc.records.push(collection);
-			}
-			return acc;
-		},
-		{ collections: [], records: [] } as { collections: Collection[]; records: Collection[] }
+	const { collections, records } = $derived(
+		data.collections.reduce(
+			(acc, collection) => {
+				const { loader } = collection;
+				if (loader.type === 'glob') {
+					acc.collections.push(collection);
+				} else if (loader.type === 'file') {
+					acc.records.push(collection);
+				}
+				return acc;
+			},
+			{ collections: [], records: [] } as { collections: Collection[]; records: Collection[] }
+		)
 	);
 
 	const staticMenu = [
