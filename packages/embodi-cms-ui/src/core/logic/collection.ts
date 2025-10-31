@@ -8,7 +8,8 @@ import {
 	ImageField,
 	ObjectField,
 	ArrayField,
-	EnumField
+	EnumField,
+	GlobLoader
 } from '$core/model/collection';
 import { GitDirContent, GitDirMeta, GitFileMeta } from '$core/model/content';
 import * as v from 'valibot';
@@ -167,10 +168,10 @@ export const convertMetaFiledsToValibotSchmea = (fields: FormInputField[]) => {
 };
 
 export const getCollectionContent = async (
-	loader: Loader,
+	loader: GlobLoader,
 	services: { getContent: (path: string) => Promise<GitDirContent[]> }
 ): Promise<GitFileMeta[]> => {
-	const basePath = loader.base.replace('./', '');
+	const basePath = loader.base?.replace('./', '') ?? '';
 	const content = await services.getContent(basePath);
 	const [files, dirs] = content.reduce(
 		(acc, item) => {
