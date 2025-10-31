@@ -1,11 +1,25 @@
 <script lang="ts">
 	import { ProjectSwitch, User } from '$/lib/comp/sidebar/index';
 	import { resolve } from '$app/paths';
+	import type { Collection } from '$core/model/collection';
 	import * as Sidebar from '$lib/comp/ui/sidebar/index.js';
 	import type { LayoutProps } from './$types';
 	import { LayoutDashboard } from '@lucide/svelte';
 
 	const { data, children }: LayoutProps = $props();
+
+	const { collections, records } = data.collections.reduce(
+		(acc, collection) => {
+			const { loader } = collection;
+			if (loader.type === 'glob') {
+				acc.collections.push(collection);
+			} else if (loader.type === 'file') {
+				acc.records.push(collection);
+			}
+			return acc;
+		},
+		{ collections: [], records: [] } as { collections: Collection[]; records: Collection[] }
+	);
 
 	const staticMenu = [
 		{ label: 'Dashboard', href: `/project/${data.currentProject.id}`, icon: LayoutDashboard }
@@ -26,7 +40,7 @@
 				<Sidebar.GroupLabel>Collections</Sidebar.GroupLabel>
 				<Sidebar.GroupContent>
 					<Sidebar.Menu>
-						{#each data.collections as collection (collection.name)}
+						{#each collections as collection (collection.name)}
 							<Sidebar.MenuItem>
 								<Sidebar.MenuButton>
 									{#snippet child({ props })}
@@ -37,6 +51,29 @@
 											{...props}
 										>
 											<span>{collection.displayName}</span>
+										</a>
+									{/snippet}
+								</Sidebar.MenuButton>
+							</Sidebar.MenuItem>
+						{/each}
+					</Sidebar.Menu>
+				</Sidebar.GroupContent>
+			</Sidebar.Group>
+			<Sidebar.Group>
+				<Sidebar.GroupLabel>Records</Sidebar.GroupLabel>
+				<Sidebar.GroupContent>
+					<Sidebar.Menu>
+						{#each records as dataRecord (dataRecord.name)}
+							<Sidebar.MenuItem>
+								<Sidebar.MenuButton>
+									{#snippet child({ props })}
+										<a
+											href={resolve(
+												`/project/${data.currentProject.id}/collection/${dataRecord.name}/open/${dataRecord.loader.path}`
+											)}
+											{...props}
+										>
+											<span>{dataRecord.displayName}</span>
 										</a>
 									{/snippet}
 								</Sidebar.MenuButton>

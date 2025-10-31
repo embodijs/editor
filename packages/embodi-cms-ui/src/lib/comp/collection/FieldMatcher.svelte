@@ -1,5 +1,5 @@
 <script lang="ts" generics="T extends { meta: Record<string, unknown>}">
-	import type { MetaInputField } from '$core/model/collection';
+	import type { FormInputField } from '$core/model/collection';
 	import ObjectField from './ObjectField.svelte';
 	import type { FormPath, SuperForm } from 'sveltekit-superforms';
 	import * as Form from '$lib/comp/ui/form/index.js';
@@ -20,7 +20,7 @@
 	import TagInput from '../core/TagInput.svelte';
 
 	type Props = {
-		field: MetaInputField;
+		field: FormInputField;
 		form: SuperForm<T>;
 		objectPath: (string | number)[];
 		noLabel?: boolean;

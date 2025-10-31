@@ -1,4 +1,4 @@
-<script lang="ts" generics="T extends { meta: Record<string, unknown>}">
+<script lang="ts" generics="T extends Record<string, unknown>">
 	import type { ObjectField } from '$core/model/collection';
 	import type { SuperForm } from 'sveltekit-superforms';
 	import FieldMatcher from './FieldMatcher.svelte';

@@ -12,7 +12,7 @@
 	import { page } from '$app/state';
 	import { toast } from 'svelte-sonner';
 	import * as Sidebar from '$lib/comp/ui/sidebar/index.js';
-	import { Button, Spinner } from '$/lib/comp/core';
+	import { Button, SaveFormButton } from '$/lib/comp/core';
 	import { ChevronLeft } from '@lucide/svelte';
 	import { resolve } from '$app/paths';
 
@@ -71,21 +71,7 @@
 					</Button>
 				</div>
 				<div class="flex items-center">
-					<Button
-						onclick={async () => {
-							form.submit();
-						}}
-						variant="ghost"
-						type="submit"
-						disabled={$submitting}
-						class="ml-2"
-					>
-						{#if $submitting}
-							<Spinner /> Saving...
-						{:else}
-							Save
-						{/if}
-					</Button>
+					<SaveFormButton {form} />
 					<Sidebar.Trigger />
 				</div>
 			</header>

@@ -10,13 +10,15 @@ const generateId = (): string => {
 	return `p_${crypto.randomUUID()}`;
 };
 
-export const projectToRepo = (project: Project, branch?: string): GitRepo => {
+export function projectToRepo(project: Project): GitRepo;
+export function projectToRepo(project: Project, branch: string): Required<GitRepo>;
+export function projectToRepo(project: Project, branch?: string): GitRepo | Required<GitRepo> {
 	return {
 		owner: project.owner,
 		name: project.repo,
 		branch
-	};
-};
+	} satisfies GitRepo;
+}
 
 export const generateProject = (data: NewProject, provider: Provider): Project => {
 	const now = new Date();
