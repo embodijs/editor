@@ -1,11 +1,10 @@
-<script lang="ts" generics="T extends { meta: Record<string, unknown>}">
+<script lang="ts" generics="T extends Record<string, unknown>">
 	import type { ObjectField } from '$core/model/collection';
 	import type { SuperForm } from 'sveltekit-superforms';
 	import FieldMatcher from './FieldMatcher.svelte';
 	import * as Field from '$lib/comp/ui/field/index.js';
 	import { getLabel, getPathValue, hasPathValue, setPathValue } from './helpers.svelte';
 	import RemoveButton from './RemoveButton.svelte';
-	import AddButton from './AddButton.svelte';
 	import { Button } from '../core';
 
 	type Props = {

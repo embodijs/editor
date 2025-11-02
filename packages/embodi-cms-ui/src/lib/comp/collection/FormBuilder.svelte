@@ -1,11 +1,11 @@
-<script lang="ts" generics="T extends { meta: Record<string, unknown>}">
-	import type { MetaInputField } from '$core/model/collection';
+<script lang="ts" generics="T extends Record<string, unknown>">
+	import type { FormInputField } from '$core/model/collection';
 	import type { SuperForm } from 'sveltekit-superforms';
 	import FieldMatcher from './FieldMatcher.svelte';
 	import * as Field from '$lib/comp/ui/field/index.js';
 
 	type Props = {
-		fields: MetaInputField[];
+		fields: FormInputField[];
 		label?: string;
 		description?: string;
 		form: SuperForm<T>;

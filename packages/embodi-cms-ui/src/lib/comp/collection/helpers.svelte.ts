@@ -1,8 +1,8 @@
 import { camelToReadable } from '$/lib/helpers/string';
-import type { MetaInputField } from '$core/model/collection';
+import type { FormInputField } from '$core/model/collection';
 import { getLocale } from '$/lib/paraglide/runtime';
 
-export const getLabel = ({ displayName, fieldName }: MetaInputField): string => {
+export const getLabel = ({ displayName, fieldName }: FormInputField): string => {
 	if (displayName != null) {
 		if (typeof displayName === 'string') {
 			return displayName;

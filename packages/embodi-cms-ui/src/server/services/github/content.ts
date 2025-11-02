@@ -14,7 +14,7 @@ import { RequestError } from 'octokit';
 import { generateRestBase, getClient } from './github';
 import * as v from 'valibot';
 
-export const getJsonContent = async (
+export const getRawContent = async (
 	path: string,
 	branch: GitRepo,
 	user: InternalGitUser

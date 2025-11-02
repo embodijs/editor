@@ -20,13 +20,13 @@ export const NumberField = v.object({
 
 export type ArrayField = v.InferInput<typeof FieldBase> & {
 	type: 'array';
-	items: v.InferInput<typeof MetaInputField>;
+	items: v.InferInput<typeof FormInputField>;
 };
 
 export const ArrayField: v.GenericSchema<ArrayField> = v.object({
 	...FieldBase.entries,
 	type: v.literal('array'),
-	items: v.lazy(() => MetaInputField)
+	items: v.lazy(() => FormInputField)
 });
 
 export const EnumField = v.object({
@@ -68,7 +68,7 @@ export const BooleanField = v.object({
 const ObjectFieldType = v.literal('object');
 export type ObjectField = v.InferInput<typeof FieldBase> & {
 	type: v.InferInput<typeof ObjectFieldType>;
-	fields: v.InferInput<typeof MetaInputField>[];
+	fields: v.InferInput<typeof FormInputField>[];
 };
 
 export const ObjectField: v.GenericSchema<ObjectField> = v.object({
@@ -76,12 +76,12 @@ export const ObjectField: v.GenericSchema<ObjectField> = v.object({
 	type: ObjectFieldType,
 	fields: v.array(
 		v.lazy(() => {
-			return MetaInputField;
+			return FormInputField;
 		})
 	)
 });
 
-export const MetaInputField = v.union([
+export const FormInputField = v.union([
 	NumberField,
 	StringField,
 	ImageField,
@@ -93,29 +93,36 @@ export const MetaInputField = v.union([
 	EnumField
 ]);
 
-export const Loader = v.variant('type', [
-	v.object({
-		type: v.literal('glob'),
-		pattern: v.string(),
-		base: v.optional(v.string())
-	}),
-	v.object({
-		type: v.literal('file'),
-		path: v.string()
-	})
-]);
+/** @Deprecated renamed to FormInputField */
+export const MetaInputField = FormInputField;
+
+export const GlobLoader = v.object({
+	type: v.literal('glob'),
+	pattern: v.string(),
+	base: v.optional(v.string())
+});
+
+export const FileLoader = v.object({
+	type: v.literal('file'),
+	path: v.string()
+});
+
+export const Loader = v.variant('type', [GlobLoader, FileLoader]);
 
 export const Collection = v.object({
 	name: v.string(),
 	displayName: v.string(),
 	loader: Loader,
 	formats: v.optional(v.array(v.string())),
-	fields: v.array(MetaInputField)
+	fields: v.array(FormInputField)
 });
 
 export type Loader = v.InferOutput<typeof Loader>;
+export type GlobLoader = v.InferOutput<typeof GlobLoader>;
+export type FileLoader = v.InferOutput<typeof FileLoader>;
 export type Collection = v.InferOutput<typeof Collection>;
 export type GitCollection = v.InferInput<typeof Collection>;
+export type FormInputField = v.InferInput<typeof FormInputField>;
 export type MetaInputField = v.InferInput<typeof MetaInputField>;
 export type StringField = v.InferInput<typeof StringField>;
 export type NumberField = v.InferInput<typeof NumberField>;

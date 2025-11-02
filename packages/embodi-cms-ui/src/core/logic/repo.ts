@@ -7,11 +7,6 @@ export const createGitRepo = (params: { owner: string; repo: string }): GitRepo 
 	name: params.repo
 });
 
-export const projectToRepo = (project: Project): GitRepo => ({
-	owner: project.owner,
-	name: project.name
-});
-
 export const extractJsonFromGitFile = (data: GitFile) => {
 	const text = Buffer.from(data.content, data.encoding).toString('utf8');
 	return JSON.parse(text);

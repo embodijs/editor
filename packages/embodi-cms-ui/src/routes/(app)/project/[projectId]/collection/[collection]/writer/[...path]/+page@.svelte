@@ -4,17 +4,18 @@
 	import type { PageProps } from './$types';
 	import { FormBuilder } from '$/lib/comp/collection';
 	import { initFileContext } from '$/lib/context/filemanager';
-	import type { FileUpload } from '$core/model/article';
+	import type { FileUpload } from '$core/model/file';
 	import { writable } from 'svelte/store';
 	import { valibotClient } from 'sveltekit-superforms/adapters';
-	import { generateArticleFormSchema } from '$core/logic/article';
+	import { generateArticleFormSchema } from '$core/logic/file';
 	import type { GitRepo } from '$core/model/repo';
 	import { page } from '$app/state';
 	import { toast } from 'svelte-sonner';
 	import * as Sidebar from '$lib/comp/ui/sidebar/index.js';
-	import { Button, Spinner } from '$/lib/comp/core';
+	import { Button, SaveFormButton } from '$/lib/comp/core';
 	import { ChevronLeft } from '@lucide/svelte';
 	import { resolve } from '$app/paths';
+	import { onMount } from 'svelte';
 
 	const { data }: PageProps = $props();
 	let open = $state(false);
@@ -37,7 +38,13 @@
 	});
 
 	const fileStore = writable<FileUpload[]>([]);
-	const { form: formData, enhance, submitting } = form;
+	const { form: formData, enhance } = form;
+
+	onMount(() => {
+		return fileStore.subscribe((value) => {
+			$formData.files = value;
+		});
+	});
 
 	const repo: GitRepo = {
 		owner: data.currentProject.owner,
@@ -49,10 +56,6 @@
 		repo,
 		new URL(`/${repo.owner}/${repo.name}/file/${data.path}/`, page.url.origin)
 	);
-
-	$effect(() => {
-		$formData.files = $fileStore;
-	});
 </script>
 
 <main class="relative">
@@ -71,21 +74,7 @@
 					</Button>
 				</div>
 				<div class="flex items-center">
-					<Button
-						onclick={async () => {
-							form.submit();
-						}}
-						variant="ghost"
-						type="submit"
-						disabled={$submitting}
-						class="ml-2"
-					>
-						{#if $submitting}
-							<Spinner /> Saving...
-						{:else}
-							Save
-						{/if}
-					</Button>
+					<SaveFormButton {form} />
 					<Sidebar.Trigger />
 				</div>
 			</header>

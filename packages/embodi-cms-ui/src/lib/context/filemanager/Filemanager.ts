@@ -1,4 +1,4 @@
-import type { FileUpload } from '$core/model/article';
+import type { FileUpload } from '$core/model/file';
 import type { GitRepo } from '$core/model/repo';
 import type { Writable } from 'svelte/store';
 

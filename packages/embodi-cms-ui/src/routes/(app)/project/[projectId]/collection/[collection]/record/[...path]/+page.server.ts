@@ -1,52 +1,40 @@
 import { isAuthorized } from '$/lib/server/guards';
-import {
-	generateArticleFormSchema,
-	generateArticleFileName,
-	isValidFilePath
-} from '$core/logic/file';
+import { generateRecordFormSchema, isValidFilePath } from '$core/logic/file';
 import type { Actions, RouteParams, PageServerLoad } from './$types';
 import { superValidate, fail } from 'sveltekit-superforms';
 import { error } from '@sveltejs/kit';
 import { valibot } from 'sveltekit-superforms/adapters';
-import { getDirPath } from '$core/logic/collection.js';
 import type { Collection, Loader } from '$core/model/collection';
 import { getProjectConfig } from '$layer/project';
 import { projectToRepo } from '$core/logic/project';
-import { saveArticle, getArticle } from '$layer/file';
+import { getRecord, saveRecord } from '$layer/file';
 import { dirname } from 'path';
-import { getDb } from '$/lib/db/index.server.js';
+import { getDb } from '$/lib/db/index.server';
 import * as path from 'node:path';
 import { getProject } from '$services/project';
-import type { GitRepo } from '$core/model/repo';
+import { getDirPath } from '$core/logic/collection';
+import type { DataRecord } from '$core/model/file';
 
 const getCurrentCollection = (collections: Collection[], name: string) =>
 	collections.find((collection) => collection.name === name);
 
-const getFilePath = (params: RouteParams, loader: Loader, article: Articel) => {
+const getFilePath = (params: RouteParams, loader: Loader, record: DataRecord) => {
 	if (params.path) {
 		return params.path;
 	} else if (loader.type === 'file') {
 		return loader.path;
 	} else {
-		const fileName = generateArticleFileName(article);
+		const fileName = record.name;
 		return path.join(loader.base ?? '', fileName);
 	}
 };
 
-export const load: PageServerLoad = async ({ params, locals, platform }) => {
+export const load: PageServerLoad = async ({ params, parent, locals }) => {
 	isAuthorized(locals);
 	const { path } = params;
-	const dbConnection = getDb(platform?.env);
 
-	const currentProject = await getProject(dbConnection, params.projectId);
-	if (!currentProject) {
-		throw error(404, {
-			type: 'Project not found',
-			message: 'The Project your try to open seems to be not exist'
-		});
-	}
-	const repo: GitRepo = projectToRepo(currentProject);
-	const { collections } = (await getProjectConfig(repo, locals)) ?? {};
+	const { currentProject, collections } = await parent();
+
 	const collection = getCurrentCollection(collections, params.collection);
 	if (!collection) {
 		throw error(404, {
@@ -59,24 +47,24 @@ export const load: PageServerLoad = async ({ params, locals, platform }) => {
 		if (isValidFilePath(loader, path)) {
 			throw error(406, {
 				type: 'File type not supported',
-				message: 'File type is not supported for this collection'
+				message: 'The file type is not supported for this collection'
 			});
 		}
-		const article = await getArticle(path, repo, locals);
-		const metaForm = await superValidate(article, valibot(generateArticleFormSchema(fields)));
+		const record = await getRecord(path, collection, projectToRepo(currentProject), locals);
+		const recordForm = await superValidate(record, valibot(generateRecordFormSchema(fields)));
 		return {
-			metaForm,
+			recordForm,
 			formFields: fields,
 			path: dirname(path),
 			collection,
 			currentProject
 		};
 	} else {
-		const metaForm = await superValidate(valibot(generateArticleFormSchema(fields)));
+		const recordForm = await superValidate(valibot(generateRecordFormSchema(fields)));
 		return {
-			metaForm,
+			recordForm,
 			formFields: fields,
-			path: getDirPath(loader),
+			path: getDirPath(collection.loader),
 			collection,
 			currentProject
 		};
@@ -94,7 +82,7 @@ export const actions: Actions = {
 				message: 'The project you try to open does not exist'
 			});
 		}
-		const repo = projectToRepo(project);
+		const repo = projectToRepo(project, 'main');
 		const { collections } = await getProjectConfig(repo, locals);
 		const { fields, loader } = getCurrentCollection(collections, params.collection) ?? {};
 
@@ -107,26 +95,13 @@ export const actions: Actions = {
 
 		const form = await superValidate(
 			await request.formData(),
-			valibot(generateArticleFormSchema(fields))
+			valibot(generateRecordFormSchema(fields))
 		);
 		if (!form.valid) {
 			return fail(400, { form });
 		}
-		const { meta, markdown, files } = form.data;
 		const path = getFilePath(params, loader, form.data);
-		await saveArticle(
-			{
-				meta,
-				markdown,
-				files
-			},
-			path,
-			{
-				...repo,
-				branch: 'main'
-			},
-			locals
-		);
+		await saveRecord(form.data, path, repo, locals);
 		return { form };
 	}
 };

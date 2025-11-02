@@ -5,7 +5,7 @@ import { error } from '@sveltejs/kit';
 import { getInternalGitUser } from '$core/logic/user.js';
 
 import { getProjectConfig } from '$layer/project';
-import { projectToRepo } from '$core/logic/repo';
+import { projectToRepo } from '$core/logic/project';
 import { GitFileNotFoundException } from '$core/error/repo';
 import { getDb } from '$/lib/db/index.server';
 

@@ -1,4 +1,4 @@
-<script lang="ts" generics="T extends { meta: Record<string, unknown>}">
+<script lang="ts" generics="T extends Record<string, unknown>">
 	import type { ArrayField } from '$core/model/collection';
 	import type { SuperForm } from 'sveltekit-superforms';
 	import FieldMatcher from './FieldMatcher.svelte';
@@ -18,21 +18,23 @@
 	const { field, form, objectPath, noSeparator }: Props = $props();
 	const { form: formData } = form;
 
-	let fieldState: { id: string; content: unknown }[] = $state([]);
-	((getPathValue($formData, objectPath) as unknown[]) ?? []).forEach((item) => {
-		fieldState.push({
-			content: item,
-			id: generateRandomHash()
-		});
-	});
-	formData.subscribe(console.log);
+	let fieldState: { id: string; content: unknown }[] = $derived.by(() =>
+		((getPathValue($formData, objectPath) as unknown[]) ?? []).map((item) => {
+			return {
+				content: item,
+				id: generateRandomHash()
+			};
+		})
+	);
 	const addItem = async () => {
-		console.log(objectPath.join('.'));
 		await tick();
-		fieldState.push({
-			content: {},
-			id: generateRandomHash()
-		});
+		fieldState = [
+			...fieldState,
+			{
+				content: {},
+				id: generateRandomHash()
+			}
+		];
 	};
 </script>
 

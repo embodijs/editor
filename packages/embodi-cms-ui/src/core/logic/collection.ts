@@ -1,5 +1,5 @@
 import {
-	type MetaInputField,
+	type FormInputField,
 	type Loader,
 	NumberField,
 	StringField,
@@ -8,27 +8,29 @@ import {
 	ImageField,
 	ObjectField,
 	ArrayField,
-	EnumField
+	EnumField,
+	GlobLoader
 } from '$core/model/collection';
 import { GitDirContent, GitDirMeta, GitFileMeta } from '$core/model/content';
 import * as v from 'valibot';
 import { minimatch } from 'minimatch';
+import { twoDigit } from './date';
 
-export const isNumberField = (field: MetaInputField): field is NumberField =>
+export const isNumberField = (field: FormInputField): field is NumberField =>
 	field.type === 'number';
-export const isStringField = (field: MetaInputField): field is StringField =>
+export const isStringField = (field: FormInputField): field is StringField =>
 	field.type === 'string';
-export const isDateField = (field: MetaInputField): field is DateField => field.type === 'date';
-export const isBooleanField = (field: MetaInputField): field is BooleanField =>
+export const isDateField = (field: FormInputField): field is DateField => field.type === 'date';
+export const isBooleanField = (field: FormInputField): field is BooleanField =>
 	field.type === 'boolean';
-export const isImageField = (field: MetaInputField): field is ImageField => field.type === 'image';
-export const isObjectField = (field: MetaInputField): field is ObjectField =>
+export const isImageField = (field: FormInputField): field is ImageField => field.type === 'image';
+export const isObjectField = (field: FormInputField): field is ObjectField =>
 	field.type === 'object';
-export const isArrayField = (field: MetaInputField): field is ArrayField => field.type === 'array';
-export const isEnumField = (field: MetaInputField): field is EnumField => field.type === 'enum';
+export const isArrayField = (field: FormInputField): field is ArrayField => field.type === 'array';
+export const isEnumField = (field: FormInputField): field is EnumField => field.type === 'enum';
 
 const handleOptional = <T extends v.BaseSchema<unknown, unknown, v.BaseIssue<unknown>>>(
-	fields: MetaInputField,
+	fields: FormInputField,
 	schema: T,
 	defaultValue?: unknown
 ) => (fields.optional ? v.optional(schema, defaultValue) : schema);
@@ -63,6 +65,11 @@ const parseNumber: Transformer = (field) => {
 	return handleOptional(field, v.pipe(v.number(), ...deepParams));
 };
 
+const convertToIsoDate = (value: number | string) => {
+	const date = new Date(value);
+	return `${date.getFullYear()}-${twoDigit(date.getMonth() + 1)}-${twoDigit(date.getDate())}`;
+};
+
 const parseDate: Transformer = (field) => {
 	if (!isDateField(field)) {
 		return null;
@@ -70,9 +77,10 @@ const parseDate: Transformer = (field) => {
 	return handleOptional(
 		field,
 		v.pipe(
-			v.date(),
-			field.min ? v.minValue(new Date(field.min)) : v.check<Date>(() => true),
-			field.max ? v.maxValue(new Date(field.max)) : v.check<Date>(() => true)
+			v.string(),
+			v.isoDate(),
+			field.min ? v.minValue(convertToIsoDate(field.min)) : v.check<string>(() => true),
+			field.max ? v.maxValue(convertToIsoDate(field.max)) : v.check<string>(() => true)
 		)
 	);
 };
@@ -128,7 +136,7 @@ const parseEnum: Transformer = (field) => {
 };
 
 type Transformer = (
-	field: MetaInputField
+	field: FormInputField
 ) => v.BaseSchema<unknown, unknown, v.BaseIssue<unknown>> | null;
 
 const transformer: Array<Transformer> = [
@@ -142,7 +150,7 @@ const transformer: Array<Transformer> = [
 	parseEnum
 ];
 
-const runSchemaTransformer = (field: MetaInputField) => {
+const runSchemaTransformer = (field: FormInputField) => {
 	for (const parser of transformer) {
 		const result = parser(field);
 		if (result) {
@@ -152,7 +160,7 @@ const runSchemaTransformer = (field: MetaInputField) => {
 	return null;
 };
 
-export const convertMetaFiledsToValibotSchmea = (fields: MetaInputField[]) => {
+export const convertMetaFiledsToValibotSchmea = (fields: FormInputField[]) => {
 	const objectSchema = fields.reduce(
 		(acc, field) => {
 			const schema = runSchemaTransformer(field);
@@ -167,10 +175,10 @@ export const convertMetaFiledsToValibotSchmea = (fields: MetaInputField[]) => {
 };
 
 export const getCollectionContent = async (
-	loader: Loader,
+	loader: GlobLoader,
 	services: { getContent: (path: string) => Promise<GitDirContent[]> }
 ): Promise<GitFileMeta[]> => {
-	const basePath = loader.base.replace('./', '');
+	const basePath = loader.base?.replace('./', '') ?? '';
 	const content = await services.getContent(basePath);
 	const [files, dirs] = content.reduce(
 		(acc, item) => {
@@ -184,4 +192,12 @@ export const getCollectionContent = async (
 		[[], []] as [GitFileMeta[], GitDirMeta[]]
 	);
 	return files;
+};
+
+export const getDirPath = (loader: Loader) => {
+	if (loader.type === 'glob') {
+		return loader.base ?? '';
+	} else {
+		return loader.path.split('/').slice(0, -1).join('/');
+	}
 };

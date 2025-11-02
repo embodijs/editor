@@ -1,4 +1,4 @@
-<script lang="ts" generics="T extends { meta: Record<string, unknown>}">
+<script lang="ts" generics="T extends Record<string, unknown>">
 	import { getFileContext } from '$/lib/context/filemanager';
 	import type { ImageField } from '$core/model/collection';
 	import * as Upload from '$lib/comp/fileUpload/index.js';
@@ -16,7 +16,7 @@
 
 	const { field, form, objectPath }: Props = $props();
 	const { form: formData } = form;
-	let fieldState: string | undefined = $state(getPathValue($formData, objectPath) as string);
+	let fieldState: string | undefined = $state.raw(getPathValue($formData, objectPath) as string);
 	const name = `${objectPath.join('.')}` as FormPath<T>;
 
 	$effect(() => {
