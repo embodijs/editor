@@ -1,4 +1,4 @@
-<script lang="ts" generics="T extends { meta: Record<string, unknown>}">
+<script lang="ts" generics="T extends Record<string, unknown>">
 	import type { FormInputField } from '$core/model/collection';
 	import ObjectField from './ObjectField.svelte';
 	import type { FormPath, SuperForm } from 'sveltekit-superforms';
@@ -29,11 +29,12 @@
 	const { field, form, objectPath, noLabel }: Props = $props();
 	const { form: formData } = form;
 
-	let fieldState: unknown = $state(getPathValue($formData, objectPath));
 	const name = `${objectPath.join('.')}` as FormPath<T>;
-	$effect(() => {
-		formData.update((data) => setPathValue(data, objectPath, fieldState));
-	});
+
+	const updateFormValue = (value: unknown, objectPath: Props['objectPath']) => {
+		console.log(`Updating form value at ${objectPath.join('.')}:`, value);
+		formData.update((data) => setPathValue(data, objectPath, value));
+	};
 </script>
 
 <Form.Field {form} {name}>
@@ -44,13 +45,26 @@
 					{#if !noLabel}
 						<Form.Label>{getLabel(field)}</Form.Label>
 					{/if}
-					<Switch bind:checked={fieldState as boolean} {...props} />
+					<Switch
+						bind:checked={
+							() => getPathValue($formData, objectPath) as boolean,
+							(v) => updateFormValue(v, objectPath)
+						}
+						{...props}
+					/>
 				</div>
 			{:else if isObjectField(field)}
 				<ObjectField {form} {field} {objectPath} />
 			{:else if isArrayField(field)}
 				{#if field.items.type === 'string' || field.items.type === 'number'}
-					<TagInput placeholder="Add..." bind:value={fieldState as string[]} {...props}>
+					<TagInput
+						placeholder="Add..."
+						bind:value={
+							() => getPathValue($formData, objectPath) as string[],
+							(v) => updateFormValue(v, objectPath)
+						}
+						{...props}
+					>
 						{#snippet label()}
 							<Form.Label>{getLabel(field)}</Form.Label>
 						{/snippet}
@@ -72,13 +86,20 @@
 							data-slot="input-group-control"
 							{...props}
 							class="border-input selection:bg-primary selection:text-primary-foreground ring-offset-background placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive flex h-9 w-full min-w-0 flex-1 rounded-none border-0 bg-transparent px-3 py-1 text-base shadow-none transition-[color,box-shadow] outline-none focus-visible:ring-0 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm dark:bg-transparent"
-							bind:value={fieldState as Date}
+							bind:value={
+								() => getPathValue($formData, objectPath) as Date,
+								(v) => updateFormValue(v, objectPath)
+							}
 							local={getLocale()}
 						/>
-					{:else if isImageField(field)}
-						<InputGroup.Input {...props} bind:value={fieldState}></InputGroup.Input>
 					{:else}
-						<InputGroup.Input {...props} bind:value={fieldState as string}></InputGroup.Input>
+						<InputGroup.Input
+							{...props}
+							data-lpignore="true"
+							bind:value={
+								() => getPathValue($formData, objectPath), (v) => updateFormValue(v, objectPath)
+							}
+						></InputGroup.Input>
 					{/if}
 				</InputGroup.Root>
 			{/if}

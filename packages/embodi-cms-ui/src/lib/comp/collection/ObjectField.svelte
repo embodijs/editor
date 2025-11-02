@@ -5,7 +5,6 @@
 	import * as Field from '$lib/comp/ui/field/index.js';
 	import { getLabel, getPathValue, hasPathValue, setPathValue } from './helpers.svelte';
 	import RemoveButton from './RemoveButton.svelte';
-	import AddButton from './AddButton.svelte';
 	import { Button } from '../core';
 
 	type Props = {

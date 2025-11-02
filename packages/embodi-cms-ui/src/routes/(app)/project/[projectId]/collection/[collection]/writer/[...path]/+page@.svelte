@@ -15,6 +15,7 @@
 	import { Button, SaveFormButton } from '$/lib/comp/core';
 	import { ChevronLeft } from '@lucide/svelte';
 	import { resolve } from '$app/paths';
+	import { onMount } from 'svelte';
 
 	const { data }: PageProps = $props();
 	let open = $state(false);
@@ -37,7 +38,13 @@
 	});
 
 	const fileStore = writable<FileUpload[]>([]);
-	const { form: formData, enhance, submitting } = form;
+	const { form: formData, enhance } = form;
+
+	onMount(() => {
+		return fileStore.subscribe((value) => {
+			$formData.files = value;
+		});
+	});
 
 	const repo: GitRepo = {
 		owner: data.currentProject.owner,
@@ -49,10 +56,6 @@
 		repo,
 		new URL(`/${repo.owner}/${repo.name}/file/${data.path}/`, page.url.origin)
 	);
-
-	$effect(() => {
-		$formData.files = $fileStore;
-	});
 </script>
 
 <main class="relative">

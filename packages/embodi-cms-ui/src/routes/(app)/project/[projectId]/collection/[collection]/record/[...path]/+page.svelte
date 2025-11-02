@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { SaveFormButton, SiteHeader } from '$/lib/comp/core';
+	import { Input, SaveFormButton, SiteHeader } from '$/lib/comp/core';
 	import { superForm } from 'sveltekit-superforms';
 	import type { PageProps } from './$types';
 	import { initFileContext } from '$/lib/context/filemanager';
@@ -12,7 +12,7 @@
 	import { generateRecordFormSchema } from '$core/logic/file';
 	import { toast } from 'svelte-sonner';
 	import * as Form from '$lib/comp/ui/form/index.js';
-	import * as InputGroup from '$lib/comp/ui/input-group/index.js';
+	import { onMount } from 'svelte';
 
 	const { data }: PageProps = $props();
 	const schema = generateRecordFormSchema(data.formFields);
@@ -35,9 +35,13 @@
 	const { form: formData, enhance } = form;
 	const hasFileName = !!$formData.name;
 
-	$effect(() => {
-		$formData.files = $fileStore;
+	onMount(() => {
+		return fileStore.subscribe((value) => {
+			$formData.files = value;
+		});
 	});
+
+	formData.subscribe(console.log);
 
 	const repo: GitRepo = {
 		owner: data.currentProject.owner,
@@ -53,7 +57,30 @@
 	);
 </script>
 
-<SiteHeader title="Record">
+<SiteHeader>
+	{#snippet title()}
+		<div class="flex flex-nowrap items-center gap-2">
+			<span class="text-primary/70">Record:</span>
+			{#if hasFileName}
+				{$formData.name}
+			{:else}
+				<Form.Field {form} name="name">
+					<Form.Control
+						>{#snippet children({ props })}
+							<Input
+								class="m-0"
+								{...props}
+								placeholder="Enter record name"
+								disabled={hasFileName}
+								bind:value={$formData.name}
+							/>
+						{/snippet}
+					</Form.Control>
+					<Form.FieldErrors />
+				</Form.Field>
+			{/if}
+		</div>
+	{/snippet}
 	{#snippet actions()}
 		<SaveFormButton {form} />
 	{/snippet}
@@ -61,20 +88,6 @@
 
 <main class="relative">
 	<form use:enhance method="POST" class="mx-auto max-w-3xl">
-		<Form.Field {form} name="name">
-			<Form.Control>
-				{#snippet children({ props })}
-					<InputGroup.Root>
-						<InputGroup.Addon align="block-start">
-							<Form.Label>Name</Form.Label>
-						</InputGroup.Addon>
-						<InputGroup.Input disabled={hasFileName} {...props} bind:value={$formData.name}
-						></InputGroup.Input>
-					</InputGroup.Root>
-				{/snippet}
-			</Form.Control>
-			<Form.FieldErrors />
-		</Form.Field>
 		<FormBuilder fields={data.formFields} {form} objectPath={['data']} />
 	</form>
 </main>

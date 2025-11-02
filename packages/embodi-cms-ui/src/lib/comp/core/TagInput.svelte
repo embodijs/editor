@@ -7,7 +7,7 @@
 	import type { Snippet, ComponentProps } from 'svelte';
 
 	type Props = ComponentProps<typeof InputGroup.Input> & {
-		label?: Snippet;
+		label?: Snippet<[string]>;
 		value?: string[];
 	};
 
@@ -32,13 +32,14 @@
 	};
 
 	const handleRemove = (index: number) => () => {
-		value?.splice(index, 1);
+		console.log('Removing item at index:', index);
+		value = value?.filter((_, i) => i !== index);
 	};
 </script>
 
 <InputGroup.Root>
 	{#if label}
-		<InputGroup.Addon align="block-start">{@render label({ id })}</InputGroup.Addon>
+		<InputGroup.Addon align="block-start">{@render label(id)}</InputGroup.Addon>
 	{/if}
 	<InputGroup.Addon align="block-start" class="flex flex-row flex-wrap items-center gap-1.5">
 		{#each value ?? [] as pill, index (pill)}
