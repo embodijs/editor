@@ -3,7 +3,7 @@
   "module": "dist/plugin.js",
   "types": "dist/plugin.d.ts",
   "type": "module",
-  "version": "0.3.4",
+  "version": "0.4.0",
   "scripts": {
     "test": "vitest",
     "build": "tsup",

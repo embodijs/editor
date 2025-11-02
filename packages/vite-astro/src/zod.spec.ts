@@ -8,10 +8,12 @@ import {
   parseArray,
   imageTypeMock,
   parseImage,
+  parseDefault,
 } from "./zod.js";
 import { z } from "zod";
 import * as v from "valibot";
 import * as collection from "@embodi/cms";
+import { optional } from "astro/zod";
 
 describe("parseZodSchema", () => {
   test("parseString - validate against schema", () => {
@@ -47,6 +49,20 @@ describe("parseZodSchema", () => {
       fieldName: "optional",
       type: "string",
       optional: true,
+    });
+  });
+
+  test("parseDefault", () => {
+    const schema = z.string().default("default");
+    const result = parseDefault(schema, "default");
+    const parsed = v.safeParse(collection.StringField, result);
+    expect(parsed.issues).toBeUndefined();
+    expect(parsed.success).toBeTruthy();
+    expect(parsed.output).toEqual({
+      fieldName: "default",
+      type: "string",
+      optional: false,
+      default: "default",
     });
   });
 
@@ -129,6 +145,7 @@ describe("parseZodSchema", () => {
     const schema = z.object({
       num: z.number().min(0).max(100),
       str: z.string().min(2).max(100),
+      strWithDefault: z.string().min(2).max(100).default("some default value"),
       optional: z.string().min(2).max(100).optional(),
       optionalObj: z
         .object({
@@ -174,6 +191,14 @@ describe("parseZodSchema", () => {
         minLength: 2,
         maxLength: 100,
         optional: false,
+      },
+      {
+        fieldName: "strWithDefault",
+        type: "string",
+        minLength: 2,
+        maxLength: 100,
+        optional: false,
+        default: "some default value",
       },
       {
         fieldName: "optional",

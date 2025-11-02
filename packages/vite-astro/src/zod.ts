@@ -34,6 +34,7 @@ const runTypeTransformer = (schema: z.core.$ZodType, fieldName: string) =>
       parseString,
       parseNumber,
       parseOptional,
+      parseDefault,
       parseObject,
       parseArray,
       parseBoolean,
@@ -205,6 +206,21 @@ export const parseOptional: TypeTransformer = (schema, fieldName) => {
     return {
       ...sub,
       optional: true,
+    };
+  }
+  return null;
+};
+
+export const parseDefault: TypeTransformer = (schema, fieldName) => {
+  const def = getTypeDef(schema) as z.core.$ZodDefaultDef;
+  if (def.type === "default") {
+    const sub = runTypeTransformer(def.innerType, fieldName);
+    if (!sub) {
+      return null;
+    }
+    return {
+      ...sub,
+      default: def.defaultValue,
     };
   }
   return null;

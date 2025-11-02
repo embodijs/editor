@@ -30,10 +30,17 @@ export const isArrayField = (field: FormInputField): field is ArrayField => fiel
 export const isEnumField = (field: FormInputField): field is EnumField => field.type === 'enum';
 
 const handleOptional = <T extends v.BaseSchema<unknown, unknown, v.BaseIssue<unknown>>>(
-	fields: FormInputField,
+	field: FormInputField,
 	schema: T,
 	defaultValue?: unknown
-) => (fields.optional ? v.optional(schema, defaultValue) : schema);
+) => {
+	if (field.optional) {
+		return v.optional(schema, field.default ?? defaultValue);
+	} else if (field.default) {
+		return v.optional(schema, field.default);
+	}
+	return schema;
+};
 
 export const parseString: Transformer = (field) => {
 	if (!isStringField(field)) {
@@ -180,7 +187,7 @@ export const getCollectionContent = async (
 ): Promise<GitFileMeta[]> => {
 	const basePath = loader.base?.replace('./', '') ?? '';
 	const content = await services.getContent(basePath);
-	const [files, dirs] = content.reduce(
+	const [files] = content.reduce(
 		(acc, item) => {
 			if (item.type === 'file' && minimatch(item.path, loader.pattern)) {
 				acc[0] = [...acc[0], item];

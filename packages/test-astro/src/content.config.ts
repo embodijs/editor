@@ -24,7 +24,7 @@ const simpleTestCollection = defineCollection({
   loader: glob({ pattern: "**/*.{md,mdx}", base: "./src/content/blogs" }),
   schema: z.object({
     title: z.string(),
-    description: z.string(),
+    description: z.string().default("Description"),
     pubDate: z.date(),
     author: z.string().optional(),
     tags: z.array(z.string()).optional(),

@@ -8,7 +8,8 @@ const FieldDisplayName = v.union([
 const FieldBase = v.object({
 	fieldName: v.string(),
 	displayName: v.optional(FieldDisplayName),
-	optional: v.optional(v.boolean(), false)
+	optional: v.optional(v.boolean(), false),
+	default: v.optional(v.any())
 });
 
 export const NumberField = v.object({
