@@ -110,7 +110,11 @@ export const getArticle = async (
 		return null;
 	}
 
-	const { data, content } = matter(fileContent);
+	const { data, content } = matter(fileContent, {
+		engines: {
+			yaml: yaml.parse
+		}
+	});
 	return { meta: data, markdown: content, files: [] };
 };
 

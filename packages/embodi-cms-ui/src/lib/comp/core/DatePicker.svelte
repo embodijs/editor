@@ -7,10 +7,11 @@
 	import { parseDate } from 'chrono-node';
 	import { CalendarDate, getLocalTimeZone, type DateValue } from '@internationalized/date';
 	import { untrack } from 'svelte';
+	import { twoDigit } from '$core/logic/date';
 
 	type Props = {
 		name: string;
-		value?: Date;
+		value?: string;
 		local: Intl.LocalesArgument;
 		'data-slot'?: string;
 		class?: string;
@@ -36,32 +37,41 @@
 		});
 	};
 
+	const toIsoString = (date: DateValue | Date | string | undefined): string => {
+		if (!date) return '';
+		if (date instanceof Date) {
+			return `${date.getFullYear()}-${twoDigit(date.getMonth() + 1)}-${twoDigit(date.getDate())}`;
+		} else if (typeof date === 'string') {
+			return date;
+		}
+		return toIsoString(date.toDate(getLocalTimeZone()));
+	};
+
 	const id = $props.id();
 
 	let open = $state(false);
 	let internalValue = $state<DateValue | undefined>(
 		untrack(() => {
-			const date = value;
-			if (date) return new CalendarDate(date.getFullYear(), date.getMonth() + 1, date.getDate());
+			if (value) {
+				const date = new Date(value);
+				return new CalendarDate(date.getFullYear(), date.getMonth() + 1, date.getDate());
+			}
 			return undefined;
 		})
 	);
-	$effect(() => {
-		console.log(value);
-	});
 </script>
 
 <div class="relative flex w-full gap-2" data-slot="input-group-control">
 	<Input
 		{name}
 		{...props}
-		value={formatDate(value)}
+		value={formatDate(internalValue)}
 		onchange={(e: Event) => {
 			const userInput = (e.target as HTMLInputElement).value;
 			const date = parseDate(userInput);
 			if (date) {
 				internalValue = new CalendarDate(date.getFullYear(), date.getMonth() + 1, date.getDate());
-				value = internalValue.toDate(getLocalTimeZone());
+				value = toIsoString(internalValue);
 			}
 		}}
 		placeholder="Tomorrow or next week"
@@ -88,7 +98,7 @@
 				bind:value={internalValue}
 				captionLayout="dropdown"
 				onValueChange={(v) => {
-					value = v?.toDate(getLocalTimeZone());
+					value = toIsoString(v);
 					open = false;
 				}}
 			/>

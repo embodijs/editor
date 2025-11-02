@@ -14,6 +14,7 @@ import {
 import { GitDirContent, GitDirMeta, GitFileMeta } from '$core/model/content';
 import * as v from 'valibot';
 import { minimatch } from 'minimatch';
+import { twoDigit } from './date';
 
 export const isNumberField = (field: FormInputField): field is NumberField =>
 	field.type === 'number';
@@ -64,28 +65,22 @@ const parseNumber: Transformer = (field) => {
 	return handleOptional(field, v.pipe(v.number(), ...deepParams));
 };
 
+const convertToIsoDate = (value: number | string) => {
+	const date = new Date(value);
+	return `${date.getFullYear()}-${twoDigit(date.getMonth() + 1)}-${twoDigit(date.getDate())}`;
+};
+
 const parseDate: Transformer = (field) => {
 	if (!isDateField(field)) {
 		return null;
 	}
 	return handleOptional(
 		field,
-		v.fallback(
-			v.pipe(
-				v.date(),
-				field.min ? v.minValue(new Date(field.min)) : v.check<Date>(() => true),
-				field.max ? v.maxValue(new Date(field.max)) : v.check<Date>(() => true)
-			),
-			(data) => {
-				try {
-					if (typeof data === 'string') {
-						return new Date(data);
-					}
-					return undefined;
-				} catch (_) {
-					return undefined;
-				}
-			}
+		v.pipe(
+			v.string(),
+			v.isoDate(),
+			field.min ? v.minValue(convertToIsoDate(field.min)) : v.check<string>(() => true),
+			field.max ? v.maxValue(convertToIsoDate(field.max)) : v.check<string>(() => true)
 		)
 	);
 };
