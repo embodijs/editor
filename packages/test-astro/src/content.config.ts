@@ -32,7 +32,27 @@ const simpleTestCollection = defineCollection({
   }),
 });
 
+const dataFile = defineCollection({
+  loader: file("./src/content/data.yml"),
+  schema: ({ image }) =>
+    z.object({
+      title: z.string(),
+      description: z.string(),
+      pubDate: z.date().optional(),
+      author: z.string().optional(),
+      tags: z.array(z.string()).optional(),
+      draft: z.boolean().optional(),
+      image: z
+        .object({
+          url: image(),
+          alt: z.string().optional(),
+        })
+        .optional(),
+    }),
+});
+
 export const collections = {
   blogs: blogsCollection,
   simpleTest: simpleTestCollection,
+  data: dataFile,
 };

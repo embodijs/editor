@@ -9,28 +9,31 @@
         "pattern": "**/*.{md,mdx}"
       },
       "formats": ["md", "mdx"],
-      "fields": [
-        { "fieldName": "title", "type": "string" },
-        { "fieldName": "description", "type": "string" },
-        { "fieldName": "pubDate", "type": "date" },
-        { "fieldName": "author", "type": "string", "optional": true },
-        {
-          "fieldName": "tags",
-          "type": "array",
-          "items": { "fieldName": "items", "type": "string" },
-          "optional": true
-        },
-        { "fieldName": "draft", "type": "boolean", "optional": true },
-        {
-          "fieldName": "image",
-          "type": "object",
-          "fields": [
-            { "fieldName": "url", "type": "image" },
-            { "fieldName": "alt", "type": "string", "optional": true }
-          ],
-          "optional": true
-        }
-      ]
+      "definition": {
+        "type": "object",
+        "fields": [
+          { "fieldName": "title", "type": "string" },
+          { "fieldName": "description", "type": "string" },
+          { "fieldName": "pubDate", "type": "date" },
+          { "fieldName": "author", "type": "string", "optional": true },
+          {
+            "fieldName": "tags",
+            "type": "array",
+            "items": { "type": "string" },
+            "optional": true
+          },
+          { "fieldName": "draft", "type": "boolean", "optional": true },
+          {
+            "fieldName": "image",
+            "type": "object",
+            "fields": [
+              { "fieldName": "url", "type": "image" },
+              { "fieldName": "alt", "type": "string", "optional": true }
+            ],
+            "optional": true
+          }
+        ]
+      }
     },
     {
       "name": "simpleTest",
@@ -41,24 +44,60 @@
         "pattern": "**/*.{md,mdx}"
       },
       "formats": ["md", "mdx"],
-      "fields": [
-        { "fieldName": "title", "type": "string" },
-        {
-          "fieldName": "description",
-          "type": "string",
-          "default": "Description"
-        },
-        { "fieldName": "pubDate", "type": "date" },
-        { "fieldName": "author", "type": "string", "optional": true },
-        {
-          "fieldName": "tags",
-          "type": "array",
-          "items": { "fieldName": "items", "type": "string" },
-          "optional": true
-        },
-        { "fieldName": "draft", "type": "boolean", "optional": true }
-      ]
+      "definition": {
+        "type": "object",
+        "fields": [
+          { "fieldName": "title", "type": "string" },
+          {
+            "fieldName": "description",
+            "type": "string",
+            "default": "Description"
+          },
+          { "fieldName": "pubDate", "type": "date" },
+          { "fieldName": "author", "type": "string", "optional": true },
+          {
+            "fieldName": "tags",
+            "type": "array",
+            "items": { "type": "string" },
+            "optional": true
+          },
+          { "fieldName": "draft", "type": "boolean", "optional": true }
+        ]
+      }
+    },
+    {
+      "name": "data",
+      "displayName": "Data",
+      "loader": { "type": "file", "path": "./src/content/data.yml" },
+      "definition": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "fields": [
+            { "fieldName": "title", "type": "string" },
+            { "fieldName": "description", "type": "string" },
+            { "fieldName": "pubDate", "type": "date", "optional": true },
+            { "fieldName": "author", "type": "string", "optional": true },
+            {
+              "fieldName": "tags",
+              "type": "array",
+              "items": { "type": "string" },
+              "optional": true
+            },
+            { "fieldName": "draft", "type": "boolean", "optional": true },
+            {
+              "fieldName": "image",
+              "type": "object",
+              "fields": [
+                { "fieldName": "url", "type": "image" },
+                { "fieldName": "alt", "type": "string", "optional": true }
+              ],
+              "optional": true
+            }
+          ]
+        }
+      }
     }
   ],
-  "updatedAt": 1762105770785
+  "updatedAt": 1762267271611
 }

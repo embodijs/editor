@@ -6,7 +6,7 @@ const FieldDisplayName = v.union([
 ]);
 
 const FieldBase = v.object({
-	fieldName: v.string(),
+	fieldName: v.optional(v.string()),
 	displayName: v.optional(FieldDisplayName),
 	optional: v.optional(v.boolean(), false),
 	default: v.optional(v.any())
@@ -110,18 +110,30 @@ export const FileLoader = v.object({
 
 export const Loader = v.variant('type', [GlobLoader, FileLoader]);
 
-export const Collection = v.object({
-	name: v.string(),
-	displayName: v.string(),
-	loader: Loader,
-	formats: v.optional(v.array(v.string())),
-	fields: v.array(FormInputField)
-});
+export const SchemaDefinition = v.union([ObjectField, ArrayField]);
+
+export const Collection = v.union([
+	v.object({
+		name: v.string(),
+		displayName: v.string(),
+		loader: Loader,
+		formats: v.optional(v.array(v.string())),
+		definition: SchemaDefinition
+	}),
+	v.object({
+		name: v.string(),
+		displayName: v.string(),
+		loader: Loader,
+		formats: v.optional(v.array(v.string())),
+		fields: v.array(FormInputField)
+	})
+]);
 
 export type Loader = v.InferOutput<typeof Loader>;
 export type GlobLoader = v.InferOutput<typeof GlobLoader>;
 export type FileLoader = v.InferOutput<typeof FileLoader>;
 export type Collection = v.InferOutput<typeof Collection>;
+export type SchemaDefinition = v.InferOutput<typeof SchemaDefinition>;
 export type GitCollection = v.InferInput<typeof Collection>;
 export type FormInputField = v.InferInput<typeof FormInputField>;
 export type MetaInputField = v.InferInput<typeof MetaInputField>;

@@ -16,6 +16,10 @@ export const extractFormats = (pattern: string): string[] => {
   return extMatch && extMatch[1] ? [extMatch[1]] : [];
 };
 
+export const isFileLoader = (loader: cms.Loader): loader is cms.FileLoader => {
+  return loader.type === "file";
+};
+
 export const legacyLoader = (
   key: string,
   type: "data" | "content" | undefined,

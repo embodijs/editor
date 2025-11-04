@@ -4,7 +4,12 @@ import vm from "node:vm";
 import * as z from "zod";
 import * as cms from "@embodi/cms";
 import { extractSchema, parseZodSchema } from "./zod";
-import { extractFormats, legacyLoader, parseLoader } from "./loaders";
+import {
+  extractFormats,
+  isFileLoader,
+  legacyLoader,
+  parseLoader,
+} from "./loaders";
 import { camelToReadable, hasFile } from "./helper";
 import fs from "node:fs";
 import { resolve, dirname } from "node:path";
@@ -112,7 +117,7 @@ export default (): Plugin[] => {
         const collectionsRaw: Record<string, AstroCollection> =
           sandbox.exports.collections;
         const isLegacy = sandbox.exports.legacy as boolean;
-        const collections: cms.GitCollection[] = Object.entries(collectionsRaw)
+        const collections: cms.Collection[] = Object.entries(collectionsRaw)
           .map(([key, value]) => {
             const schema = extractSchema(value.schema);
 
@@ -124,13 +129,16 @@ export default (): Plugin[] => {
             }
             const formats =
               "pattern" in loader ? extractFormats(loader.pattern) : undefined;
+            const fields = isFileLoader(loader)
+              ? parseZodSchema(z.array(schema))
+              : parseZodSchema(schema);
 
             return {
               name: key,
               displayName: camelToReadable(key),
               loader: loader,
               formats,
-              fields: parseZodSchema(schema),
+              definition: fields,
             };
           })
           .filter((entry) => entry != null);
@@ -138,6 +146,7 @@ export default (): Plugin[] => {
         const config: cms.GitProjectConfig = {
           collections,
           updatedAt: new Date().getTime(),
+          v: "1.0",
         };
 
         const path = resolve(".embodi/cms/config.json");

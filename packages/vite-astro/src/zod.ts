@@ -11,12 +11,12 @@ function getTypeDef<T extends z.core.$ZodType>(schema: T): T["_zod"]["def"] {
 
 type TypeTransformer<
   O extends collection.MetaInputField = collection.MetaInputField,
-> = (schema: z.core.$ZodType, fieldName: string) => O | null;
+> = (schema: z.core.$ZodType, fieldName?: string) => O | null;
 
 const prepareTransformers = (
   list: TypeTransformer[],
   schema: z.core.$ZodType,
-  fieldName: string,
+  fieldName?: string,
 ): ReturnType<TypeTransformer> => {
   for (const transformer of list) {
     const result = transformer(schema, fieldName);
@@ -27,7 +27,7 @@ const prepareTransformers = (
 
 export const imageTypeMock = z.string().meta({ type: "image" });
 
-const runTypeTransformer = (schema: z.core.$ZodType, fieldName: string) =>
+const runTypeTransformer = (schema: z.core.$ZodType, fieldName?: string) =>
   prepareTransformers(
     [
       parseImage, // need to be called before string
@@ -46,16 +46,17 @@ const runTypeTransformer = (schema: z.core.$ZodType, fieldName: string) =>
   );
 
 export const parseZodSchema = (
-  schema: z.ZodObject,
-): collection.MetaInputField[] => {
-  const def = getTypeDef(schema);
-  if (def.type !== "object") {
-    throw new Error(`Expected object type, got ${def.type}`);
+  schema: z.ZodObject | z.ZodArray,
+): collection.ObjectField | collection.ArrayField => {
+  const fieldsDefinition = runTypeTransformer(schema);
+  if (
+    !fieldsDefinition ||
+    (fieldsDefinition.type !== "object" && fieldsDefinition.type !== "array")
+  ) {
+    throw new Error(`Failed to evaluate the ZOD Schema.`);
   }
-  const { shape } = def;
-  return Object.entries(shape)
-    .map(([key, value]) => runTypeTransformer(value, key))
-    .filter((v) => v != null);
+
+  return fieldsDefinition;
 };
 
 const handleChecks = (def: z.core.$ZodTypeDef) => {
@@ -100,7 +101,7 @@ export const parseString: TypeTransformer<collection.StringField> = (
   }
 
   return {
-    fieldName,
+    ...(fieldName ? { fieldName } : {}),
     type: "string",
     ...handleChecks(def),
   };
@@ -115,7 +116,7 @@ export const parseNumber: TypeTransformer<collection.NumberField> = (
     return null;
   }
   return {
-    fieldName,
+    ...(fieldName ? { fieldName } : {}),
     type: "number",
     ...handleChecks(def),
   };
@@ -130,7 +131,7 @@ const parseBoolean: TypeTransformer<collection.BooleanField> = (
     return null;
   }
   return {
-    fieldName,
+    ...(fieldName ? { fieldName } : {}),
     type: "boolean",
   };
 };
@@ -145,7 +146,7 @@ export const parseImage: TypeTransformer<collection.ImageField> = (
     return null;
   }
   return {
-    fieldName,
+    ...(fieldName ? { fieldName } : {}),
     type: "image",
     ...handleChecks(def),
   };
@@ -156,12 +157,12 @@ export const parseArray: TypeTransformer = (schema, fieldName) => {
   if (def.type !== "array") {
     return null;
   }
-  const sub = runTypeTransformer(def.element, "items");
+  const sub = runTypeTransformer(def.element);
   if (!sub) {
     return null;
   }
   return {
-    fieldName,
+    ...(fieldName ? { fieldName } : {}),
     type: "array",
     items: sub,
   };
@@ -173,7 +174,7 @@ export const parseDate: TypeTransformer = (schema, fieldName) => {
     return null;
   }
   return {
-    fieldName,
+    ...(fieldName ? { fieldName } : {}),
     type: "date",
     ...handleChecks(def),
   };
@@ -189,7 +190,7 @@ export const parseEnum: TypeTransformer<collection.EnumField> = (
   }
   const { entries } = def as z.core.$ZodEnumDef;
   return {
-    fieldName,
+    ...(fieldName ? { fieldName } : {}),
     type: "enum",
     options: entries,
     ...handleChecks(def),
@@ -233,7 +234,7 @@ export const parseObject: TypeTransformer = (schema, fieldName) => {
   }
   const { shape } = def as z.core.$ZodObjectDef;
   return {
-    fieldName,
+    ...(fieldName ? { fieldName } : {}),
     type: "object",
     fields: Object.entries(shape)
       .map(([key, value]) => runTypeTransformer(value, key))
