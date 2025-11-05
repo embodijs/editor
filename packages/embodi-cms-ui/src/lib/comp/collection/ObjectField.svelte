@@ -40,7 +40,7 @@
 	</Field.Legend>
 	{#if show}
 		{#each field.fields as sub (sub.fieldName)}
-			{#if sub.fieldName}
+			{#if sub.fieldName && !sub.hidden}
 				<FieldMatcher field={sub} {form} objectPath={[...objectPath, sub.fieldName]} />
 			{/if}
 		{/each}

@@ -28,56 +28,6 @@ export const isValidFilePath = (loader: Loader, path: string) =>
 	(loader.type === 'glob' && !minimatch(path, loader.pattern)) ||
 	(loader.type === 'file' && path !== loader.path.replace(/^.\//, ''));
 
-export const flatMeta = (
-	meta: Record<string, unknown>,
-	parentKey: string = ''
-): Record<string, unknown> => {
-	return Object.entries(meta).reduce((acc, [key, value]) => {
-		if (
-			typeof value === 'object' &&
-			value !== null &&
-			!Array.isArray(value) &&
-			!(value instanceof Date)
-		) {
-			return { ...acc, ...flatMeta(value as Record<string, unknown>, `${parentKey}${key}.`) };
-		}
-		return { ...acc, [`${parentKey}${key}`]: value };
-	}, {});
-};
-
-const validateUnflatedMeta = (meta: Record<string, unknown>): Record<string, unknown> => {
-	return Object.fromEntries(
-		Object.entries(meta).map(([key, value]) => {
-			if (isRecord(value) && !(value instanceof Date)) {
-				return [key, unflatMeta(value as Record<string, unknown>)];
-			}
-			return [key, value];
-		})
-	);
-};
-
-export const unflatMeta = (meta: Record<string, unknown>): Record<string, unknown> => {
-	const unflated = Object.entries(meta).reduce(
-		(acc, [key, value]) => {
-			const [parentKey, ...childKey] = key.split('.');
-			if (childKey.length === 0) {
-				return {
-					...acc,
-					[key]: value
-				};
-			}
-			if (!acc[parentKey]) {
-				acc[parentKey] = {};
-			}
-			//Join the sub keys to do validation for the hole object after reduce loop
-			(acc[parentKey] as Record<string, unknown>)[childKey.join('.')] = value;
-			return acc;
-		},
-		{} as Record<string, unknown>
-	);
-	return validateUnflatedMeta(unflated);
-};
-
 export const generateArticleFormSchema = (fields: SchemaDefinition) => {
 	const metaSchema = convertSchemaDefinitionToValibotSchmea(fields);
 	return v.object({
@@ -118,7 +68,7 @@ export const getArticle = async (
 	return { meta: data, markdown: content, files: [] };
 };
 
-export const stringifyRecord = async (data: Record<string, unknown>, filePath: string) => {
+export const stringifyRecord = async (data: unknown, filePath: string) => {
 	if (filePath.endsWith('.json')) {
 		return superjson.stringify(data);
 	} else if (filePath.endsWith('.yaml') || filePath.endsWith('.yml')) {
@@ -190,7 +140,7 @@ export const generateArticleFileName = (article: Article) => {
 	if (hasInlineHeadline(article.markdown)) {
 		const headline = getInlineHeadline(article.markdown);
 		return `${slugify(headline)}.md`;
-	} else if (typeof article.meta.title === 'string') {
+	} else if (isRecord(article.meta) && typeof article.meta.title === 'string') {
 		return `${slugify(article.meta.title)}.md`;
 	}
 
@@ -207,7 +157,11 @@ export const saveArticle = async (
 		storeBlob: (blob: NewGitBlob) => Promise<GitBlobRef>;
 	}
 ) => {
-	const markdownFileContent = matter.stringify(article.markdown, removeEmpty(article.meta));
+	const { meta } = article;
+	if (!isRecord(meta)) {
+		throw new Error('Article meta is not a record');
+	}
+	const markdownFileContent = matter.stringify(article.markdown, removeEmpty(meta));
 
 	return saveFiles(
 		{

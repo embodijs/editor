@@ -43,21 +43,32 @@ const handleOptional = <T extends v.BaseSchema<unknown, unknown, v.BaseIssue<unk
 	return schema;
 };
 
+const getStringDefault = (field: StringField) => {
+	if (field.generate === true && field.pattern === 'uuid') {
+		return () => crypto.randomUUID();
+	}
+};
+
 export const parseString: Transformer = (field) => {
 	if (!isStringField(field)) {
 		return null;
 	}
+
 	const deepParams: v.BaseValidation<string, string, v.BaseIssue<unknown>>[] = [];
 	if (field.minLength) {
 		deepParams.push(v.minLength(field.minLength));
-	} else if (field.maxLength) {
+	}
+	if (field.maxLength) {
 		deepParams.push(v.maxLength(field.maxLength));
-	} else if (field.pattern === 'email') {
+	}
+	if (field.pattern === 'email') {
 		deepParams.push(v.email());
 	} else if (field.pattern === 'url') {
 		deepParams.push(v.url());
+	} else if (field.pattern === 'uuid') {
+		deepParams.push(v.uuid());
 	}
-	return handleOptional(field, v.pipe(v.string(), ...deepParams));
+	return handleOptional(field, v.pipe(v.string(), ...deepParams), getStringDefault(field));
 };
 
 const parseNumber: Transformer = (field) => {

@@ -32,7 +32,6 @@
 	const name = `${objectPath.join('.')}` as FormPath<T>;
 
 	const updateFormValue = (value: unknown, objectPath: Props['objectPath']) => {
-		console.log(`Updating form value at ${objectPath.join('.')}:`, value);
 		formData.update((data) => setPathValue(data, objectPath, value));
 	};
 </script>

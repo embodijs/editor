@@ -13,7 +13,6 @@ import {
 import { z } from "zod";
 import * as v from "valibot";
 import * as cms from "@embodi/cms";
-import { optional } from "astro/zod";
 
 describe("parseZodSchema", () => {
   test("parseString - validate against schema", () => {

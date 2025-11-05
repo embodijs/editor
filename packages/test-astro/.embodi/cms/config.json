@@ -77,7 +77,7 @@
             {
               "fieldName": "id",
               "type": "string",
-              "pattern": "uuid:v7",
+              "pattern": "uuid",
               "hidden": true,
               "generate": true
             },

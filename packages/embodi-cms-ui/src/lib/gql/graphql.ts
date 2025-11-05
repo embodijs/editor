@@ -4169,6 +4169,8 @@ export type CreateIssueInput = {
   parentIssueId?: InputMaybe<Scalars['ID']['input']>;
   /** An array of Node IDs for projects associated with this issue. */
   projectIds?: InputMaybe<Array<Scalars['ID']['input']>>;
+  /** An array of Node IDs for Projects V2 associated with this issue. */
+  projectV2Ids?: InputMaybe<Array<Scalars['ID']['input']>>;
   /** The Node ID of the repository. */
   repositoryId: Scalars['ID']['input'];
   /** The title for the issue. */
