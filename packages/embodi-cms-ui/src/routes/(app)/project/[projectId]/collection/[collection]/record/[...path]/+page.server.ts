@@ -42,7 +42,7 @@ export const load: PageServerLoad = async ({ params, parent, locals }) => {
 			message: 'The Collection your try to open seems to be not exist'
 		});
 	}
-	const { fields, loader } = collection;
+	const { definition, loader } = collection;
 	if (path?.length !== 0) {
 		if (isValidFilePath(loader, path)) {
 			throw error(406, {
@@ -51,19 +51,19 @@ export const load: PageServerLoad = async ({ params, parent, locals }) => {
 			});
 		}
 		const record = await getRecord(path, collection, projectToRepo(currentProject), locals);
-		const recordForm = await superValidate(record, valibot(generateRecordFormSchema(fields)));
+		const recordForm = await superValidate(record, valibot(generateRecordFormSchema(definition)));
 		return {
 			recordForm,
-			formFields: fields,
+			definition,
 			path: dirname(path),
 			collection,
 			currentProject
 		};
 	} else {
-		const recordForm = await superValidate(valibot(generateRecordFormSchema(fields)));
+		const recordForm = await superValidate(valibot(generateRecordFormSchema(definition)));
 		return {
 			recordForm,
-			formFields: fields,
+			definition,
 			path: getDirPath(collection.loader),
 			collection,
 			currentProject
@@ -84,9 +84,9 @@ export const actions: Actions = {
 		}
 		const repo = projectToRepo(project, 'main');
 		const { collections } = await getProjectConfig(repo, locals);
-		const { fields, loader } = getCurrentCollection(collections, params.collection) ?? {};
+		const { definition, loader } = getCurrentCollection(collections, params.collection) ?? {};
 
-		if (!fields || !loader) {
+		if (!definition || !loader) {
 			throw error(404, {
 				type: 'Collection not found',
 				message: 'The collection you try to open does not exist'
@@ -95,7 +95,7 @@ export const actions: Actions = {
 
 		const form = await superValidate(
 			await request.formData(),
-			valibot(generateRecordFormSchema(fields))
+			valibot(generateRecordFormSchema(definition))
 		);
 		if (!form.valid) {
 			return fail(400, { form });

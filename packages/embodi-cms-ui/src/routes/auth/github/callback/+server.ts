@@ -16,11 +16,21 @@ export async function GET(event: RequestEvent): Promise<Response> {
 	const state = url.searchParams.get('state');
 	const storedState = getOauthStateCookie(event);
 	if (code === null || state === null || storedState === null) {
+		if (code === null) {
+			console.warn('Missing code');
+		}
+		if (state === null) {
+			console.warn('Missing state');
+		}
+		if (storedState === null) {
+			console.error('Missing stored state');
+		}
 		return new Response(null, {
 			status: 400
 		});
 	}
 	if (state !== storedState) {
+		console.warn('Invalid OAuth state');
 		return new Response(null, {
 			status: 400
 		});

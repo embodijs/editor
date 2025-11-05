@@ -6,7 +6,8 @@
 	import { getLabel, getPathValue } from './helpers.svelte.js';
 	import { generateRandomHash } from '$/lib/helpers/crypto';
 	import { Button } from '../core';
-	import { tick } from 'svelte';
+	import * as ButtonGroup from '$lib/comp/ui/button-group/index.js';
+	import * as Item from '$lib/comp/ui/item/index.js';
 
 	type Props = {
 		field: ArrayField;
@@ -27,7 +28,6 @@
 		})
 	);
 	const addItem = async () => {
-		await tick();
 		fieldState = [
 			...fieldState,
 			{
@@ -43,15 +43,15 @@
 		{getLabel(field)}
 		<Button variant="ghost" size="sm" class="text-xs" onclick={addItem}>Add</Button>
 	</Field.Legend>
-	{#each fieldState as item, index (item.id)}
-		<FieldMatcher
-			field={{ ...field.items, optional: true }}
-			{form}
-			objectPath={[...objectPath, index]}
-			noLabel
-		/>
-	{/each}
+	<Item.Group>
+		{#each fieldState as item, index (item.id)}
+			<Item.Title>Set {index + 1}</Item.Title>
+			<Item.Actions>
+				<ButtonGroup.Root></ButtonGroup.Root>
+			</Item.Actions>
+			<Item.Content>
+				<FieldMatcher field={field.items} {form} objectPath={[...objectPath, index]} noLabel />
+			</Item.Content>
+		{/each}
+	</Item.Group>
 </Field.Set>
-{#if !noSeparator}
-	<Field.Separator />
-{/if}

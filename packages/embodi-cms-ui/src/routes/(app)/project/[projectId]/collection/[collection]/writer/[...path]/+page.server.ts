@@ -10,6 +10,7 @@ import { error } from '@sveltejs/kit';
 import { valibot } from 'sveltekit-superforms/adapters';
 import { getDirPath } from '$core/logic/collection.js';
 import type { Collection, Loader } from '$core/model/collection';
+import type { Article } from '$core/model/file';
 import { getProjectConfig } from '$layer/project';
 import { projectToRepo } from '$core/logic/project';
 import { saveArticle, getArticle } from '$layer/file';
@@ -22,7 +23,7 @@ import type { GitRepo } from '$core/model/repo';
 const getCurrentCollection = (collections: Collection[], name: string) =>
 	collections.find((collection) => collection.name === name);
 
-const getFilePath = (params: RouteParams, loader: Loader, article: Articel) => {
+const getFilePath = (params: RouteParams, loader: Loader, article: Article) => {
 	if (params.path) {
 		return params.path;
 	} else if (loader.type === 'file') {
@@ -54,7 +55,7 @@ export const load: PageServerLoad = async ({ params, locals, platform }) => {
 			message: 'The Collection your try to open seems to be not exist'
 		});
 	}
-	const { fields, loader } = collection;
+	const { definition, loader } = collection;
 	if (path?.length !== 0) {
 		if (isValidFilePath(loader, path)) {
 			throw error(406, {
@@ -63,19 +64,19 @@ export const load: PageServerLoad = async ({ params, locals, platform }) => {
 			});
 		}
 		const article = await getArticle(path, repo, locals);
-		const metaForm = await superValidate(article, valibot(generateArticleFormSchema(fields)));
+		const metaForm = await superValidate(article, valibot(generateArticleFormSchema(definition)));
 		return {
 			metaForm,
-			formFields: fields,
+			definition,
 			path: dirname(path),
 			collection,
 			currentProject
 		};
 	} else {
-		const metaForm = await superValidate(valibot(generateArticleFormSchema(fields)));
+		const metaForm = await superValidate(valibot(generateArticleFormSchema(definition)));
 		return {
 			metaForm,
-			formFields: fields,
+			definition,
 			path: getDirPath(loader),
 			collection,
 			currentProject
@@ -96,9 +97,9 @@ export const actions: Actions = {
 		}
 		const repo = projectToRepo(project);
 		const { collections } = await getProjectConfig(repo, locals);
-		const { fields, loader } = getCurrentCollection(collections, params.collection) ?? {};
+		const { definition, loader } = getCurrentCollection(collections, params.collection) ?? {};
 
-		if (!fields || !loader) {
+		if (!definition || !loader) {
 			throw error(404, {
 				type: 'Collection not found',
 				message: 'The collection you try to open does not exist'
@@ -107,7 +108,7 @@ export const actions: Actions = {
 
 		const form = await superValidate(
 			await request.formData(),
-			valibot(generateArticleFormSchema(fields))
+			valibot(generateArticleFormSchema(definition))
 		);
 		if (!form.valid) {
 			return fail(400, { form });

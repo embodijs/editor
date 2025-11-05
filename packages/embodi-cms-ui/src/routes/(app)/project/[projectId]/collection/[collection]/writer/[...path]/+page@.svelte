@@ -19,7 +19,7 @@
 
 	const { data }: PageProps = $props();
 	let open = $state(false);
-	const schema = generateArticleFormSchema(data.formFields);
+	const schema = generateArticleFormSchema(data.definition);
 	const form = superForm(data.metaForm, {
 		dataType: 'json',
 		validators: valibotClient(schema),
@@ -38,7 +38,7 @@
 	});
 
 	const fileStore = writable<FileUpload[]>([]);
-	const { form: formData, enhance } = form;
+	const { form: formData } = form;
 
 	onMount(() => {
 		return fileStore.subscribe((value) => {
@@ -84,9 +84,13 @@
 
 		<Sidebar.Root side="right">
 			<Sidebar.Content>
-				<form use:enhance method="POST">
-					<FormBuilder fields={data.formFields} {form} objectPath={['meta']} label="Settings" />
-				</form>
+				<FormBuilder
+					class="mx-2 my-3"
+					definition={data.definition}
+					{form}
+					objectPath={['meta']}
+					label="Settings"
+				/>
 			</Sidebar.Content>
 		</Sidebar.Root>
 	</Sidebar.Provider>

@@ -47,7 +47,7 @@
 					{/if}
 					<Switch
 						bind:checked={
-							() => getPathValue($formData, objectPath) as boolean,
+							() => (getPathValue($formData, objectPath) as boolean) ?? field.default ?? false,
 							(v) => updateFormValue(v, objectPath)
 						}
 						{...props}
@@ -60,7 +60,7 @@
 					<TagInput
 						placeholder="Add..."
 						bind:value={
-							() => getPathValue($formData, objectPath) as string[],
+							() => (getPathValue($formData, objectPath) as string[]) ?? field.default,
 							(v) => updateFormValue(v, objectPath)
 						}
 						{...props}
@@ -87,7 +87,7 @@
 							{...props}
 							class="border-input selection:bg-primary selection:text-primary-foreground ring-offset-background placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive flex h-9 w-full min-w-0 flex-1 rounded-none border-0 bg-transparent px-3 py-1 text-base shadow-none transition-[color,box-shadow] outline-none focus-visible:ring-0 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm dark:bg-transparent"
 							bind:value={
-								() => getPathValue($formData, objectPath) as Date,
+								() => (getPathValue($formData, objectPath) as string) ?? field.default,
 								(v) => updateFormValue(v, objectPath)
 							}
 							local={getLocale()}
@@ -97,7 +97,8 @@
 							{...props}
 							data-lpignore="true"
 							bind:value={
-								() => getPathValue($formData, objectPath), (v) => updateFormValue(v, objectPath)
+								() => getPathValue($formData, objectPath) ?? field.default,
+								(v) => updateFormValue(v, objectPath)
 							}
 						></InputGroup.Input>
 					{/if}

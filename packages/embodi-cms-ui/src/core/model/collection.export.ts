@@ -112,22 +112,13 @@ export const Loader = v.variant('type', [GlobLoader, FileLoader]);
 
 export const SchemaDefinition = v.union([ObjectField, ArrayField]);
 
-export const Collection = v.union([
-	v.object({
-		name: v.string(),
-		displayName: v.string(),
-		loader: Loader,
-		formats: v.optional(v.array(v.string())),
-		definition: SchemaDefinition
-	}),
-	v.object({
-		name: v.string(),
-		displayName: v.string(),
-		loader: Loader,
-		formats: v.optional(v.array(v.string())),
-		fields: v.array(FormInputField)
-	})
-]);
+export const Collection = v.object({
+	name: v.string(),
+	displayName: v.string(),
+	loader: Loader,
+	formats: v.optional(v.array(v.string())),
+	definition: SchemaDefinition
+});
 
 export type Loader = v.InferOutput<typeof Loader>;
 export type GlobLoader = v.InferOutput<typeof GlobLoader>;

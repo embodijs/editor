@@ -9,7 +9,8 @@ import {
 	ObjectField,
 	ArrayField,
 	EnumField,
-	GlobLoader
+	GlobLoader,
+	SchemaDefinition
 } from '$core/model/collection';
 import { GitDirContent, GitDirMeta, GitFileMeta } from '$core/model/content';
 import * as v from 'valibot';
@@ -111,7 +112,7 @@ const parseObject: Transformer = (field) => {
 	const objectSchema = field.fields.reduce(
 		(acc, field) => {
 			const transformed = runSchemaTransformer(field);
-			if (transformed) {
+			if (transformed && field.fieldName) {
 				return { ...acc, [field.fieldName]: transformed };
 			}
 			return acc;
@@ -167,18 +168,12 @@ const runSchemaTransformer = (field: FormInputField) => {
 	return null;
 };
 
-export const convertMetaFiledsToValibotSchmea = (fields: FormInputField[]) => {
-	const objectSchema = fields.reduce(
-		(acc, field) => {
-			const schema = runSchemaTransformer(field);
-			if (schema) {
-				return { ...acc, [field.fieldName]: schema };
-			}
-			return acc;
-		},
-		{} as Record<string, v.BaseSchema<unknown, unknown, v.BaseIssue<unknown>>>
-	);
-	return v.object(objectSchema);
+export const convertSchemaDefinitionToValibotSchmea = (definition: SchemaDefinition) => {
+	const schema = runSchemaTransformer(definition);
+	if (!schema) {
+		throw new Error('Invalid schema definition');
+	}
+	return schema;
 };
 
 export const getCollectionContent = async (

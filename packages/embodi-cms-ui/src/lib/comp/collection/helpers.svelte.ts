@@ -13,8 +13,11 @@ export const getLabel = ({ displayName, fieldName }: FormInputField): string => 
 		} else {
 			return Object.entries(displayName)[0][1];
 		}
+	} else if (fieldName) {
+		return camelToReadable(fieldName);
+	} else {
+		return '';
 	}
-	return camelToReadable(fieldName);
 	// const nameParts = [...objectPath.slice(excludeFirstFromName ? 1 : 0), fieldName];
 	// const label = nameParts.map((word) => camelToReadable(word)).join(' ');
 	// return label;

@@ -15,7 +15,7 @@
 	import { onMount } from 'svelte';
 
 	const { data }: PageProps = $props();
-	const schema = generateRecordFormSchema(data.formFields);
+	const schema = generateRecordFormSchema(data.definition);
 	const form = superForm(data.recordForm, {
 		dataType: 'json',
 		validators: valibotClient(schema),
@@ -32,7 +32,7 @@
 	});
 
 	const fileStore = writable<FileUpload[]>([]);
-	const { form: formData, enhance } = form;
+	const { form: formData } = form;
 	const hasFileName = !!$formData.name;
 
 	onMount(() => {
@@ -87,7 +87,11 @@
 </SiteHeader>
 
 <main class="relative">
-	<form use:enhance method="POST" class="mx-auto max-w-3xl">
-		<FormBuilder fields={data.formFields} {form} objectPath={['data']} />
-	</form>
+	<FormBuilder
+		class="mx-auto max-w-3xl"
+		label="Dataset"
+		definition={data.definition}
+		{form}
+		objectPath={['data']}
+	/>
 </main>

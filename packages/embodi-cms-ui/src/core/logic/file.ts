@@ -1,6 +1,6 @@
 import { Article, RawUpload, FileUpload, DataRecord } from '$core/model/file';
-import type { Collection, FormInputField, Loader } from '$core/model/collection';
-import { convertMetaFiledsToValibotSchmea } from './collection';
+import type { Collection, Loader, SchemaDefinition } from '$core/model/collection';
+import { convertSchemaDefinitionToValibotSchmea } from './collection';
 import { isRecord, removeEmpty } from '$lib/helpers/object';
 import * as v from 'valibot';
 import matter from 'gray-matter';
@@ -78,16 +78,16 @@ export const unflatMeta = (meta: Record<string, unknown>): Record<string, unknow
 	return validateUnflatedMeta(unflated);
 };
 
-export const generateArticleFormSchema = (fields: FormInputField[]) => {
-	const metaSchema = convertMetaFiledsToValibotSchmea(fields);
+export const generateArticleFormSchema = (fields: SchemaDefinition) => {
+	const metaSchema = convertSchemaDefinitionToValibotSchmea(fields);
 	return v.object({
 		...Article.entries,
 		meta: metaSchema
 	});
 };
 
-export const generateRecordFormSchema = (fields: FormInputField[]) => {
-	const metaSchema = convertMetaFiledsToValibotSchmea(fields);
+export const generateRecordFormSchema = (definition: SchemaDefinition) => {
+	const metaSchema = convertSchemaDefinitionToValibotSchmea(definition);
 	return v.object({
 		...DataRecord.entries,
 		data: metaSchema
