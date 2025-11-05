@@ -52,14 +52,7 @@ export const StringField = v.object({
 	minLength: v.optional(v.number()),
 	maxLength: v.optional(v.number()),
 	pattern: v.optional(
-		v.union([
-			v.literal('email'),
-			v.literal('url'),
-			v.literal('slug'),
-			v.literal('uuid'),
-			v.literal('uuid:v7'),
-			v.literal('uuid:v4')
-		])
+		v.union([v.literal('email'), v.literal('url'), v.literal('slug'), v.literal('uuid')])
 	)
 });
 

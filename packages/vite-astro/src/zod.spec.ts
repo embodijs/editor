@@ -40,15 +40,12 @@ describe("parseZodSchema", () => {
   });
 
   test("parse uuid string", () => {
-    const schema = z
-      .string()
-      .uuid({ version: "v7" })
-      .meta({ hidden: true, generate: true });
+    const schema = z.string().uuid().meta({ hidden: true, generate: true });
     const result = parseString(schema);
     const parsed = v.safeParse(cms.StringField, result);
     expect(parsed.output).toEqual({
       type: "string",
-      pattern: "uuid:v7",
+      pattern: "uuid",
       hidden: true,
       generate: true,
       optional: false,

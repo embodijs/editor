@@ -135,7 +135,7 @@ export default (): Plugin[] => {
                     z.object({
                       id: z
                         .string()
-                        .uuid({ version: "v7" })
+                        .uuid()
                         .meta({ hidden: true, generate: true }),
                       ...schema.shape,
                     }),

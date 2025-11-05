@@ -78,12 +78,6 @@ const handleChecks = (def: z.core.$ZodTypeDef) => {
       const { def } = check._zod;
       if (def.check === "string_format") {
         const { format } = def as z.core.$ZodCheckStringFormatDef;
-        if (format === "uuid") {
-          return [
-            "pattern",
-            `uuid:${(def as z.core.$ZodCheckUUIDParams).version}`,
-          ];
-        }
         return ["pattern", format];
       } else if (def.check === "min_length") {
         return ["minLength", (def as z.core.$ZodCheckMinLengthDef).minimum];
