@@ -3,38 +3,34 @@
 	import type { SuperForm } from 'sveltekit-superforms';
 	import FieldMatcher from './FieldMatcher.svelte';
 	import * as Field from '$lib/comp/ui/field/index.js';
-	import { getLabel, getPathValue } from './helpers.svelte.js';
+	import { getLabel, getPathValue, setPathValue } from './helpers.svelte.js';
 	import { generateRandomHash } from '$/lib/helpers/crypto';
 	import { Button } from '../core';
 	import * as ButtonGroup from '$lib/comp/ui/button-group/index.js';
 	import * as Item from '$lib/comp/ui/item/index.js';
+	import { untrack } from 'svelte';
 
 	type Props = {
 		field: ArrayField;
 		form: SuperForm<T>;
 		objectPath: (string | number)[];
-		noSeparator?: boolean;
 	};
 
-	const { field, form, objectPath, noSeparator }: Props = $props();
+	const { field, form, objectPath }: Props = $props();
 	const { form: formData } = form;
 
-	let fieldState: { id: string; content: unknown }[] = $derived.by(() =>
-		((getPathValue($formData, objectPath) as unknown[]) ?? []).map((item) => {
-			return {
-				content: item,
-				id: generateRandomHash()
-			};
-		})
+	let fieldState: { id: string; content: unknown }[] = $state.raw(
+		untrack(() =>
+			((getPathValue($formData, objectPath) as unknown[]) ?? []).map((item) => {
+				return {
+					content: item,
+					id: generateRandomHash()
+				};
+			})
+		)
 	);
 	const addItem = async () => {
-		fieldState = [
-			...fieldState,
-			{
-				content: {},
-				id: generateRandomHash()
-			}
-		];
+		fieldState = [...fieldState, { content: {}, id: generateRandomHash() }];
 	};
 </script>
 
