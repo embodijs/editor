@@ -130,7 +130,17 @@ export default (): Plugin[] => {
             const formats =
               "pattern" in loader ? extractFormats(loader.pattern) : undefined;
             const fields = isFileLoader(loader)
-              ? parseZodSchema(z.array(schema))
+              ? parseZodSchema(
+                  z.array(
+                    z.object({
+                      id: z
+                        .string()
+                        .uuid({ version: "v7" })
+                        .meta({ hidden: true, generate: true }),
+                      ...schema.shape,
+                    }),
+                  ),
+                )
               : parseZodSchema(schema);
 
             return {

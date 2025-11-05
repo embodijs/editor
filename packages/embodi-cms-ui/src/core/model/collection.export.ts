@@ -8,8 +8,11 @@ const FieldDisplayName = v.union([
 const FieldBase = v.object({
 	fieldName: v.optional(v.string()),
 	displayName: v.optional(FieldDisplayName),
+	description: v.optional(v.string()),
 	optional: v.optional(v.boolean(), false),
-	default: v.optional(v.any())
+	default: v.optional(v.any()),
+	hidden: v.optional(v.boolean()),
+	generate: v.optional(v.boolean())
 });
 
 export const NumberField = v.object({
@@ -48,12 +51,27 @@ export const StringField = v.object({
 	type: v.literal('string'),
 	minLength: v.optional(v.number()),
 	maxLength: v.optional(v.number()),
-	pattern: v.optional(v.union([v.literal('email'), v.literal('url'), v.literal('slug')]))
+	pattern: v.optional(
+		v.union([
+			v.literal('email'),
+			v.literal('url'),
+			v.literal('slug'),
+			v.literal('uuid'),
+			v.literal('uuid:v7'),
+			v.literal('uuid:v4')
+		])
+	)
 });
 
 export const ImageField = v.object({
 	...FieldBase.entries,
 	type: v.literal('image')
+});
+
+export const UuidField = v.object({
+	...FieldBase.entries,
+	type: v.literal('uuid'),
+	generated: v.optional(v.boolean())
 });
 
 export const FileField = v.object({
@@ -86,6 +104,7 @@ export const FormInputField = v.union([
 	NumberField,
 	StringField,
 	ImageField,
+	UuidField,
 	FileField,
 	BooleanField,
 	DateField,
@@ -131,6 +150,7 @@ export type MetaInputField = v.InferInput<typeof MetaInputField>;
 export type StringField = v.InferInput<typeof StringField>;
 export type NumberField = v.InferInput<typeof NumberField>;
 export type ImageField = v.InferInput<typeof ImageField>;
+export type UuidField = v.InferInput<typeof UuidField>;
 export type FileField = v.InferInput<typeof FileField>;
 export type BooleanField = v.InferInput<typeof BooleanField>;
 export type EnumField = v.InferInput<typeof EnumField>;

@@ -59,12 +59,32 @@ export const parseZodSchema = (
   return fieldsDefinition;
 };
 
+const handleMeta = (schema: z.core.$ZodType) => {
+  const meta = (schema as z.ZodType).meta();
+  if (!meta) return {};
+
+  return Object.entries(meta).reduce((res, [attr, value]) => {
+    if (attr === "hidden") res.hidden = !!value;
+    else if (attr === "generate") res.generate = !!value;
+    else if (attr === "label") res.displayName = String(value);
+    else if (attr === "description") res.description = String(value);
+    return res;
+  }, {} as collection.FormInputField);
+};
+
 const handleChecks = (def: z.core.$ZodTypeDef) => {
   const checks: [string, number | string][] | undefined = def.checks
     ?.map((check): [string, number | string] | null => {
       const { def } = check._zod;
       if (def.check === "string_format") {
-        return ["pattern", (def as z.core.$ZodCheckStringFormatDef).format];
+        const { format } = def as z.core.$ZodCheckStringFormatDef;
+        if (format === "uuid") {
+          return [
+            "pattern",
+            `uuid:${(def as z.core.$ZodCheckUUIDParams).version}`,
+          ];
+        }
+        return ["pattern", format];
       } else if (def.check === "min_length") {
         return ["minLength", (def as z.core.$ZodCheckMinLengthDef).minimum];
       } else if (def.check === "max_length") {
@@ -104,6 +124,7 @@ export const parseString: TypeTransformer<collection.StringField> = (
     ...(fieldName ? { fieldName } : {}),
     type: "string",
     ...handleChecks(def),
+    ...handleMeta(schema),
   };
 };
 
