@@ -15,7 +15,6 @@ import {
 	type NewGitCommit
 } from '$core/model/repo';
 import * as yaml from 'yaml';
-import superjson from 'superjson';
 import type { GetGitFileContent } from '$core/types/external';
 import { minimatch } from 'minimatch';
 import { camelToReadable } from '$/lib/helpers/string';
@@ -70,7 +69,7 @@ export const getArticle = async (
 
 export const stringifyRecord = async (data: unknown, filePath: string) => {
 	if (filePath.endsWith('.json')) {
-		return superjson.stringify(data);
+		return JSON.stringify(data);
 	} else if (filePath.endsWith('.yaml') || filePath.endsWith('.yml')) {
 		return yaml.stringify(data);
 	}
@@ -80,7 +79,7 @@ export const stringifyRecord = async (data: unknown, filePath: string) => {
 
 const parseRecord = (content: string | Buffer, path: string) => {
 	if (path.endsWith('.json')) {
-		return superjson.parse(content.toString());
+		return JSON.parse(content.toString());
 	} else if (path.endsWith('.yaml') || path.endsWith('.yml')) {
 		return yaml.parse(content.toString());
 	}
@@ -109,9 +108,8 @@ export const getRecord = async (
 	const name = getRecordName(path, collection);
 	const fileContent = await load(path);
 	if (!fileContent) {
-		return { files: [], data: {}, name };
+		return { files: [], data: undefined, name };
 	}
-
 	const data = parseRecord(fileContent, path);
 	return { files: [], data, name };
 };

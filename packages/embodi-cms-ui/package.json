@@ -7,7 +7,7 @@
 		"dev": "vite dev",
 		"build": "vite build",
 		"build:lib": "tsup",
-		"deploy": "bun run build && bun x wrangler deploy --env=''",
+		"deploy": "bun run build && wrangler deploy --env=''",
 		"prepublishOnly": "bun run build:lib && bun x publint",
 		"preview": "vite preview",
 		"prepare": "svelte-kit sync || echo ''",
@@ -117,7 +117,6 @@
 		"minimatch": "^10.1.1",
 		"octokit": "^5.0.5",
 		"openapi-typescript": "^7.10.1",
-		"superjson": "^2.2.5",
 		"svelte-sonner": "^1.0.5",
 		"yaml": "^2.8.1"
 	}

@@ -11,7 +11,7 @@
     },
     "packages/embodi-cms-ui": {
       "name": "@embodi/cms",
-      "version": "0.3.0",
+      "version": "0.4.0",
       "dependencies": {
         "@exodus/schemasafe": "^1.3.0",
         "@libsql/client": "^0.15.15",
@@ -36,13 +36,12 @@
         "minimatch": "^10.1.1",
         "octokit": "^5.0.5",
         "openapi-typescript": "^7.10.1",
-        "superjson": "^2.2.5",
         "svelte-sonner": "^1.0.5",
         "yaml": "^2.8.1",
       },
       "devDependencies": {
         "@eslint/compat": "^1.4.1",
-        "@eslint/js": "^9.39.0",
+        "@eslint/js": "^9.39.1",
         "@graphql-codegen/cli": "^6.0.1",
         "@graphql-codegen/client-preset": "^5.1.1",
         "@graphql-codegen/typescript": "^5.0.2",
@@ -60,13 +59,13 @@
         "@tailwindcss/vite": "^4.1.16",
         "@testing-library/jest-dom": "^6.9.1",
         "@testing-library/svelte": "^5.2.8",
-        "@vitest/browser": "^4.0.6",
-        "@vitest/coverage-v8": "^4.0.6",
+        "@vitest/browser": "^4.0.7",
+        "@vitest/coverage-v8": "^4.0.7",
         "bits-ui": "^2.14.2",
         "clsx": "^2.1.1",
         "dotenv": "^17.2.3",
         "drizzle-kit": "^0.31.6",
-        "eslint": "^9.39.0",
+        "eslint": "^9.39.1",
         "eslint-config-prettier": "^10.1.8",
         "eslint-plugin-svelte": "^3.13.0",
         "formsnap": "^2.0.1",
@@ -78,20 +77,20 @@
         "prettier": "^3.6.2",
         "prettier-plugin-svelte": "^3.4.0",
         "prettier-plugin-tailwindcss": "^0.7.1",
-        "svelte": "^5.43.2",
+        "svelte": "^5.43.3",
         "svelte-check": "^4.3.3",
-        "sveltekit-superforms": "^2.28.0",
+        "sveltekit-superforms": "^2.28.1",
         "tailwind-merge": "^3.3.1",
         "tailwind-variants": "^3.1.1",
         "tailwindcss": "^4.1.16",
         "tsup": "^8.5.0",
         "tw-animate-css": "^1.4.0",
         "typescript": "^5.9.3",
-        "typescript-eslint": "^8.46.2",
+        "typescript-eslint": "^8.46.3",
         "valibot": "^1.1.0",
-        "vite": "^7.1.12",
+        "vite": "^7.2.0",
         "vite-plugin-graphql-codegen": "^3.7.0",
-        "vitest": "^4.0.6",
+        "vitest": "^4.0.7",
         "wrangler": "4.43.0",
       },
     },
@@ -123,7 +122,7 @@
     },
     "packages/vite-astro": {
       "name": "@embodi/vite-astro-cms",
-      "version": "0.5.0",
+      "version": "0.6.0",
       "dependencies": {
         "@embodi/cms": "workspace:*",
         "minimatch": "^10.1.1",
@@ -1571,8 +1570,6 @@
 
     "cookie-es": ["cookie-es@1.2.2", "", {}, "sha512-+W7VmiVINB+ywl1HGXJXmrqkOhpKrIiVZV6tQuV54ZyQC7MMuBt81Vc336GMLoHBq5hV/F9eXgt5Mnx0Rha5Fg=="],
 
-    "copy-anything": ["copy-anything@4.0.5", "", { "dependencies": { "is-what": "^5.2.0" } }, "sha512-7Vv6asjS4gMOuILabD3l739tsaxFQmC+a7pLZm02zyvs8p977bL3zEgq3yDk5rn9B0PbYgIv++jmHcuUab4RhA=="],
-
     "core-js-compat": ["core-js-compat@3.46.0", "", { "dependencies": { "browserslist": "^4.26.3" } }, "sha512-p9hObIIEENxSV8xIu+V68JjSeARg6UVMG5mR+JEUguG3sI6MsiS1njz2jHmyJDvA+8jX/sytkBHup6kxhM9law=="],
 
     "core-util-is": ["core-util-is@1.0.3", "", {}, "sha512-ZQBvi1DcpJ4GDqanjucZ2Hj3wEO5pZDS89BWbkcrvdxksJorwUDDZamX9ldFkp9aw2lmBDLgkObEA4DWNJ9FYQ=="],
@@ -2096,8 +2093,6 @@
     "is-weakref": ["is-weakref@1.1.1", "", { "dependencies": { "call-bound": "^1.0.3" } }, "sha512-6i9mGWSlqzNMEqpCp93KwRS1uUOodk2OJ6b+sq7ZPDSy2WuI5NFIxp/254TytR8ftefexkWn5xNiHUNpPOfSew=="],
 
     "is-weakset": ["is-weakset@2.0.4", "", { "dependencies": { "call-bound": "^1.0.3", "get-intrinsic": "^1.2.6" } }, "sha512-mfcwb6IzQyOKTs84CQMrOwW4gQcaTOAWJ0zzJCl2WSPDrWk/OzDaImWFH3djXhb24g4eudZfLRozAvPGw4d9hQ=="],
-
-    "is-what": ["is-what@5.5.0", "", {}, "sha512-oG7cgbmg5kLYae2N5IVd3jm2s+vldjxJzK1pcu9LfpGuQ93MQSzo0okvRna+7y5ifrD+20FE8FvjusyGaz14fw=="],
 
     "is-windows": ["is-windows@1.0.2", "", {}, "sha512-eXK1UInq2bPmjyX6e3VHIzMLobc4J94i4AWn+Hpq3OU5KkrRC96OAcR3PRJ/pGu6m8TRnBHP9dkXQVsT/COVIA=="],
 
@@ -2964,8 +2959,6 @@
     "stylehacks": ["stylehacks@5.1.1", "", { "dependencies": { "browserslist": "^4.21.4", "postcss-selector-parser": "^6.0.4" }, "peerDependencies": { "postcss": "^8.2.15" } }, "sha512-sBpcd5Hx7G6seo7b1LkpttvTz7ikD0LlH5RmdcBNb6fFR0Fl7LQwHDFr300q4cwUqi+IYrFGmsIHieMBfnN/Bw=="],
 
     "sucrase": ["sucrase@3.35.0", "", { "dependencies": { "@jridgewell/gen-mapping": "^0.3.2", "commander": "^4.0.0", "glob": "^10.3.10", "lines-and-columns": "^1.1.6", "mz": "^2.7.0", "pirates": "^4.0.1", "ts-interface-checker": "^0.1.9" }, "bin": { "sucrase": "bin/sucrase", "sucrase-node": "bin/sucrase-node" } }, "sha512-8EbVDiu9iN/nESwxeSxDKe0dunta1GOlHufmSSXxMD2z2/tMZpDMpvXQGsc+ajGo8y2uYUmixaSRUc/QPoQ0GA=="],
-
-    "superjson": ["superjson@2.2.5", "", { "dependencies": { "copy-anything": "^4" } }, "sha512-zWPTX96LVsA/eVYnqOM2+ofcdPqdS1dAF1LN4TS2/MWuUpfitd9ctTa87wt4xrYnZnkLtS69xpBdSxVBP5Rm6w=="],
 
     "superstruct": ["superstruct@2.0.2", "", {}, "sha512-uV+TFRZdXsqXTL2pRvujROjdZQ4RAlBUS5BTh9IGm+jTqQntYThciG/qu57Gs69yjnVUSqdxF9YLmSnpupBW9A=="],
 

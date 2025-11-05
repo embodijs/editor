@@ -12,7 +12,6 @@
 	};
 
 	const { definition, form, objectPath, label, ...props }: Props = $props();
-
 	const { enhance } = form;
 </script>
 
