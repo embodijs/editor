@@ -39,6 +39,8 @@ const handleOptional = <T extends v.BaseSchema<unknown, unknown, v.BaseIssue<unk
 		return v.optional(schema, field.default ?? defaultValue);
 	} else if (field.default) {
 		return v.optional(schema, field.default);
+	} else if (field.generate && field.generate) {
+		return v.optional(schema, defaultValue);
 	}
 	return schema;
 };
