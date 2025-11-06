@@ -159,7 +159,11 @@ export const saveArticle = async (
 	if (!isRecord(meta)) {
 		throw new Error('Article meta is not a record');
 	}
-	const markdownFileContent = matter.stringify(article.markdown, removeEmpty(meta));
+	const markdownFileContent = matter.stringify(article.markdown, removeEmpty(meta), {
+		engines: {
+			yaml: yaml
+		}
+	});
 
 	return saveFiles(
 		{
