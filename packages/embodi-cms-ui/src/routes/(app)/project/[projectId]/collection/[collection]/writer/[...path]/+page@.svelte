@@ -23,15 +23,13 @@
 	const form = superForm(data.metaForm, {
 		dataType: 'json',
 		validators: valibotClient(schema),
+		resetForm: false,
 		onError: ({ result }) => {
 			open = true;
 			toast.error(`Something went wrong: <br /> ${result.error.message}`);
 		},
-		onUpdate: ({ form }) => {
-			if (!form.valid) {
-				open = true;
-				toast.error('Meta data is invalid.');
-			} else {
+		onUpdated: ({ form }) => {
+			if (form.valid) {
 				toast.success('Saved successfully.');
 			}
 		}

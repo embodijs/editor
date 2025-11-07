@@ -19,6 +19,7 @@
 	const form = superForm(data.recordForm, {
 		dataType: 'json',
 		validators: valibotClient(schema),
+		resetForm: false,
 		onError: ({ result }) => {
 			toast.error(`Something went wrong: <br /> ${result.error.message}`);
 		},
@@ -40,8 +41,6 @@
 			$formData.files = value;
 		});
 	});
-
-	formData.subscribe(console.log);
 
 	const repo: GitRepo = {
 		owner: data.currentProject.owner,

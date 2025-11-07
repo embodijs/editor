@@ -106,10 +106,7 @@ export const actions: Actions = {
 			});
 		}
 
-		const form = await superValidate(
-			await request.formData(),
-			valibot(generateArticleFormSchema(definition))
-		);
+		const form = await superValidate(request, valibot(generateArticleFormSchema(definition)));
 		if (!form.valid) {
 			return fail(400, { form });
 		}

@@ -27,12 +27,12 @@
 	};
 
 	const { field, form, objectPath, noLabel }: Props = $props();
+
 	const { form: formData } = form;
 
 	const name = `${objectPath.join('.')}` as FormPath<T>;
 
 	const updateFormValue = (value: unknown, objectPath: Props['objectPath']) => {
-		formData.update((data) => setPathValue(data, objectPath, value));
 		if (String(value).trim() === '') {
 			formData.update((data) => setPathValue(data, objectPath, undefined));
 		} else {

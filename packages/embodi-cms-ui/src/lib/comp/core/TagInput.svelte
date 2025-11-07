@@ -32,7 +32,6 @@
 	};
 
 	const handleRemove = (index: number) => () => {
-		console.log('Removing item at index:', index);
 		value = value?.filter((_, i) => i !== index);
 	};
 </script>
