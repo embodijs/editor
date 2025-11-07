@@ -33,6 +33,11 @@
 
 	const updateFormValue = (value: unknown, objectPath: Props['objectPath']) => {
 		formData.update((data) => setPathValue(data, objectPath, value));
+		if (String(value).trim() === '') {
+			formData.update((data) => setPathValue(data, objectPath, undefined));
+		} else {
+			formData.update((data) => setPathValue(data, objectPath, value));
+		}
 	};
 </script>
 
