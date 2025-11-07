@@ -18,6 +18,8 @@
 	import { Switch } from '../ui/switch';
 	import ImageField from './ImageField.svelte';
 	import TagInput from '../core/TagInput.svelte';
+	import { Asterisk } from '@lucide/svelte';
+	import FieldLabel from './FieldLabel.svelte';
 
 	type Props = {
 		field: FormInputField;
@@ -70,7 +72,7 @@
 						{...props}
 					>
 						{#snippet label()}
-							<Form.Label>{getLabel(field)}</Form.Label>
+							<FieldLabel {field} {props} />
 						{/snippet}
 					</TagInput>
 				{:else}
@@ -82,7 +84,7 @@
 				<InputGroup.Root>
 					{#if !noLabel}
 						<InputGroup.Addon align="block-start">
-							<Form.Label>{getLabel(field)}</Form.Label>
+							<FieldLabel {field} {props} />
 						</InputGroup.Addon>
 					{/if}
 					{#if isDateField(field)}
