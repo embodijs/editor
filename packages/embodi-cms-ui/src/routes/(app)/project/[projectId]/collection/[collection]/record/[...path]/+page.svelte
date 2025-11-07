@@ -87,7 +87,7 @@
 
 <main class="relative">
 	<FormBuilder
-		class="mx-auto max-w-3xl"
+		class="mx-auto max-w-3xl px-3"
 		label="Dataset"
 		definition={data.definition}
 		{form}

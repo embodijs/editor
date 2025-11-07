@@ -18,17 +18,16 @@
 	import { Switch } from '../ui/switch';
 	import ImageField from './ImageField.svelte';
 	import TagInput from '../core/TagInput.svelte';
-	import { Asterisk } from '@lucide/svelte';
 	import FieldLabel from './FieldLabel.svelte';
 
 	type Props = {
 		field: FormInputField;
 		form: SuperForm<T>;
 		objectPath: (string | number)[];
-		noLabel?: boolean;
+		class?: string;
 	};
 
-	const { field, form, objectPath, noLabel }: Props = $props();
+	const { field, form, objectPath, ...fieldProps }: Props = $props();
 
 	const { form: formData } = form;
 
@@ -48,9 +47,7 @@
 		{#snippet children({ props })}
 			{#if isBooleanField(field)}
 				<div class="flex items-center justify-between">
-					{#if !noLabel}
-						<Form.Label>{getLabel(field)}</Form.Label>
-					{/if}
+					<Form.Label>{getLabel(field)}</Form.Label>
 					<Switch
 						bind:checked={
 							() => (getPathValue($formData, objectPath) as boolean) ?? field.default ?? false,
@@ -60,7 +57,7 @@
 					/>
 				</div>
 			{:else if isObjectField(field)}
-				<ObjectField {form} {field} {objectPath} />
+				<ObjectField {form} {field} {objectPath} {...fieldProps} />
 			{:else if isArrayField(field)}
 				{#if field.items.type === 'string' || field.items.type === 'number'}
 					<TagInput
@@ -82,11 +79,10 @@
 				<ImageField {form} {field} {objectPath} />
 			{:else}
 				<InputGroup.Root>
-					{#if !noLabel}
-						<InputGroup.Addon align="block-start">
-							<FieldLabel {field} {props} />
-						</InputGroup.Addon>
-					{/if}
+					<InputGroup.Addon align="block-start">
+						<FieldLabel {field} {props} />
+					</InputGroup.Addon>
+
 					{#if isDateField(field)}
 						<DatePicker
 							data-slot="input-group-control"

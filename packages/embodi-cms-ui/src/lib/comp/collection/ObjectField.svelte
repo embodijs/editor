@@ -6,14 +6,16 @@
 	import { getLabel, getPathValue, hasPathValue, setPathValue } from './helpers.svelte';
 	import RemoveButton from './RemoveButton.svelte';
 	import { Button } from '../core';
+	import { cn } from '../ui/utils';
 
 	type Props = {
 		field: ObjectField;
 		form: SuperForm<T>;
 		objectPath: (string | number)[];
+		class?: string;
 	};
 
-	const { field, form, objectPath }: Props = $props();
+	const { field, form, objectPath, ...props }: Props = $props();
 	const { form: formData } = form;
 	let show = $derived(!field.optional || hasPathValue($formData, objectPath));
 
@@ -29,9 +31,9 @@
 	};
 </script>
 
-<Field.Set>
+<Field.Set class={cn('mt-3 mb-7', props.class)}>
 	<Field.Legend class="flex w-full items-center justify-between">
-		{getLabel(field)}
+		<span class="text-md">{getLabel(field)}</span>
 		{#if !show}
 			<Button size="sm" variant="ghost" class="ml-auto text-xs" onclick={addElement}>Add</Button>
 		{:else if field.optional}
@@ -46,4 +48,3 @@
 		{/each}
 	{/if}
 </Field.Set>
-<Field.Separator />
