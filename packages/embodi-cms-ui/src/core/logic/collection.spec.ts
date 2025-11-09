@@ -11,7 +11,7 @@ describe('Collection logic', () => {
 			optional: false
 		});
 
-		expect(v.parse(schema, 'string')).toBe('string');
-		expect(() => v.parse(schema, 7)).toThrow();
+		expect(v.parse(schema!, 'string')).toBe('string');
+		expect(() => v.parse(schema!, 7)).toThrow();
 	});
 });

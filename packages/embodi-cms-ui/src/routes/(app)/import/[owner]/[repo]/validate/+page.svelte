@@ -52,15 +52,15 @@
 				</Empty.Media>
 				<Empty.Title>Your repository is not well configurate yet</Empty.Title>
 				<Empty.Description>
-					In the current Version of embodi cms we could not offer a automatic implementation for
-					this. Please add
+					Please run <code>npx @embodi/cli init</code>
 					<a
-						href="https://www.npmjs.com/package/@embodi/vite-astro-cms"
+						href="https://www.npmjs.com/package/@embodi/cli"
 						target="_blank"
 						rel="noopener noreferrer"
 					>
-						<code>@embodi/vite-astro-cms</code>
-					</a> to you project. It will generate the config from the collectons.
+						(docs)
+					</a> in your project, to generate a config file. Push this file to your repository. We work
+					to automatically generate a config file for you.
 				</Empty.Description>
 			</Empty.Header>
 			<Empty.Content>
