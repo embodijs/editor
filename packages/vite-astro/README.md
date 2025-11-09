@@ -1,6 +1,6 @@
 # @embodi/vite-astro-cms
 
-Automatically generates CMS configuration from your Astro content collections. Part of [embodi cms](https://app.embodi.site).
+Automatically generates CMS configuration from your Astro content collections. Part of [embodi cms](https://embodi.site).
 
 ## Installation
 
