@@ -1,0 +1,31 @@
+{
+  "name": "bod",
+  "version": "0.1.0",
+  "module": "index.ts",
+  "type": "module",
+  "private": false,
+  "files": [
+    "dist"
+  ],
+  "devDependencies": {
+    "@embodi/cms": "workspace:*",
+    "@types/bun": "latest",
+    "tsup": "^8.5.0",
+    "valibot": "^1.1.0"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  },
+  "dependencies": {
+    "astro": "^5.15.4",
+    "commander": "^14.0.2",
+    "empathic": "^2.0.0",
+    "minimatch": "^10.1.1",
+    "package-manager-detector": "^1.5.0",
+    "picocolors": "^1.1.1",
+    "tinyexec": "^1.0.2",
+    "vite": "^7.2.2",
+    "zod": "^4.1.12"
+  },
+  "license": "Apache-2.0"
+}
