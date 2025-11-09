@@ -19,10 +19,10 @@
 
 	const { field, form, objectPath }: Props = $props();
 	const { form: formData } = form;
-
+	const label = getLabel(field);
 	let fieldState: string[] = $state.raw(
 		untrack(() =>
-			((getPathValue($formData, objectPath) as unknown[]) ?? []).map((item) => {
+			((getPathValue($formData, objectPath) as unknown[]) ?? []).map(() => {
 				return generateRandomHash();
 			})
 		)
@@ -79,7 +79,7 @@
 
 <Field.Set>
 	<Field.Legend class="flex w-full items-center justify-between">
-		{getLabel(field)}
+		{label}
 		<Button variant="ghost" size="sm" class="text-xs" onclick={addItemAt(0)}>Add</Button>
 	</Field.Legend>
 	<div class="flex flex-col gap-5">
@@ -87,7 +87,7 @@
 			<Card.Root>
 				<Card.Header>
 					<Card.Title>
-						Entry {index + 1} <span class="text-muted-foreground">of {getLabel(field)}</span>
+						Item {index + 1} <span class="text-muted-foreground">of {label}</span>
 					</Card.Title>
 					<Card.Action>
 						<ButtonGroup.Root>
@@ -123,7 +123,7 @@
 				</Card.Content>
 			</Card.Root>
 			<Button variant="outline" onclick={addItemAt(index + 1)}
-				>Add Entry <span class="text-muted-foreground">to {getLabel(field)}</span></Button
+				>Add Entry <span class="text-muted-foreground">to {label}</span></Button
 			>
 		{/each}
 	</div>
