@@ -1,4 +1,1 @@
-import { update } from "./update";
-
-export const init = update;
-export { update };
+export { init, update } from "./update";

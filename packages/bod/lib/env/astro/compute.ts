@@ -40,33 +40,42 @@ export const mockImports = (): Plugin => ({
   },
 });
 
-export const virtualEntry = (): Plugin => ({
-  name: "vite-embodi-virtual-entry",
-  resolveId(id) {
-    if (id === "embodi-config") {
-      return "\0embodi-config";
-    }
-  },
-  load(id) {
-    if (id === "\0embodi-config") {
-      if (hasFile(resolve("src"), "content.config.*")) {
-        return `
-        export { collections } from './src/content.config.js';
+export const virtualEntry = (): Plugin => {
+  let root = process.cwd();
+  return {
+    name: "vite-embodi-virtual-entry",
+    configResolved(resolvedConfig) {
+      root = resolvedConfig.root;
+    },
+    resolveId(id) {
+      if (id === "embodi-config") {
+        return "\0embodi-config";
+      }
+    },
+    load(id) {
+      if (id === "\0embodi-config") {
+        if (hasFile(resolve(root, "src"), "content.config.*")) {
+          const configPath = resolve(root, "src/content.config.js");
+          return `
+        export { collections } from '${configPath}';
         export const legacy = false;
       `;
-      } else if (hasFile(resolve("src/content"), "config.*")) {
-        return `
-        export { collections } from './src/content/config.js';
+        } else if (hasFile(resolve(root, "src/content"), "config.*")) {
+          const configPath = resolve(root, "src/content/config.js");
+          return `
+        export { collections } from '${configPath}';
         export const legacy = true;
       `;
-      }
+        }
 
-      throw new Error("No content config found");
-    }
-  },
-});
+        throw new Error("No content config found");
+      }
+    },
+  };
+};
 
 export const createConfigFromAstro = async (root = process.cwd()) => {
+  console.log({ root });
   const { output } = (await build({
     plugins: [virtualEntry(), mockImports()],
     configFile: false,

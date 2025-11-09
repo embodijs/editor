@@ -1,6 +1,7 @@
 import { Command } from "commander";
 import { writeConfigFile } from "./helper";
 import { createConfigFromAstro } from "../../lib/env/astro/compute";
+import { resolve } from "node:path";
 
 export const init = new Command("init")
   .description("init the configuration file")
@@ -13,7 +14,7 @@ export const update = new Command("update")
   .description("Update the configuration file")
   .option("-C, --cwd <path>", "path to working directory", process.cwd())
   .action(async (options) => {
-    await runUpdate(options.cwd);
+    await runUpdate(resolve(process.cwd(), options.cwd));
   });
 
 export const runUpdate = async (cwd: string = process.cwd()) => {

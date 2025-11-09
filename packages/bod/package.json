@@ -4,6 +4,12 @@
   "module": "index.ts",
   "type": "module",
   "private": false,
+  "scripts": {
+    "test": "vitest",
+    "build": "tsup",
+    "prepublishOnly": "bun run build"
+  },
+  "bin": "./dist/bin.js",
   "files": [
     "dist"
   ],
