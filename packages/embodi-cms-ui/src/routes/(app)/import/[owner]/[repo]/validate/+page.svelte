@@ -8,6 +8,7 @@
 	import { goto } from '$app/navigation';
 	import { toast } from 'svelte-sonner';
 	import { resolve } from '$app/paths';
+	import { Code } from '$lib/comp/core/index.js';
 
 	const { data }: PageProps = $props();
 	const redirectIfExists = () => {
@@ -52,7 +53,7 @@
 				</Empty.Media>
 				<Empty.Title>Your repository is not well configurate yet</Empty.Title>
 				<Empty.Description>
-					Please run <code>npx @embodi/cli init</code>
+					Please run <Code>npx @embodi/cli init</Code>
 					<a
 						href="https://www.npmjs.com/package/@embodi/cli"
 						target="_blank"

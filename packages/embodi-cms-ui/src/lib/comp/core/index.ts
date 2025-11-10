@@ -6,3 +6,4 @@ export { Textarea } from '$lib/comp/ui/textarea/index.js';
 export { default as SiteHeader } from './SiteHeader.svelte';
 export { Spinner } from '$lib/comp/ui/spinner/index.js';
 export { default as SaveFormButton } from './SaveFormButton.svelte';
+export { default as Code } from './Code.svelte';
