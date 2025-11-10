@@ -23,6 +23,7 @@
     "typescript": "^5"
   },
   "dependencies": {
+    "@clack/prompts": "1.0.0-alpha.6",
     "astro": "^5.15.4",
     "commander": "^14.0.2",
     "empathic": "^2.0.0",
