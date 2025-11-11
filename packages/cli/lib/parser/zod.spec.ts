@@ -6,8 +6,6 @@ import {
   parseObject,
   parseNumber,
   parseArray,
-  imageTypeMock,
-  parseImage,
   parseDefault,
 } from "./zod.js";
 import { z } from "zod";
@@ -143,9 +141,9 @@ describe("parseZodSchema", () => {
     });
   });
 
-  test("image mock fits parser", () => {
-    const schema = imageTypeMock;
-    const result = parseImage(schema, "image");
+  test("type image", () => {
+    const schema = z.string().meta({ type: "image" });
+    const result = parseString(schema, "image");
     expect(result).toEqual({
       fieldName: "image",
       type: "image",

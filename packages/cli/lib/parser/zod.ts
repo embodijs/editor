@@ -1,12 +1,16 @@
 import { z } from "zod";
 import type * as collection from "@embodi/cms";
 
-function isZodSchema(value: unknown): value is z.ZodType {
-  return value instanceof z.ZodType;
-}
-
 function getTypeDef<T extends z.core.$ZodType>(schema: T): T["_zod"]["def"] {
-  return schema._zod.def;
+  // Zod 4 structure
+  if ("_zod" in schema && schema._zod?.def) {
+    return schema._zod.def;
+  }
+  // Zod 3 structure (fallback)
+  if ("_def" in schema) {
+    return (schema as any)._def;
+  }
+  throw new Error("Unsupported Zod version");
 }
 
 type TypeTransformer<
@@ -25,12 +29,10 @@ const prepareTransformers = (
   return null;
 };
 
-export const imageTypeMock = z.string().meta({ type: "image" });
-
 const runTypeTransformer = (schema: z.core.$ZodType, fieldName?: string) =>
   prepareTransformers(
     [
-      parseImage, // need to be called before string
+      // parseImage, // need to be called before string
       parseString,
       parseNumber,
       parseOptional,
@@ -59,8 +61,39 @@ export const parseZodSchema = (
   return fieldsDefinition;
 };
 
+const validateType = (type: string) => {
+  if (!type) return "string";
+  if (type === "number") return "number";
+  if (type === "boolean") return "boolean";
+  if (type === "date") return "date";
+  if (type === "array") return "array";
+  if (type === "object") return "object";
+  if (type === "enum") return "enum";
+  if (type === "string") return "string";
+  if (type === "image") return "image";
+  console.warn(`Unknown type ${type}, defaulting to string`);
+  return "string";
+};
+
+const extractMeta = (_schema: z.core.$ZodType) => {
+  const schema = _schema as z.ZodType;
+
+  if (typeof schema.meta === "function") {
+    return schema.meta();
+  }
+
+  const { description } = schema;
+  if (!description) return undefined;
+  try {
+    return JSON.parse(description);
+  } catch (error) {
+    console.error(`Failed to parse description: ${error}`);
+    return undefined;
+  }
+};
+
 const handleMeta = (schema: z.core.$ZodType) => {
-  const meta = (schema as z.ZodType).meta();
+  const meta = extractMeta(schema);
   if (!meta) return {};
 
   return Object.entries(meta).reduce((res, [attr, value]) => {
@@ -68,6 +101,7 @@ const handleMeta = (schema: z.core.$ZodType) => {
     else if (attr === "generate") res.generate = !!value;
     else if (attr === "label") res.displayName = String(value);
     else if (attr === "description") res.description = String(value);
+    else if (attr === "type") res.type = validateType(String(value));
     return res;
   }, {} as collection.FormInputField);
 };
@@ -92,17 +126,6 @@ const handleChecks = (def: z.core.$ZodTypeDef) => {
     })
     .filter((value) => value != null);
   return checks ? Object.fromEntries(checks) : {};
-};
-
-export const extractSchema = (
-  schema: z.ZodObject | ((...args: unknown[]) => z.ZodObject),
-) => {
-  if (isZodSchema(schema)) {
-    return schema;
-  }
-  return schema({
-    image: () => imageTypeMock,
-  });
 };
 
 export const parseString: TypeTransformer<collection.StringField> = (
@@ -244,6 +267,7 @@ export const parseDefault: TypeTransformer = (schema, fieldName) => {
 
 export const parseObject: TypeTransformer = (schema, fieldName) => {
   const def = getTypeDef(schema);
+
   if (def.type !== "object") {
     return null;
   }

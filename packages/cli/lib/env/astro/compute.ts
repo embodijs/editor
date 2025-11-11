@@ -3,7 +3,8 @@ import type * as loaders from "astro/loaders";
 import vm from "node:vm";
 import * as z from "zod";
 import * as cms from "@embodi/cms";
-import { extractSchema, parseZodSchema } from "../../parser/zod.js";
+import { parseZodSchema } from "../../parser/zod.js";
+import { extractSchema } from "./schema.js";
 import {
   extractFormats,
   isFileLoader,
@@ -25,8 +26,6 @@ export const mockImports = (): Plugin => ({
       name?.includes("content.config.") ||
       (name?.includes("config.") && folder === "content")
     ) {
-      console.log("Loading mock import:", id, importer);
-
       return `\0virtual:${id}`;
     }
   },
@@ -75,7 +74,6 @@ export const virtualEntry = (): Plugin => {
 };
 
 export const createConfigFromAstro = async (root = process.cwd()) => {
-  console.log({ root });
   const { output } = (await build({
     plugins: [virtualEntry(), mockImports()],
     configFile: false,
@@ -88,6 +86,7 @@ export const createConfigFromAstro = async (root = process.cwd()) => {
           format: "cjs",
         },
         input: "embodi-config",
+        external: ["astro/loaders", "zod"],
       },
     },
   })) as Rollup.RollupOutput;
