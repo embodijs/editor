@@ -9,7 +9,7 @@ function isZodSchema(value: unknown): value is z.ZodType {
 }
 
 export const extractSchema = (
-  schema: z.ZodType | ((...args: unknown[]) => z.ZodType),
+  schema: z.ZodObject | ((...args: unknown[]) => z.ZodObject),
 ) => {
   if (isZodSchema(schema)) {
     return schema;

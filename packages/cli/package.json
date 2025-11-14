@@ -1,6 +1,6 @@
 {
   "name": "@embodi/cli",
-  "version": "0.3.3",
+  "version": "0.4.0",
   "module": "index.ts",
   "type": "module",
   "private": false,
@@ -16,13 +16,14 @@
   "devDependencies": {
     "@embodi/cms": "workspace:*",
     "@types/bun": "latest",
-    "tsup": "^8.5.0",
+    "tsup": "^8.5.1",
     "valibot": "^1.1.0"
   },
   "peerDependencies": {
-    "typescript": "^5",
-    "zod": "^4",
-    "astro": "^5.15.4"
+    "typescript": "^5.9.3",
+    "zod": "^4.1.12",
+    "astro": "^5.15.6",
+    "@embodi/vite-astro-cms": "workspace:*"
   },
   "dependencies": {
     "@clack/prompts": "1.0.0-alpha.6",

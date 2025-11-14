@@ -1,10 +1,11 @@
 import { build, type Plugin, type Rollup } from "vite";
 import type * as loaders from "astro/loaders";
 import vm from "node:vm";
-import * as z from "zod";
+import { z } from "zod";
 import * as cms from "@embodi/cms";
 import { parseZodSchema } from "../../parser/zod.js";
 import { extractSchema } from "./schema.js";
+import { contentPlugin } from "@embodi/vite-astro-cms";
 import {
   extractFormats,
   isFileLoader,
@@ -16,26 +17,20 @@ import { resolve } from "node:path";
 
 export const mockImports = (): Plugin => ({
   name: "vite-embodi-mock-imports",
-  resolveId(id, importer) {
-    if (!importer) return;
-    const split = importer.split("/");
-    const folder = split[split.length - 2];
-    const name = split[split.length - 1];
-
-    if (
-      name?.includes("content.config.") ||
-      (name?.includes("config.") && folder === "content")
-    ) {
-      return `\0virtual:${id}`;
+  resolveId(id) {
+    if (id === "astro:content") {
+      return `\0${id}`;
     }
+    return null;
   },
   load(id) {
-    if (id === "\0virtual:astro:content") {
+    if (id === "\0astro:content") {
       return `
         export * as z from 'zod';
         export const defineCollection = (i) => i;
       `;
     }
+    return null;
   },
 });
 
@@ -50,6 +45,7 @@ export const virtualEntry = (): Plugin => {
       if (id === "embodi-config") {
         return "\0embodi-config";
       }
+      return null;
     },
     load(id) {
       if (id === "\0embodi-config") {
@@ -69,15 +65,17 @@ export const virtualEntry = (): Plugin => {
 
         throw new Error("No content config found");
       }
+      return null;
     },
   };
 };
 
 export const createConfigFromAstro = async (root = process.cwd()) => {
   const { output } = (await build({
-    plugins: [virtualEntry(), mockImports()],
+    plugins: [contentPlugin(), virtualEntry(), mockImports()],
     configFile: false,
     root,
+    logLevel: "silent",
     build: {
       write: false,
       ssr: true,

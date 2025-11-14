@@ -3,7 +3,7 @@ import { readConfigFile, writeConfigFile } from "./helper";
 import { createConfigFromAstro } from "../../lib/env/astro/compute";
 import { resolve } from "node:path";
 import { hasConfigChanged } from "../../lib/helper";
-import { intro, outro, confirm, text } from "@clack/prompts";
+import { intro, outro, confirm, log } from "@clack/prompts";
 
 export const init = new Command("init")
   .description("init the configuration file")
@@ -23,9 +23,11 @@ export const runInit = async (cwd: string = process.cwd()) => {
   intro("Initializing configuration file");
   const config = await createConfigFromAstro(cwd);
   writeConfigFile(config, cwd);
-  outro(
-    "Configuration file initialized successfully. Please commit .embodi/cms/config.json the changes to make it available to your embodi cms",
+  log.success("Configuration file initialized successfully.");
+  log.warn(
+    "Please commit .embodi/cms/config.json to make it available to your embodi cms",
   );
+  outro("All done!");
 };
 
 export const runUpdate = async (cwd: string = process.cwd()) => {
@@ -41,12 +43,16 @@ export const runUpdate = async (cwd: string = process.cwd()) => {
     }
     return;
   }
-  text({ message: "Updating configuration file" });
+  log.step("Updating configuration file");
   const { updatedAt, ...config } = await createConfigFromAstro(cwd);
-  if (!hasConfigChanged(currentConfig, config)) {
+  if (hasConfigChanged(currentConfig, config)) {
     writeConfigFile(config, cwd);
-    outro("Configuration file updated successfully");
+    log.success("Configuration file initialized successfully.");
+    log.warn(
+      "Please commit .embodi/cms/config.json to make it available to your embodi cms",
+    );
   } else {
-    outro("No changes detected");
+    log.info("No changes detected");
   }
+  outro("All done!");
 };

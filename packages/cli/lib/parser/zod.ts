@@ -215,6 +215,7 @@ export const parseDate: TypeTransformer = (schema, fieldName) => {
     ...(fieldName ? { fieldName } : {}),
     type: "date",
     ...handleChecks(def),
+    ...handleMeta(schema),
   };
 };
 

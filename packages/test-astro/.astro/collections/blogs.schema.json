@@ -24,7 +24,9 @@
               "type": "integer",
               "format": "unix-time"
             }
-          ]
+          ],
+          "description": "{\"label\":\"Published at\",\"description\":\"The date the blog post was published\"}",
+          "markdownDescription": "{\"label\":\"Published at\",\"description\":\"The date the blog post was published\"}"
         },
         "author": {
           "type": "string"
