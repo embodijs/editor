@@ -1,4 +1,5 @@
 import { type Plugin } from "vite";
+import fs from "fs";
 import code from "../code/content.js?raw";
 
 const virtual = {
@@ -18,28 +19,44 @@ const virtual = {
     );
   },
 };
-//     {
-//   name: "vite-embodi-astro-virtual-modules-types",
-//   buildStart() {
-//     const configPath = ".embodi/types/content.d.ts";
-//     fs.mkdirSync(dirname(configPath), { recursive: true });
-//     fs.writeFileSync(configPath, ``);
-//   },
-// },
-export default (): Plugin => {
-  return {
-    name: "vite-embodi-astro-virtual-modules",
-    resolveId(id: string) {
-      if (virtual.isValid(id)) {
-        return virtual.resolve(id);
-      }
-      return null;
+
+export default (): Plugin[] => {
+  return [
+    {
+      name: "vite-embodi-astro-virtual-modules-types",
+      buildStart() {
+        const tsConfigPath = "tsconfig.json";
+        if (fs.existsSync(tsConfigPath)) {
+          const strContent = fs.readFileSync(tsConfigPath, "utf-8");
+          const config = JSON.parse(strContent);
+          if (
+            !config.compilerOptions?.types?.includes(
+              "@embodi/vite-astro-cms/client",
+            )
+          ) {
+            config.compilerOptions.types = [
+              ...(config?.compilerOptions?.types ?? []),
+              "@embodi/vite-astro-cms/client",
+            ];
+            fs.writeFileSync(tsConfigPath, JSON.stringify(config, null, 2));
+          }
+        }
+      },
     },
-    load(id: string) {
-      if (virtual.isLoadId(id, "content")) {
-        return code;
-      }
-      return null;
+    {
+      name: "vite-embodi-astro-virtual-modules",
+      resolveId(id: string) {
+        if (virtual.isValid(id)) {
+          return virtual.resolve(id);
+        }
+        return null;
+      },
+      load(id: string) {
+        if (virtual.isLoadId(id, "content")) {
+          return code;
+        }
+        return null;
+      },
     },
-  };
+  ];
 };

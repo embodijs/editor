@@ -12,6 +12,6 @@ export default defineConfig([
     format: ["esm", "cjs"],
     esbuildPlugins: [RawPlugin()],
     treeshake: true,
-    external: ["astro:content"],
+    external: ["astro:content", "astro"],
   },
 ]);

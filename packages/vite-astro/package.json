@@ -3,7 +3,7 @@
   "module": "dist/plugin.js",
   "types": "dist/plugin.d.ts",
   "type": "module",
-  "version": "0.6.0-next.2",
+  "version": "0.7.0",
   "scripts": {
     "test": "vitest",
     "build:code": "tsup --config tsup-code.config.ts",
@@ -32,6 +32,11 @@
         "types": "./code/content.d.ts",
         "default": "./code/content.js"
       }
+    },
+    "./client": {
+      "import": {
+        "types": "./client.d.ts"
+      }
     }
   },
   "dependencies": {
@@ -48,10 +53,10 @@
     "valibot": "^1.1.0"
   },
   "peerDependencies": {
-    "typescript": "^5.9.3",
-    "vite": "^7.2.2",
+    "typescript": "^5",
+    "vite": "^7",
     "zod": "^4",
-    "astro": "^5.15.4"
+    "astro": "^5"
   },
   "license": "Apache-2.0"
 }

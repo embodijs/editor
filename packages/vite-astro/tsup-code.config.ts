@@ -10,6 +10,6 @@ export default defineConfig([
     dts: true,
     clean: true,
     format: ["esm"],
-    external: ["astro:content"],
+    external: ["astro:content", "astro"],
   },
 ]);
