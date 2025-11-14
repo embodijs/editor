@@ -3,14 +3,18 @@
   "module": "dist/plugin.js",
   "types": "dist/plugin.d.ts",
   "type": "module",
-  "version": "0.6.0",
+  "version": "0.6.0-next.2",
   "scripts": {
     "test": "vitest",
-    "build": "tsup",
-    "prepublishOnly": "bun run build"
+    "build:code": "tsup --config tsup-code.config.ts",
+    "build:plugin": "tsup --config tsup.config.ts",
+    "build": "bun run build:code && bun run build:plugin",
+    "prepublishOnly": "bun run build && bun run publint"
   },
   "files": [
-    "dist"
+    "client.d.ts",
+    "dist",
+    "code"
   ],
   "exports": {
     ".": {
@@ -22,6 +26,12 @@
         "types": "./dist/plugin.d.cts",
         "default": "./dist/plugin.cjs"
       }
+    },
+    "./content": {
+      "import": {
+        "types": "./code/content.d.ts",
+        "default": "./code/content.js"
+      }
     }
   },
   "dependencies": {
@@ -31,14 +41,17 @@
   },
   "devDependencies": {
     "@types/bun": "latest",
-    "tsup": "^8.5.0",
+    "esbuild-plugin-raw": "^0.3.0",
+    "publint": "^0.3.15",
+    "tsup": "^8.5.1",
+    "type-fest": "^5.2.0",
     "valibot": "^1.1.0"
   },
   "peerDependencies": {
     "typescript": "^5.9.3",
-    "vite": "^7.1.12",
+    "vite": "^7.2.2",
     "zod": "^4",
-    "astro": "^5.14.5"
+    "astro": "^5.15.4"
   },
   "license": "Apache-2.0"
 }

@@ -1,5 +1,7 @@
 # @embodi/vite-astro-cms
 
+> If you used the plugin to create your embodi content config, please use the new command line interface for this `npx @embodi/cli init` or `npx @embodi/cli update`
+
 Automatically generates CMS configuration from your Astro content collections. Part of [embodi cms](https://embodi.site).
 
 ## Installation

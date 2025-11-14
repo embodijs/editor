@@ -1,173 +1,45 @@
-import { build, type Plugin, type Rollup } from "vite";
-import type * as loaders from "astro/loaders";
-import vm from "node:vm";
-import * as z from "zod";
-import * as cms from "@embodi/cms";
-import { extractSchema, parseZodSchema } from "./zod";
-import {
-  extractFormats,
-  isFileLoader,
-  legacyLoader,
-  parseLoader,
-} from "./loaders";
-import { camelToReadable, hasFile } from "./helper";
-import fs from "node:fs";
-import { resolve, dirname } from "node:path";
+import { type Plugin } from "vite";
+import code from "../code/content.js?raw";
 
-export const mockImports = (): Plugin => ({
-  name: "vite-embodi-mock-imports",
-  resolveId(id, importer) {
-    if (!importer) return;
-    const split = importer.split("/");
-    const folder = split[split.length - 2];
-    const name = split[split.length - 1];
+const virtual = {
+  resolveIds: ["embodi:content"],
 
-    if (
-      name?.includes("content.config.") ||
-      (name?.includes("config.") && folder === "content")
-    ) {
-      console.log("Loading mock import:", id, importer);
-
-      return `\0virtual:${id}`;
-    }
+  isValid: (id: string) => {
+    return virtual.resolveIds.includes(id);
   },
-  load(id) {
-    if (id === "\0virtual:astro:content") {
-      return `
-        export * as z from 'zod';
-        export const defineCollection = (i) => i;
-      `;
-    }
-  },
-});
 
-export const virtualEntry = (): Plugin => ({
-  name: "vite-embodi-virtual-entry",
-  resolveId(id) {
-    if (id === "embodi-config") {
-      return "\0embodi-config";
-    }
+  resolve: (id: string) => {
+    return `\0${id}`;
   },
-  load(id) {
-    if (id === "\0embodi-config") {
-      if (hasFile(resolve("src"), "content.config.*")) {
-        return `
-        export { collections } from './src/content.config.js';
-        export const legacy = false;
-      `;
-      } else if (hasFile(resolve("src/content"), "config.*")) {
-        return `
-        export { collections } from './src/content/config.js';
-        export const legacy = true;
-      `;
+
+  isLoadId: (id: string, cat: string) => {
+    return virtual.resolveIds.some(
+      (resId) => virtual.resolve(resId) === id && id.endsWith(cat),
+    );
+  },
+};
+//     {
+//   name: "vite-embodi-astro-virtual-modules-types",
+//   buildStart() {
+//     const configPath = ".embodi/types/content.d.ts";
+//     fs.mkdirSync(dirname(configPath), { recursive: true });
+//     fs.writeFileSync(configPath, ``);
+//   },
+// },
+export default (): Plugin => {
+  return {
+    name: "vite-embodi-astro-virtual-modules",
+    resolveId(id: string) {
+      if (virtual.isValid(id)) {
+        return virtual.resolve(id);
       }
-
-      throw new Error("No content config found");
-    }
-  },
-});
-
-export default (): Plugin[] => {
-  return [
-    {
-      name: "vite-embodi-astro-ast-analyses",
-      async buildEnd() {
-        console.info("Starting cms config generation");
-
-        const { output } = (await build({
-          plugins: [virtualEntry(), mockImports()],
-          configFile: false,
-          build: {
-            write: false,
-            ssr: true,
-            rollupOptions: {
-              output: {
-                format: "cjs",
-              },
-              input: "embodi-config",
-            },
-          },
-        })) as Rollup.RollupOutput;
-
-        const { imports, importedBindings, code } = output[0];
-        const sandbox = {
-          require: (id: string) => {
-            if (id === "astro/loaders") {
-              return {
-                glob: (i: Parameters<typeof loaders.glob>[0]) => i,
-                file: (i: Parameters<typeof loaders.file>[0]) => i,
-              };
-            } else if (id === "zod") {
-              return z;
-            }
-          },
-          exports: { collections: {}, legacy: false },
-          module: { exports: {} },
-          console: console,
-        };
-        type AstroCollection = {
-          type?: "data" | "content";
-          loader:
-            | Parameters<typeof loaders.glob>[0]
-            | Parameters<typeof loaders.file>[0];
-          schema: z.ZodObject<any> | ((...args: any[]) => z.ZodObject<any>);
-        };
-
-        await vm.runInNewContext(code, sandbox);
-        const collectionsRaw: Record<string, AstroCollection> =
-          sandbox.exports.collections;
-        const isLegacy = sandbox.exports.legacy as boolean;
-        const collections: cms.Collection[] = Object.entries(collectionsRaw)
-          .map(([key, value]) => {
-            const schema = extractSchema(value.schema);
-
-            const loader = isLegacy
-              ? legacyLoader(key, value.type)
-              : parseLoader(value.loader);
-            if (!loader) {
-              return null;
-            }
-            const formats =
-              "pattern" in loader ? extractFormats(loader.pattern) : undefined;
-            const fields = isFileLoader(loader)
-              ? parseZodSchema(
-                  z.array(
-                    z.object({
-                      id: z
-                        .string()
-                        .uuid()
-                        .meta({ hidden: true, generate: true }),
-                      ...schema.shape,
-                    }),
-                  ),
-                )
-              : parseZodSchema(schema);
-
-            return {
-              name: key,
-              displayName: camelToReadable(key),
-              loader: loader,
-              formats,
-              definition: fields,
-            };
-          })
-          .filter((entry) => entry != null);
-
-        const config: cms.GitProjectConfig = {
-          collections,
-          updatedAt: new Date().getTime(),
-          v: "1.0",
-        };
-
-        const path = resolve(".embodi/cms/config.json");
-        fs.mkdirSync(dirname(path), { recursive: true });
-        fs.writeFileSync(
-          resolve(".embodi/cms/config.json"),
-          JSON.stringify(config),
-        );
-
-        console.info("Finished cms config generation");
-      },
+      return null;
     },
-  ];
+    load(id: string) {
+      if (virtual.isLoadId(id, "content")) {
+        return code;
+      }
+      return null;
+    },
+  };
 };

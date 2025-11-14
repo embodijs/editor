@@ -3,15 +3,13 @@ import RawPlugin from "esbuild-plugin-raw";
 
 export default defineConfig([
   {
-    entry: ["src/plugin.ts"],
-    outDir: "dist",
+    entry: ["src/code/content.ts"],
+    outDir: "code",
     splitting: false,
-    sourcemap: true,
+    sourcemap: false,
     dts: true,
     clean: true,
-    format: ["esm", "cjs"],
-    esbuildPlugins: [RawPlugin()],
-    treeshake: true,
+    format: ["esm"],
     external: ["astro:content"],
   },
 ]);
