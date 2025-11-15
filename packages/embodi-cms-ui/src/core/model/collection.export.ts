@@ -126,6 +126,8 @@ export const SchemaDefinition = v.union([ObjectField, ArrayField]);
 
 export const Collection = v.object({
 	name: v.string(),
+	assets: v.optional(v.pipe(v.string())),
+	description: v.optional(v.string()),
 	displayName: v.string(),
 	loader: Loader,
 	formats: v.optional(v.array(v.string())),

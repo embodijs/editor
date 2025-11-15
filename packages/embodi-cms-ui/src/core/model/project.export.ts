@@ -3,6 +3,7 @@ import * as v from 'valibot';
 
 export const ProjectConfig = v.object({
 	collections: v.array(Collection),
+	assets: v.optional(v.array(v.string())),
 	updatedAt: v.optional(v.number()),
 	v: v.optional(v.literal('1.0'))
 });

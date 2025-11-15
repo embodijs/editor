@@ -161,8 +161,16 @@ export const createConfigFromAstro = async (root = process.cwd()) => {
     })
     .filter((entry) => entry != null);
 
+  const assets = collections
+    .map((collection) => collection.assets)
+    .reduce(
+      (acc, curr) => (curr && !acc.includes(curr) ? [...acc, curr] : acc),
+      [] as string[],
+    );
+
   const config: cms.GitProjectConfig = {
     collections,
+    assets,
     updatedAt: new Date().getTime(),
     v: "1.0",
   };
