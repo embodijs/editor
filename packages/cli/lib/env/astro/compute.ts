@@ -12,8 +12,8 @@ import {
   legacyLoader,
   parseLoader,
 } from "./loaders";
-import { camelToReadable, hasFile } from "../../helper.js";
-import { resolve } from "node:path";
+import { camelToReadable, hasFile, resolveRelativePath } from "../../helper.js";
+import { resolve, dirname } from "node:path";
 
 export const mockImports = (): Plugin => ({
   name: "vite-embodi-mock-imports",
@@ -101,12 +101,15 @@ export const createConfigFromAstro = async (root = process.cwd()) => {
         return z;
       }
     },
-    exports: { collections: {}, legacy: false },
+    exports: { collections: {}, definitions: {}, legacy: false },
     module: { exports: {} },
     console: console,
   };
   type AstroCollection = {
     type?: "data" | "content";
+    label?: string;
+    description?: string;
+    assets?: string;
     loader:
       | Parameters<typeof loaders.glob>[0]
       | Parameters<typeof loaders.file>[0];
@@ -127,6 +130,10 @@ export const createConfigFromAstro = async (root = process.cwd()) => {
       if (!loader) {
         return null;
       }
+      const collectionRoot = isFileLoader(loader)
+        ? dirname(loader.path)
+        : loader.base;
+
       const formats =
         "pattern" in loader ? extractFormats(loader.pattern) : undefined;
       const fields = isFileLoader(loader)
@@ -142,7 +149,11 @@ export const createConfigFromAstro = async (root = process.cwd()) => {
 
       return {
         name: key,
-        displayName: camelToReadable(key),
+        displayName: value.label ?? camelToReadable(key),
+        description: value.description,
+        assets: value.assets
+          ? resolveRelativePath(collectionRoot ?? "", value.assets)
+          : undefined,
         loader: loader,
         formats,
         definition: fields,

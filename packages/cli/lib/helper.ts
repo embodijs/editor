@@ -1,5 +1,6 @@
 import { minimatch } from "minimatch";
 import fs from "node:fs";
+import { join } from "node:path";
 import * as cms from "@embodi/cms";
 
 export const camelToReadable = (str: string) => {
@@ -34,4 +35,12 @@ export const hasConfigChanged = (
   const cleaned2 = removeTimeAttributes(config2);
 
   return JSON.stringify(cleaned1) !== JSON.stringify(cleaned2);
+};
+
+export const resolveRelativePath = (base: string, path: string) => {
+  if (path.startsWith("./") || path.startsWith("../")) {
+    return join(base, path);
+  } else {
+    return path;
+  }
 };

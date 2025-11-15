@@ -3,7 +3,7 @@
   "module": "dist/plugin.js",
   "types": "dist/plugin.d.ts",
   "type": "module",
-  "version": "0.7.0",
+  "version": "0.7.1",
   "scripts": {
     "test": "vitest",
     "build:code": "tsup --config tsup-code.config.ts",

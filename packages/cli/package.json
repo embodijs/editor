@@ -1,13 +1,13 @@
 {
   "name": "@embodi/cli",
-  "version": "0.4.0",
-  "module": "index.ts",
+  "version": "0.5.0",
+  "module": "dist/bin.js",
   "type": "module",
   "private": false,
   "scripts": {
     "test": "vitest",
     "build": "tsup",
-    "prepublishOnly": "bun run build"
+    "prepublishOnly": "bun run build && bun run publint"
   },
   "bin": "./dist/bin.js",
   "files": [

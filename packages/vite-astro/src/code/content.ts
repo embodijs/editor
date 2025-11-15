@@ -19,7 +19,7 @@ export const meta = <Z extends BaseSchema>(
 };
 
 export function defineCollection<S extends BaseSchema>(
-  config: CollectionConfig<S> & Definition,
+  config: CollectionConfig<S> & Definition & { assets: string },
 ): CollectionConfig<S> {
   return astroCollection(config as CollectionConfig<S>);
 }

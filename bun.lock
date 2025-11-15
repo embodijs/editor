@@ -12,7 +12,7 @@
     },
     "packages/cli": {
       "name": "@embodi/cli",
-      "version": "0.3.3",
+      "version": "0.4.0",
       "bin": "./dist/bin.js",
       "dependencies": {
         "@clack/prompts": "1.0.0-alpha.6",
@@ -32,7 +32,7 @@
       },
       "peerDependencies": {
         "@embodi/vite-astro-cms": "workspace:*",
-        "astro": "^5.15.4",
+        "astro": "^5.15.6",
         "typescript": "^5.9.3",
         "zod": "^4.1.12",
       },
